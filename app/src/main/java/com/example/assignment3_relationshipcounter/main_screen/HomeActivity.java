@@ -8,12 +8,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.adapter.FriendList;
 
 public class HomeActivity extends AppCompatActivity {
 
     Button friend, searchFriend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,9 +29,16 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+        loadingAppUi();
+
+        FriendList adapter = new FriendList(this);
+        RecyclerView recyclerView = findViewById(R.id.home_friend_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void loadingAppUi(){
         friend = findViewById(R.id.home_friendlist);
         friend.setSelected(true);
-
-
     }
 }

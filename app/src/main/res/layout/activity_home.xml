@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/hellix_bold"
         android:text="Friendzone"
         android:textColor="@color/primary"
@@ -25,16 +25,17 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="21dp"
         android:layout_marginEnd="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_notification" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="358dp"
         android:layout_height="60dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="68dp"
         android:orientation="horizontal"
         android:scrollbars="horizontal"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,8 +44,8 @@
     <LinearLayout
         android:layout_width="350dp"
         android:layout_height="48dp"
-        android:layout_marginTop="180dp"
-        android:background="@drawable/bg_button_toggle"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/bg_button_layer_pink_color"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -57,20 +58,21 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_button_home"
+            android:background="@drawable/bg_button_round_corner"
             android:elevation="0dp"
             android:fontFamily="@font/hellix_semibold"
             android:stateListAnimator="@null"
             android:text="Friend List"
             android:textAllCaps="false"
-            android:textColor="@color/primary" />
+            android:textColor="@color/primary"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <Button
             android:id="@+id/home_seachfriend"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_button_home"
+            android:background="@drawable/bg_button_round_corner"
             android:elevation="0dp"
             android:fontFamily="@font/hellix_semibold"
             android:stateListAnimator="@null"
@@ -79,4 +81,13 @@
             android:textColor="@color/primary"
             tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_friend_list"
+        android:layout_width="358dp"
+        android:layout_height="550dp"
+        android:layout_marginTop="188dp"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

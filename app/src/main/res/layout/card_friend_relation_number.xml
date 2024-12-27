@@ -3,17 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:padding="10dp">
+    android:layout_height="88dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_round_corner">
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/shapeableImageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/sample"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:shapeAppearanceOverlay="@style/CustomRoundedImage" />
+
+    <TextView
+        android:id="@+id/card_friendname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:fontFamily="@font/hellix_semibold"
+        android:text="Friend 1"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/friend_day_count"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/friend_day_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/hellix_regular"
+        android:text="2601 days"
+        android:textColor="@color/secondary1"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/shapeableImageView"
+        app:layout_constraintTop_toBottomOf="@+id/card_friendname" />
+
+    <FrameLayout
+        android:id="@+id/card_navigate"
+        android:layout_width="30dp"
+        android:layout_height="84dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            app:srcCompat="@drawable/ic_fowared" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
