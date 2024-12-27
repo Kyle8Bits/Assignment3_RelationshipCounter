@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_white"
     android:orientation="vertical"
     tools:context=".main_screen.WelcomeActivity">
 
@@ -38,8 +39,8 @@
         android:layout_height="56dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="580dp"
-        android:background="@drawable/welcome_login_button_bg"
-        android:drawableStart="@drawable/google_icon"
+        android:background="@drawable/bg_button_welcome_login"
+        android:drawableStart="@drawable/ic_google"
         android:drawablePadding="-30dp"
         android:fontFamily="@font/hellix_bold"
         android:padding="10dp"
