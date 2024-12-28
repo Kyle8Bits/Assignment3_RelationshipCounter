@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
+import com.example.assignment3_relationshipcounter.adapter.StoryList;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -30,15 +31,29 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         loadingAppUi();
+        loadingFriendListUI();
+        loadingStoryList();
+    }
 
+    private void loadingAppUi(){
+        friend = findViewById(R.id.home_friendlist);
+        friend.setSelected(true);
+    }
+
+    private void loadingFriendListUI(){
         FriendList adapter = new FriendList(this);
         RecyclerView recyclerView = findViewById(R.id.home_friend_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
-    private void loadingAppUi(){
-        friend = findViewById(R.id.home_friendlist);
-        friend.setSelected(true);
+    private void loadingStoryList(){
+        StoryList adapter = new StoryList(this);
+        RecyclerView recyclerView = findViewById(R.id.home_story_list);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.setAdapter(adapter);
     }
 }

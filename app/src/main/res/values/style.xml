@@ -4,4 +4,10 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item> <!-- Adjust this value as needed -->
     </style>
+
+    <style name="CircularImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- Adjust this value as needed -->
+    </style>
+
 </resources>
