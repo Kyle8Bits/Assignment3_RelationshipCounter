@@ -1,6 +1,8 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
-public class Image {
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+
+public class Image implements DataUtils.HasId {
 
     private String id;
     private String owner;
@@ -21,6 +23,7 @@ public class Image {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

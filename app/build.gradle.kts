@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.assignment3_relationshipcounter"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.work:work-runtime:2.8.1")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.appcompat)
     implementation(libs.material)

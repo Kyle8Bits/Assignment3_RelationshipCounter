@@ -1,18 +1,23 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+
 //normal user
-public class User {
+public class User implements DataUtils.HasId {
     private String id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private String DoB;
-    private String gender;
+    private Gender gender;
     private String phoneNumber;
-    private String accountType;
+    private UserType accountType;
 
-    public User(String id, String firstName, String lastName, String email, String password, String doB, String gender, String phoneNumber, String accountType) {
+    public User() {
+    }
+
+    public User(String id, String firstName, String lastName, String email, String password, String doB, Gender gender, String phoneNumber, UserType accountType) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,6 +33,7 @@ public class User {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -72,11 +78,11 @@ public class User {
         DoB = doB;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
@@ -88,11 +94,11 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAccountType() {
+    public UserType getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(UserType accountType) {
         this.accountType = accountType;
     }
 }

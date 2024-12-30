@@ -1,17 +1,21 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
 
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+
 //separate the relationship to maintain the code clean
-public class Relationship {
+public class Relationship implements DataUtils.HasId {
     private String id;
     private String firstUser;
     private String secondUser;
     private String dateCreated;
     private String dateAccept;
-    private String status;
+    private FriendStatus status;
     private int counter;
 
-    public Relationship(String id, String firstUser, String secondUser, String dateCreated, String dateAccept, String status, int counter) {
+    public Relationship() {}
+
+    public Relationship(String id, String firstUser, String secondUser, String dateCreated, String dateAccept, FriendStatus status, int counter) {
         this.id = id;
         this.firstUser = firstUser;
         this.secondUser = secondUser;
@@ -25,6 +29,7 @@ public class Relationship {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -61,11 +66,11 @@ public class Relationship {
         this.dateAccept = dateAccept;
     }
 
-    public String getStatus() {
+    public FriendStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(FriendStatus status) {
         this.status = status;
     }
 
