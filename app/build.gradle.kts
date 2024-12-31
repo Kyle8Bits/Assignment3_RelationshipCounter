@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.gms.google.services)
-
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -34,6 +33,8 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation ("androidx.work:work-runtime:2.8.1")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.appcompat)

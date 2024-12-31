@@ -3,7 +3,8 @@ package com.example.assignment3_relationshipcounter.service.models;
 public enum FriendStatus {
     FRIEND,
     PENDING,
-    BLOCKED;
+    BLOCKED,
+    NOT_FRIEND;
 
     public static FriendStatus fromString(String status) {
         switch (status.toLowerCase()) {
@@ -13,6 +14,8 @@ public enum FriendStatus {
                 return PENDING;
             case "blocked":
                 return BLOCKED;
+            case "add friend":
+                return NOT_FRIEND;
             default:
                 return null;
         }
@@ -25,6 +28,8 @@ public enum FriendStatus {
                 return "Pending";
             case BLOCKED:
                 return "Blocked";
+            case NOT_FRIEND:
+                return "Add friend";
             default:
                 return null;
         }

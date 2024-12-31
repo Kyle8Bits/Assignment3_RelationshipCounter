@@ -8,7 +8,6 @@ public class User implements DataUtils.HasId {
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private String DoB;
     private Gender gender;
     private String phoneNumber;
@@ -17,12 +16,11 @@ public class User implements DataUtils.HasId {
     public User() {
     }
 
-    public User(String id, String firstName, String lastName, String email, String password, String doB, Gender gender, String phoneNumber, UserType accountType) {
+    public User(String id, String firstName, String lastName, String email, String doB, Gender gender, String phoneNumber, UserType accountType) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
         DoB = doB;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
@@ -60,14 +58,6 @@ public class User implements DataUtils.HasId {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getDoB() {

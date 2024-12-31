@@ -9,14 +9,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.ktx.Firebase;
 
 public class Authentication {
     private final FirebaseAuth mAuth;
+
+    private static FirebaseUser user;
 
     private final DataUtils dataUtils = new DataUtils();
 
     public Authentication() {
         this.mAuth = FirebaseAuth.getInstance();
+    }
+
+    public FirebaseUser getFUser(){
+        return user;
     }
 
     /**
@@ -35,7 +42,7 @@ public class Authentication {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
+                        user = mAuth.getCurrentUser();
                         if (user != null) {
                             dataUtils.add("users", newUser, new DataUtils.NormalCallback<User>() {
                                 @Override
