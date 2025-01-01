@@ -38,26 +38,23 @@ public class Authentication {
      */
     public void registerNewUser(String email, String password, User newUser, RegisterNewUserCallback callback){
         mAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            dataUtils.add("users", newUser, new DataUtils.NormalCallback<User>() {
-                                @Override
-                                public void onSuccess() {
-                                    callback.onSuccess();
-                                }
-                                @Override
-                                public void onFailure(Exception e) {
-                                    callback.onFailure(e);
-                                }
-                            });
-                        }
-                    } else {
-                        callback.onFailure(new Exception("Cannot register new user"));
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    user = mAuth.getCurrentUser();
+                    if (user != null) {
+                        dataUtils.add("users", newUser, new DataUtils.NormalCallback<User>() {
+                            @Override
+                            public void onSuccess() {
+                                callback.onSuccess();
+                            }
+                            @Override
+                            public void onFailure(Exception e) {
+                                callback.onFailure(e);
+                            }
+                        });
                     }
+                } else {
+                    callback.onFailure(new Exception("Cannot register new user"));
                 }
             });
     }
