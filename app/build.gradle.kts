@@ -37,6 +37,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation ("androidx.work:work-runtime:2.8.1")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.firebaseui:firebase-ui-firestore:8.0.2")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
