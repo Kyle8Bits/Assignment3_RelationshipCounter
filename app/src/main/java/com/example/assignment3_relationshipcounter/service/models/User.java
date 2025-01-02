@@ -12,7 +12,7 @@ public class User implements DataUtils.HasId {
     private Gender gender;
     private String phoneNumber;
     private UserType accountType;
-
+    private String fcmToken;
     public User() {
     }
 
@@ -90,5 +90,13 @@ public class User implements DataUtils.HasId {
 
     public void setAccountType(UserType accountType) {
         this.accountType = accountType;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
