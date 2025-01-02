@@ -30,6 +30,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".main_screen.ChatActivity"
+            android:exported="false"/>
+
         <service
             android:name=".service.firestore.FCMNotificationServices"
             android:exported="false">

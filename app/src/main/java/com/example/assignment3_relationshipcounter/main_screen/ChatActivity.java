@@ -121,7 +121,6 @@ public class ChatActivity extends AppCompatActivity {
                         System.out.println("Here2"+ chatRoomID);
 
                     }
-
                     @Override
                     public void onFailure(Exception e) {
                         Log.w("ChatRoomID", "Cannot create chat room");
