@@ -1,23 +1,24 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
 public class ChatRoom {
 
     private String chatroomId;
     private List<String> userIds;
-    private String date;
-    private String time;
+    private Timestamp lastMessageTime;
     private String lastMessageSenderId;
     private String lastMessage;
 
-    public ChatRoom(String chatroomId, List<String> userIds, String date, String time, String lastMessageSenderId, String lastMessage) {
+    public ChatRoom() {
+    }
+    public ChatRoom(String chatroomId, List<String> userIds, Timestamp lastMessageTime, String lastMessageSenderId) {
         this.chatroomId = chatroomId;
         this.userIds = userIds;
-        this.date = date;
-        this.time = time;
+        this.lastMessageTime = lastMessageTime;
         this.lastMessageSenderId = lastMessageSenderId;
-        this.lastMessage = lastMessage;
     }
 
     public String getChatroomId() {
@@ -36,20 +37,12 @@ public class ChatRoom {
         this.userIds = userIds;
     }
 
-    public String getDate() {
-        return date;
+    public Timestamp getLastMessageTime() {
+        return lastMessageTime;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public void setLastMessageTime(Timestamp lastMessageTime) {
+        this.lastMessageTime = lastMessageTime;
     }
 
     public String getLastMessageSenderId() {

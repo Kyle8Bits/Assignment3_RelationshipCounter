@@ -2,9 +2,11 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import android.util.Log;
 
+import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -76,15 +78,17 @@ public class DataUtils {
      * @param parentCollection the parent collection
      * @param parentDocumentID the document in the parent collection that you want to add
      * @param childCollection the collection that added into the parent document
+     *
+     * Use for "Chat function" do not delete
      */
     public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
         db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
-                .addOnSuccessListener(documentReference -> {
-                    callback.onSuccess();
-                })
-                .addOnFailureListener(e->{
-                    callback.onFailure(new Exception("Cannot add new collection to document"));
-                });
+            .addOnSuccessListener(documentReference -> {
+                callback.onSuccess();
+            })
+            .addOnFailureListener(e->{
+                callback.onFailure(new Exception("Cannot add new collection to document"));
+            });
     }
 
     /**
@@ -111,11 +115,13 @@ public class DataUtils {
                         T retrievedData = documentSnapshot.toObject(object);
                         if (retrievedData != null) {
                             callback.onSuccess(retrievedData);
-                        } else {
-                            callback.onFailure(new Exception("Data is null"));
                         }
                     }
-                });
+                    else {
+                        callback.onFailure(new Exception("Document dont exist"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
     }
 
 
@@ -136,6 +142,47 @@ public class DataUtils {
                     }
                 })
                 .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
+    }
+
+    /**
+     * This part is for chat room, will optimize later
+     */
+
+
+    //THIS ONE IS IMPORTANT PLEASE DO NOT DELETE
+    public Query getChatInChatroom(String chatRoomID){
+       return db.collection("chatrooms").document(chatRoomID).collection("chats").orderBy("lastMessageTime", Query.Direction.DESCENDING);
+    }
+
+    public <T> void getAllChatRoomOfUser(String userID, Class<T> object, FetchCallback<List<T>> callback){
+        db.collection("chatrooms").whereArrayContains("userIds",userID).orderBy("lastMessageTime", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.isEmpty()) {
+                        List<T> dataList = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            T retrievedData = doc.toObject(object);
+                            if(retrievedData != null){
+                                dataList.add(retrievedData);
+                            }
+                        }
+                        callback.onSuccess(dataList);
+                    }
+                    else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void createNewChatRoom(String chatRoomId, ChatRoom chatRoom, NormalCallback<Void> callback){
+        db.collection("chatrooms").document(chatRoomId).set(chatRoom)
+                .addOnSuccessListener(
+                        aVoid -> callback.onSuccess()
+                )
+                .addOnFailureListener(e -> {
+                    System.out.println("Error retrieving document: " + e.getMessage());
+                    callback.onFailure(e);
+                });
     }
 
     /**

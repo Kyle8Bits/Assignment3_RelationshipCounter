@@ -1,16 +1,20 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
+import com.google.firebase.Timestamp;
+
 public class Message {
     private String message;
     private String senderId;
-    private String time;
-    private String date;
+    private Timestamp lastMessageTime;
 
-    public Message(String message, String senderId, String time, String date) {
+    public Message(){
+
+    }
+
+    public Message(String message, String senderId, Timestamp lastMessageTime) {
         this.message = message;
         this.senderId = senderId;
-        this.time = time;
-        this.date = date;
+        this.lastMessageTime = lastMessageTime;
     }
 
     public String getMessage() {
@@ -29,19 +33,19 @@ public class Message {
         this.senderId = senderId;
     }
 
-    public String getTime() {
-        return time;
+    public Timestamp getLastMessageTime() {
+        return lastMessageTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setLastMessageTime(Timestamp lastMessageTime) {
+        this.lastMessageTime = lastMessageTime;
     }
 
-    public String getDate() {
-        return date;
+    public String getDate(){
+        return lastMessageTime.toDate().toString();
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getTime(){
+        return lastMessageTime.toDate().toString();
     }
 }

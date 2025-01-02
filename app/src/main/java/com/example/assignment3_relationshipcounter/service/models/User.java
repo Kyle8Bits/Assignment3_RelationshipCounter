@@ -91,4 +91,8 @@ public class User implements DataUtils.HasId {
     public void setAccountType(UserType accountType) {
         this.accountType = accountType;
     }
+
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
 }
