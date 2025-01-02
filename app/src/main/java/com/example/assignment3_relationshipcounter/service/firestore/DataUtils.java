@@ -72,6 +72,22 @@ public class DataUtils {
     }
 
     /**
+     * Add a collection into a document
+     * @param parentCollection the parent collection
+     * @param parentDocumentID the document in the parent collection that you want to add
+     * @param childCollection the collection that added into the parent document
+     */
+    public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
+        db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
+                .addOnSuccessListener(documentReference -> {
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e->{
+                    callback.onFailure(new Exception("Cannot add new collection to document"));
+                });
+    }
+
+    /**
      * Delete the document by ID
      */
     public <T> void deleteById(String collection, String id, NormalCallback<T> callback) {
