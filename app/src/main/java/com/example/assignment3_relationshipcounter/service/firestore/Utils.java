@@ -21,12 +21,14 @@ public class Utils {
         intent.putExtra("firstName",user.getFirstName());
         intent.putExtra("lastName",user.getLastName());
         intent.putExtra("userId",user.getId());
+        intent.putExtra("fcmToken", user.getFcmToken());
     }
     public static User getUserModelFromIntent(Intent intent){
         User user = new User();
         user.setId(intent.getStringExtra("userId"));
         user.setFirstName(intent.getStringExtra("firstName"));
         user.setLastName(intent.getStringExtra("lastName"));
+        user.setFcmToken(intent.getStringExtra("fcmToken"));
         return user;
     }
 
