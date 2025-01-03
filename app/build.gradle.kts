@@ -13,7 +13,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.1")
     implementation(libs.firebase.analytics)
     implementation(platform(libs.firebase.bom))
     implementation ("androidx.work:work-runtime:2.8.1")
@@ -43,7 +44,6 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

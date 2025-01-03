@@ -1,12 +1,19 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.fragments.LoginFragment;
@@ -37,7 +44,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 }
-
                 @Override
                 public void onFailure(Exception e) {
                 }
@@ -88,8 +94,8 @@ public class WelcomeActivity extends AppCompatActivity {
          * delete the if wrap then...
          * replace the "123" with current login user's id before start new activity
          */
-        if(false) {
-            dataUtils.getFCMToken("123");
-        }
+//        if(false) {
+//            dataUtils.getFCMToken("123");
+//        }
     }
 }

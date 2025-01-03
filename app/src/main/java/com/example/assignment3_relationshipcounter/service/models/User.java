@@ -2,8 +2,10 @@ package com.example.assignment3_relationshipcounter.service.models;
 
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 
+import java.io.Serializable;
+
 //normal user
-public class User implements DataUtils.HasId {
+public class User implements DataUtils.HasId, Serializable {
     private String id;
     private String firstName;
     private String lastName;

@@ -8,7 +8,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -236,26 +235,5 @@ public class DataUtils {
         void setId(String id);
     }
 
-
-    /**
-     * FCM token getter
-     */
-    public void getFCMToken(String userId){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-           if(task.isSuccessful()){
-               String token = task.getResult();
-               updateOneFieldById("users",userId, "fcmToken", token, new NormalCallback<Void>(){
-                   @Override
-                   public void onSuccess() {
-                       System.out.println("FCM token updated successfully.");
-                   }
-                   @Override
-                   public void onFailure(Exception e) {
-                       System.err.println("Failed to update FCM token: " + e.getMessage());
-                   }
-               });
-           }
-        });
-    }
 
 }
