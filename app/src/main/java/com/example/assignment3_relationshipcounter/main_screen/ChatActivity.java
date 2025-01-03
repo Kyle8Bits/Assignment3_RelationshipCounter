@@ -103,28 +103,23 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
     private void getOrCreateChatRoom(){
-        System.out.println("Here0");
         dataUtils.getById("chatrooms", chatRoomID, ChatRoom.class, new DataUtils.FetchCallback<ChatRoom>() {
             @Override
             public void onSuccess(ChatRoom data) {
-                System.out.println("Here1.5");
                 chatRoom = data;
             }
 
             @Override
             public void onFailure(Exception e) {
-                System.out.println("Here1");
                 chatRoom = new ChatRoom(chatRoomID, Arrays.asList(startUserId, receiveUserId), Timestamp.now(), "");
                 dataUtils.createNewChatRoom(chatRoomID, chatRoom, new DataUtils.NormalCallback<Void>() {
                     @Override
                     public void onSuccess() {
-                        System.out.println("Here2"+ chatRoomID);
 
                     }
                     @Override
                     public void onFailure(Exception e) {
                         Log.w("ChatRoomID", "Cannot create chat room");
-                        System.out.println("Here3");
 
                     }
                 });

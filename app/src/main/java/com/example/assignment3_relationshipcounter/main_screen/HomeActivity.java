@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.adapter.StoryList;
+import com.example.assignment3_relationshipcounter.service.location.Location;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -30,6 +32,8 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+        Location.requestLocationPermissions(this);
+        Location.getPosition(this);
         loadingAppUi();
         loadingFriendListUI();
         loadingStoryList();
@@ -55,5 +59,13 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Handle the result of the permission request
+        Location.handlePermissionResult(requestCode, grantResults, this);
     }
 }
