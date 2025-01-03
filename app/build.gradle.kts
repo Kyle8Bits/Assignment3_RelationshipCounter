@@ -33,10 +33,10 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-analytics")
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(libs.firebase.analytics)
+    implementation(platform(libs.firebase.bom))
     implementation ("androidx.work:work-runtime:2.8.1")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation (libs.glide)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -46,4 +46,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation (libs.material.v190)
 }

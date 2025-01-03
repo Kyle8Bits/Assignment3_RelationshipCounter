@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="CalendarTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarHeaderConfirmButton">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>
+    </style>
     <style name="CustomRoundedImage" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item> <!-- Adjust this value as needed -->
+        <item name="cornerSize">16dp</item>
     </style>
 
     <style name="CircularImage" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item> <!-- Adjust this value as needed -->
+        <item name="cornerSize">50%</item>
     </style>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -14,8 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.adapter.StoryList;
+import com.example.assignment3_relationshipcounter.service.models.User;
 
 public class HomeActivity extends AppCompatActivity {
+    private User currentUser;
+
 
     Button friend, searchFriend;
 
@@ -30,24 +34,31 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+
         loadingAppUi();
         loadingFriendListUI();
         loadingStoryList();
+
+        Intent intent = getIntent();
+        if (intent.getSerializableExtra("currentUser") != null) {
+            currentUser = (User) intent.getSerializableExtra("currentUser");
+        }
+
     }
 
-    private void loadingAppUi(){
+    private void loadingAppUi() {
         friend = findViewById(R.id.home_friendlist);
         friend.setSelected(true);
     }
 
-    private void loadingFriendListUI(){
+    private void loadingFriendListUI() {
         FriendList adapter = new FriendList(this);
         RecyclerView recyclerView = findViewById(R.id.home_friend_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
-    private void loadingStoryList(){
+    private void loadingStoryList() {
         StoryList adapter = new StoryList(this);
         RecyclerView recyclerView = findViewById(R.id.home_story_list);
 
