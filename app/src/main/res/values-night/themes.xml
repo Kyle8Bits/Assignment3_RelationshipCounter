@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Assignment3_RelationshipCounter" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.Assignment3_RelationshipCounter" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
     </style>
 </resources>
