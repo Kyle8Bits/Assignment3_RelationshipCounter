@@ -103,6 +103,7 @@ public class SignUpFragment extends Fragment {
                     Intent intent = new Intent(requireActivity(), HomeActivity.class);
                     intent.putExtra("currentUser", newUser);
                     startActivity(intent);
+                    requireActivity().finish();
                 }
 
                 @Override

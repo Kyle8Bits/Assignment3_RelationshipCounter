@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.main_screen.ChatActivity;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
 import com.example.assignment3_relationshipcounter.service.ProgressManager;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
@@ -58,7 +59,6 @@ public class LoginFragment extends Fragment {
             if (email.isEmpty() || password.isEmpty()) {
                 errorDisplay.setText("Please enter all fields");
             }
-            Toast.makeText(requireActivity(), "Reach login", Toast.LENGTH_SHORT).show();
             auth.login(email, password, new Authentication.LoginCallback() {
 
                 @Override
@@ -69,12 +69,14 @@ public class LoginFragment extends Fragment {
                     dataUtils.getById("users", user.getUid(), User.class, new DataUtils.FetchCallback<User>() {
                         @Override
                         public void onSuccess(User data) {
-                            Toast.makeText(requireActivity(), "Reach data", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireActivity(), "Welcome " + data.getFirstName(), Toast.LENGTH_SHORT).show();
                             // Navigate to Home
                             ProgressManager.dismissProgress();
-                            Intent intent = new Intent(requireActivity(), HomeActivity.class);
-                            intent.putExtra("currentUser", user);
+                            Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            intent.putExtra("currentUser", data);
+                            auth.setUserDetail(data);
                             startActivity(intent);
+                            requireActivity().finish();
                         }
 
                         @Override
