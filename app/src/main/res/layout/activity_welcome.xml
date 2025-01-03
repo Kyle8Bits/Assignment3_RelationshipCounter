@@ -1,81 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_white"
-    android:orientation="vertical"
     tools:context=".main_screen.WelcomeActivity">
+    <LinearLayout
+        android:id="@+id/welcome_container"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:contentDescription="@string/tagline"
+            android:src="@drawable/welcome_img1" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="76dp"
-        android:src="@drawable/welcome_img1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/hellix_bold"
+            android:gravity="center"
+            android:lineSpacingExtra="8dp"
+            android:text="@string/tagline"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"
+            android:textSize="28sp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_marginTop="100dp"
+            android:gravity="center"
+            style="?android:attr/buttonBarStyle"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/button_to_login"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_button_selector"
+                android:fontFamily="@font/hellix_bold"
+                android:text="@string/login"
+                android:textAllCaps="false"
+                android:textColor="@drawable/text_color_selector"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/button_to_signup"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/primary"
+                android:fontFamily="@font/hellix_bold"
+                android:text="@string/signup"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_round_corner"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <androidx.fragment.app.FragmentContainerView
+        android:visibility="invisible"
+        android:id="@+id/auth_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="424dp"
-        android:fontFamily="@font/hellix_bold"
-        android:gravity="center"
-        android:lineSpacingExtra="8dp"
-        android:text="Let’s counting your relationship with your friends"
-        android:textColor="@color/black"
-        android:textSize="28sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="295dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="580dp"
-        android:background="@drawable/bg_button_welcome_login"
-        android:drawableStart="@drawable/ic_google"
-        android:drawablePadding="-30dp"
-        android:fontFamily="@font/hellix_bold"
-        android:padding="10dp"
-        android:text="Login with Google"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="660dp"
-        android:fontFamily="@font/hellix_regular"
-        android:text="Don't have an account?"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="660dp"
-        android:layout_marginEnd="85dp"
-        android:fontFamily="@font/hellix_semibold"
-        android:gravity="bottom"
-        android:minWidth="50dp"
-        android:text="Sign Up"
-        android:textColor="@color/secondary1"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

@@ -1,8 +1,5 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,9 +9,42 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.fragments.LoginFragment;
+import com.example.assignment3_relationshipcounter.fragments.SignUpFragment;
+import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.firebase.auth.FirebaseUser;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    // Check if the user is current signed in
+    @Override
+    public void onStart() {
+        super.onStart();
+        DataUtils dataUtils = new DataUtils();
+        Authentication auth = new Authentication();
+        FirebaseUser user = auth.getFUser();
+        if (user != null) {
+            user.reload();
+            // Get the user's role
+            dataUtils.getById("user", user.getUid(), User.class, new DataUtils.FetchCallback<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    Intent intent = new Intent(WelcomeActivity.this, HomeActivity.class);
+                    intent.putExtra("currentUser", user);
+                    startActivity(intent);
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                }
+            });
+        }
+    }
+
     DataUtils dataUtils = new DataUtils();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +56,31 @@ public class WelcomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        FragmentContainerView authContainer = findViewById(R.id.auth_container);
+        Button toLoginBtn = findViewById(R.id.button_to_login);
+        toLoginBtn.setOnClickListener(v -> {
+            replaceFragment(new LoginFragment());
+            authContainer.setVisibility(View.VISIBLE);
+        });
+        Button toSignUpBtn = findViewById(R.id.button_to_signup);
+        toSignUpBtn.setOnClickListener(v -> {
+            replaceFragment(new SignUpFragment());
+            authContainer.setVisibility(View.VISIBLE);
+        });
+    }
+
+
+    /**
+     * Replace fragment in the container
+     *
+     * @param fragment either login or signup fragment
+     */
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.auth_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
 
 
         /**
@@ -37,5 +92,4 @@ public class WelcomeActivity extends AppCompatActivity {
             dataUtils.getFCMToken("123");
         }
     }
-
 }

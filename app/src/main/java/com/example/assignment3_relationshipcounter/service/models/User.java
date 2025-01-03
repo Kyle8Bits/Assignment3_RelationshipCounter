@@ -7,6 +7,7 @@ public class User implements DataUtils.HasId {
     private String id;
     private String firstName;
     private String lastName;
+    private String username;
     private String email;
     private String DoB;
     private Gender gender;
@@ -16,12 +17,13 @@ public class User implements DataUtils.HasId {
     public User() {
     }
 
-    public User(String id, String firstName, String lastName, String email, String doB, Gender gender, String phoneNumber, UserType accountType) {
+    public User(String id, String firstName, String lastName, String username, String email, String doB, Gender gender, String phoneNumber, UserType accountType) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         DoB = doB;
+        this.username = username;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.accountType = accountType;
@@ -90,6 +92,14 @@ public class User implements DataUtils.HasId {
 
     public void setAccountType(UserType accountType) {
         this.accountType = accountType;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFcmToken() {
