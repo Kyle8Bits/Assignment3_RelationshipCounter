@@ -1,6 +1,5 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -34,7 +33,8 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
-
+        Location.requestLocationPermissions(this);
+        Location.getPosition(this);
         loadingAppUi();
         loadingFriendListUI();
         loadingStoryList();
@@ -66,5 +66,13 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Handle the result of the permission request
+        Location.handlePermissionResult(requestCode, grantResults, this);
     }
 }
