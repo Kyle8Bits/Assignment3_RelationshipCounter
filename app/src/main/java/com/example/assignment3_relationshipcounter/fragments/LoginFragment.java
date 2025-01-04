@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment {
                             Toast.makeText(requireActivity(), "Welcome " + data.getFirstName(), Toast.LENGTH_SHORT).show();
                             // Navigate to Home
                             ProgressManager.dismissProgress();
-                            Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            Intent intent = new Intent(requireActivity(), HomeActivity.class);
                             intent.putExtra("currentUser", data);
                             auth.setUserDetail(data);
                             startActivity(intent);

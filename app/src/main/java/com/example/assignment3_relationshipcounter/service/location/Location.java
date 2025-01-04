@@ -63,8 +63,8 @@ public class Location {
         // Create a location request
         LocationRequest locationRequest = new LocationRequest.Builder(
                 LocationRequest.PRIORITY_HIGH_ACCURACY, // High accuracy
-                5000 // Interval in milliseconds
-        ).setMinUpdateIntervalMillis(2000) // Fastest interval
+                300000 // Interval in milliseconds
+        ).setMinUpdateIntervalMillis(300000) // Fastest interval
                 .build();
 
         // Create a location callback to handle location updates
