@@ -24,7 +24,6 @@ import java.util.List;
 public class ChatMessageList extends FirestoreRecyclerAdapter<Message, ChatMessageList.ChatModelViewHolder> {
 
     Context context;
-
     String currentUserId;
     String otherUserId;
 

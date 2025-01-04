@@ -1,6 +1,8 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
@@ -21,7 +24,15 @@ import com.example.assignment3_relationshipcounter.service.models.Gender;
 import com.example.assignment3_relationshipcounter.service.models.Image;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.service.models.UserType;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +50,7 @@ public class SignUpFragment extends Fragment {
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,33 +98,42 @@ public class SignUpFragment extends Fragment {
                 errorDisplay.setText("Please fill in all fields");
                 return;
             }
-
             // Create new user object
             Gender gender = Gender.fromString(selectedGender.getText().toString().toLowerCase());
-            User newUser = new User("", firstName, lastName, username, email, dob, gender, phoneNumber, UserType.USER);
 
-
-            // Register user
-            auth.registerNewUser(email, password, newUser, new Authentication.RegisterNewUserCallback() {
-
+            FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(requireActivity());
+            client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
-                public void onSuccess() {
-                    ProgressManager.dismissProgress();
+                public void onSuccess(Location location) {
+                    try {
+                        User newUser = new User("", firstName, lastName, username, email, dob, gender, phoneNumber, UserType.USER,location.getLatitude(), location.getLongitude());
+                        // Register user
+                        auth.registerNewUser(email, password, newUser, new Authentication.RegisterNewUserCallback() {
 
-                    // Navigate to HomeActivity
-                    Intent intent = new Intent(requireActivity(), HomeActivity.class);
-                    intent.putExtra("currentUser", newUser);
-                    startActivity(intent);
-                    requireActivity().finish();
-                }
+                            @Override
+                            public void onSuccess() {
+                                ProgressManager.dismissProgress();
 
-                @Override
-                public void onFailure(Exception e) {
-                    ProgressManager.dismissProgress();
-                    errorDisplay.setText(e.getMessage());
+                                // Navigate to HomeActivity
+                                Intent intent = new Intent(requireActivity(), HomeActivity.class);
+                                intent.putExtra("currentUser", newUser);
+                                startActivity(intent);
+                                requireActivity().finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                ProgressManager.dismissProgress();
+                                errorDisplay.setText(e.getMessage());
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+
                 }
             });
-
         });
         return view;
     }

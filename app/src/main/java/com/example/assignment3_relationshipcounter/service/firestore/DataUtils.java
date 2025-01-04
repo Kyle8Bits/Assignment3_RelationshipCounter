@@ -12,6 +12,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class DataUtils {
@@ -37,8 +38,8 @@ public class DataUtils {
                 });
     }
 
-    public <T> void updateOneFieldById(String collection, String id, String field, T value, NormalCallback<Void> callback) {
-        db.collection(collection).document(id).update(field, value)
+    public void updateOneFieldById(String collection, String id, Map<String, Object> fields, NormalCallback<Void> callback) {
+        db.collection(collection).document(id).update( fields)
                 .addOnSuccessListener(aVoid -> {
                     callback.onSuccess();
                 })

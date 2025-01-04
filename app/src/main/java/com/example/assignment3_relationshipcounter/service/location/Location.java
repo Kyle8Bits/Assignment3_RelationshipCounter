@@ -6,21 +6,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.GeoPoint;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Location {
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static LocationCallback locationCallback;
     /**
      * Requests location permissions if not already granted.
      *
@@ -35,13 +43,6 @@ public class Location {
         }
     }
 
-    /**
-     * Handles the result of the permission request.
-     *
-     * @param requestCode  The request code passed in requestPermissions.
-     * @param grantResults The results of the permission request.
-     * @param activity     The activity where the result is handled.
-     */
     public static void handlePermissionResult(int requestCode, @NonNull int[] grantResults, Activity activity) {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -55,9 +56,10 @@ public class Location {
     }
 
     @SuppressLint("MissingPermission")
-    public static void getPosition(Context context) {
+    public static void updateUserPosition(Context context ,LocationUpdateListener listener) {
+        DataUtils dataUt = new DataUtils();
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
-        LatLng lastLocation = new LatLng(37.4219983, -122.084);
+
         // Create a location request
         LocationRequest locationRequest = new LocationRequest.Builder(
                 LocationRequest.PRIORITY_HIGH_ACCURACY, // High accuracy
@@ -66,7 +68,7 @@ public class Location {
                 .build();
 
         // Create a location callback to handle location updates
-        LocationCallback locationCallback = new LocationCallback() {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
@@ -75,12 +77,25 @@ public class Location {
 
                 for (android.location.Location location : locationResult.getLocations()) {
                     try {
-                        // Get the updated position
-                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        if(currentLocation.latitude != lastLocation.latitude || currentLocation.longitude != lastLocation.longitude ) {
-                            System.out.println(currentLocation.latitude + currentLocation.longitude);
-                        }
+                        Map<String, Object> fieldsToUpdate = new HashMap<>();
+                        fieldsToUpdate.put("latitude", location.getLatitude());
+                        fieldsToUpdate.put("longitude", location.getLongitude());
+                        dataUt.updateOneFieldById(
+                                "users",
+                                new Authentication().getUserDetail().getId(),
+                                fieldsToUpdate,
+                                new DataUtils.NormalCallback<Void>() {
+                                    @Override
+                                    public void onSuccess() {
+                                        listener.onLocationUpdated(location);
+                                    }
 
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Log.e("FirestoreUpdate", "Failed to update fields", e);
+                                    }
+                                }
+                        );
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
@@ -92,4 +107,14 @@ public class Location {
         client.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
+    public static void stopLocationUpdates(FusedLocationProviderClient client) {
+        if (locationCallback != null) {
+            client.removeLocationUpdates(locationCallback);
+            Log.d("LocationUpdate", "Location updates stopped");
+        }
+    }
+
+    public interface LocationUpdateListener {
+        void onLocationUpdated(android.location.Location location);
+    }
 }

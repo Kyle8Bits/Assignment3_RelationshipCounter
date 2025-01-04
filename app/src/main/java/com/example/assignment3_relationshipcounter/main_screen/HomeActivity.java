@@ -1,10 +1,21 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import static com.example.assignment3_relationshipcounter.service.location.Location.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.example.assignment3_relationshipcounter.service.location.Location.stopLocationUpdates;
+import static com.example.assignment3_relationshipcounter.service.location.Location.updateUserPosition;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -14,12 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.adapter.StoryList;
+import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.android.gms.location.LocationServices;
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser;
-
-
     Button friend, searchFriend;
 
     @Override
@@ -33,16 +44,10 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        Location.requestLocationPermissions(this);
-        Location.getPosition(this);
+        updateUserLocation();
         loadingAppUi();
         loadingFriendListUI();
         loadingStoryList();
-
-        Intent intent = getIntent();
-        if (intent.getSerializableExtra("currentUser") != null) {
-            currentUser = (User) intent.getSerializableExtra("currentUser");
-        }
 
     }
 
@@ -68,11 +73,27 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    private void updateUserLocation(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            updateUserPosition(this, location -> {
+                Toast.makeText(
+                        this,
+                        "Location updated: " + location.getLatitude() + ", " + location.getLongitude(),
+                        Toast.LENGTH_SHORT
+                ).show();
 
-        // Handle the result of the permission request
-        Location.handlePermissionResult(requestCode, grantResults, this);
+            });
+        } else {
+            // Request permissions
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
     }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (this.isFinishing()) {
+//            stopLocationUpdates(LocationServices.getFusedLocationProviderClient(this));
+//        }
+//    }
 }
