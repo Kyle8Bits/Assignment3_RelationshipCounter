@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.ChatMessageList;
+import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
@@ -69,8 +70,8 @@ public class ChatActivity extends AppCompatActivity {
          * replace the startUserId with current login in user's ID
          * replace the receiverUserId with whatever user ID that you want to start the chat room
          */
-        startUserId = "j0OXHJJ485axVcQyDclxKHOKKRe2";
-        receiveUserId = "aP6X5YA1xfXPt61fxa6xayes0J12";
+        startUserId = new Authentication().getUserDetail().getId();
+        receiveUserId = "ODL9YO8oRbMKhFqRTJQHb27NvF32";
         chatRoomID = util.getChatRoomId(receiveUserId, startUserId);
 
         getOrCreateChatRoom();
