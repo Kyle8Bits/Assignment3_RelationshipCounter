@@ -30,12 +30,12 @@
         android:text="Friend 1"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/friend_day_count"
+        app:layout_constraintStart_toStartOf="@+id/display_param"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Day Count -->
     <TextView
-        android:id="@+id/friend_day_count"
+        android:id="@+id/display_param"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
@@ -48,6 +48,18 @@
         app:layout_constraintTop_toBottomOf="@+id/card_friendname" />
 
     <!-- Add Friend Button -->
+
+    <TextView
+        android:id="@+id/last_time_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="00:00"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btn_add_friend"
         android:layout_width="wrap_content"
