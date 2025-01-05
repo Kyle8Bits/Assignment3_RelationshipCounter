@@ -21,10 +21,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 public class ChatRoomList extends FirestoreRecyclerAdapter<ChatRoom, ChatRoomList.ChatRoomViewHolder> {
     DataUtils dataUtils = new DataUtils();
     Context context;
-
-    public ChatRoomList(@NonNull FirestoreRecyclerOptions<ChatRoom> options, Context context) {
+    OnItemClickListener onItemClickListener;
+    public interface OnItemClickListener {
+        void onItemClick(User user);
+    }
+    public ChatRoomList(@NonNull FirestoreRecyclerOptions<ChatRoom> options, Context context, OnItemClickListener listener) {
         super(options);
         this.context = context;
+        this.onItemClickListener = listener;
     }
 
     @Override
@@ -42,6 +46,7 @@ public class ChatRoomList extends FirestoreRecyclerAdapter<ChatRoom, ChatRoomLis
                         else {
                             holder.lastMessageText.setText(model.getLastMessage());
                         }
+                        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(user));
                         holder.lastTimeText.setVisibility(View.VISIBLE);
                         holder.lastTimeText.setText(dataUtils.timestampToString(model.getLastMessageTime()));
                     } else {

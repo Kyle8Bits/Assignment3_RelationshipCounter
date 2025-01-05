@@ -1,5 +1,6 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.ChatRoomList;
-import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -31,19 +31,23 @@ public class ChatRoomFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chat_room_fragment,container,false);
+        View view = inflater.inflate(R.layout.fragment_chat_room,container,false);
         recyclerView = view.findViewById(R.id.chat_room_created);
-        setupRecyclerView();
+        setupRecyclerView(view);
         return view;
     }
-    void setupRecyclerView(){
+    void setupRecyclerView(View view){
 
         Query query = dataUtils.getAllChatRoomOfUser();
 
         FirestoreRecyclerOptions<ChatRoom> options = new FirestoreRecyclerOptions.Builder<ChatRoom>()
                 .setQuery(query,ChatRoom.class).build();
 
-        adapter = new ChatRoomList(options,getContext());
+        adapter = new ChatRoomList(options,getContext(), user -> {
+            Intent intent = new Intent(requireActivity(), ChatFragment.class);
+            intent.putExtra("otherUser", user);
+            startActivity(intent);
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         adapter.startListening();

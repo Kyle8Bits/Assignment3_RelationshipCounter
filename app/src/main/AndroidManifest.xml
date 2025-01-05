@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Assignment3_RelationshipCounter"
         tools:targetApi="31">
         <activity
-            android:name=".fragments.ChatRoomFragment"
+            android:name=".fragments.ChatFragment"
             android:exported="false" />
         <activity
             android:name=".main_screen.HomeActivity"
