@@ -75,7 +75,6 @@ public class ChatFragment extends AppCompatActivity {
 
                        @Override
                        public void onFailure(Exception e) {
-                           sendMessage(chatBox.getText().toString());
                        }
                    });
                 }
@@ -118,26 +117,29 @@ public class ChatFragment extends AppCompatActivity {
             }
         });
     }
-    private void getOrCreateChatRoom(CreateRoomCallback callback){
+    private void getOrCreateChatRoom(CreateRoomCallback callback) {
         dataUtils.getById("chatrooms", chatRoomID, ChatRoom.class, new DataUtils.FetchCallback<ChatRoom>() {
             @Override
             public void onSuccess(ChatRoom data) {
+                // If the chat room already exists, use it
                 chatRoom = data;
                 callback.onSuccess();
             }
 
             @Override
             public void onFailure(Exception e) {
+                // If the chat room doesn't exist, create it only when sending the first message
                 chatRoom = new ChatRoom(chatRoomID, Arrays.asList(startUserId, receiveUserId), Timestamp.now(), "");
                 dataUtils.createNewChatRoom(chatRoomID, chatRoom, new DataUtils.NormalCallback<Void>() {
                     @Override
                     public void onSuccess() {
-                        callback.onFailure(new Exception());
+                        callback.onSuccess(); // Proceed with sending the message
                     }
+
                     @Override
                     public void onFailure(Exception e) {
                         Log.w("ChatRoomID", "Cannot create chat room");
-
+                        callback.onFailure(e);
                     }
                 });
             }
