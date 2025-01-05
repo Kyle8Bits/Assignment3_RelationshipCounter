@@ -1,9 +1,8 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
-
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 
-//separate the relationship to maintain the code clean
+// Separate the relationship to maintain code clarity
 public class Relationship implements DataUtils.HasId {
     private String id;
     private String firstUser;
@@ -25,15 +24,17 @@ public class Relationship implements DataUtils.HasId {
         this.counter = counter;
     }
 
-    public String getId() {
-        return id;
-    }
-
+    // Unique ID
     @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    // User Details
     public String getFirstUser() {
         return firstUser;
     }
@@ -50,6 +51,7 @@ public class Relationship implements DataUtils.HasId {
         this.secondUser = secondUser;
     }
 
+    // Dates
     public String getDateCreated() {
         return dateCreated;
     }
@@ -66,6 +68,7 @@ public class Relationship implements DataUtils.HasId {
         this.dateAccept = dateAccept;
     }
 
+    // Relationship Status
     public FriendStatus getStatus() {
         return status;
     }
@@ -74,11 +77,67 @@ public class Relationship implements DataUtils.HasId {
         this.status = status;
     }
 
+    // Counter (e.g., number of interactions, days as friends)
     public int getCounter() {
         return counter;
     }
 
     public void setCounter(int counter) {
         this.counter = counter;
+    }
+
+    public void updateStatus(FriendStatus newStatus) {
+        this.status = newStatus;
+    }
+
+    // Utility Methods for Relationship Status
+    public boolean isFriend() {
+        return status == FriendStatus.FRIEND;
+    }
+
+    public boolean isPending() {
+        return status == FriendStatus.PENDING;
+    }
+
+    public boolean isBlocked() {
+        return status == FriendStatus.BLOCKED;
+    }
+
+    public boolean isNotFriend() {
+        return status == FriendStatus.NOT_FRIEND;
+    }
+
+    // Relationship Display Text
+    public String getStatusDisplayText() {
+        switch (status) {
+            case FRIEND:
+                return "Friend";
+            case PENDING:
+                return "Pending Request";
+            case BLOCKED:
+                return "Blocked";
+            case NOT_FRIEND:
+                return "Not Friend";
+            default:
+                return "Unknown";
+        }
+    }
+
+    // Relationship Validation (Optional)
+    public boolean isValid() {
+        return firstUser != null && secondUser != null && status != null;
+    }
+
+    @Override
+    public String toString() {
+        return "Relationship{" +
+                "id='" + id + '\'' +
+                ", firstUser='" + firstUser + '\'' +
+                ", secondUser='" + secondUser + '\'' +
+                ", dateCreated='" + dateCreated + '\'' +
+                ", dateAccept='" + dateAccept + '\'' +
+                ", status=" + status +
+                ", counter=" + counter +
+                '}';
     }
 }

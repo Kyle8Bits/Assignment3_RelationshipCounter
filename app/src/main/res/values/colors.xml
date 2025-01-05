@@ -69,5 +69,9 @@
 
         <!--  Others  -->
         <color name="secondary1_10">#1ADD88CF</color> <!-- 10% opacity -->
+        <color name="primary_with_opacity">#334B164C</color>
+        <color name="tab_bar_background">#F8E7F6</color>
+        <color name="stroke_back_button">#1422172A</color>
 
-    </resources>
+
+</resources>

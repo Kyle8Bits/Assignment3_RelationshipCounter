@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import android.util.Log;
 
+import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -172,5 +173,32 @@ public class DataUtils {
         void setId(String id);
     }
 
+    public <T> void getByField(String collection, String field, String value, Class<T> objectClass, FetchCallback<List<T>> callback) {
+        db.collection(collection)
+                .whereEqualTo(field, value)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<T> dataList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            T retrievedData = document.toObject(objectClass);
+                            if (retrievedData != null) {
+                                dataList.add(retrievedData);
+                            }
+                        }
+                        callback.onSuccess(dataList); // Pass the list to onSuccess
+                    } else {
+                        callback.onSuccess(Collections.emptyList()); // Pass an empty list if no documents are found
+                    }
+                })
+                .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
+    }
+
+    public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
+        db.collection("relationships")
+                .add(relationship)
+                .addOnSuccessListener(documentReference -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to add relationship")));
+    }
 
 }

@@ -58,4 +58,57 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <!-- Circular Icon Button -->
+    <style name="Widget.Assignment3_RelationshipCounter.CircularIconButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <!-- Button Size -->
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+
+        <!-- Icon Customizations -->
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/primary</item>
+
+        <!-- Background and Insets -->
+        <item name="android:backgroundTint">@android:color/transparent</item>
+
+        <!-- Shape Customization -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Assignment3.Button.Circle</item>
+
+        <!-- Stroke and Outline -->
+        <item name="strokeColor">@color/primary_with_opacity</item>
+        <item name="strokeWidth">1.5dp</item>
+    </style>
+
+    <!-- Circular Back Button -->
+    <style name="Widget.Assignment3_RelationshipCounter.CircularBackButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <!-- Button Size -->
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+
+        <!-- Icon Customizations -->
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@android:color/black</item>
+
+        <!-- Background and Insets -->
+        <item name="android:backgroundTint">@android:color/transparent</item>
+
+        <!-- Shape Customization -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Assignment3.Button.Circle</item>
+
+        <!-- Stroke and Outline -->
+        <item name="strokeColor">@color/stroke_back_button</item> <!-- Define #22172A with 8% opacity in colors.xml -->
+        <item name="strokeWidth">1.5dp</item>
+    </style>
+
+    <!-- Circular Shape Appearance -->
+    <style name="ShapeAppearanceOverlay.Assignment3.Button.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+
+
+
 </resources>
