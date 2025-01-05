@@ -163,7 +163,7 @@ public class DataUtils {
     }
 
     public Query getAllChatRoomOfUser(){
-        return db.collection("chatrooms").whereArrayContains("userIds", new Authentication().getFUser().getUid());
+        return db.collection("chatrooms").whereArrayContains("userIds", new Authentication().getFUser().getUid()).orderBy("lastMessageTime", Query.Direction.DESCENDING);
     }
 
     public void createNewChatRoom(String chatRoomId, ChatRoom chatRoom, NormalCallback<Void> callback){
