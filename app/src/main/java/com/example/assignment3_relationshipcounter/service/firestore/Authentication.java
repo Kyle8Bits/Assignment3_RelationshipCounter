@@ -13,19 +13,22 @@ import com.google.firebase.ktx.Firebase;
 
 public class Authentication {
     private final FirebaseAuth mAuth;
-
     private static FirebaseUser user;
-
+    private static User userDetail = new User();
     private final DataUtils dataUtils = new DataUtils();
 
     public Authentication() {
         this.mAuth = FirebaseAuth.getInstance();
     }
-
     public FirebaseUser getFUser() {
         return user;
     }
-
+    public void setUserDetail(User userDetail){
+        Authentication.userDetail = userDetail;
+    }
+    public User getUserDetail(){
+        return userDetail;
+    }
     /**
      * @param email
      * @param password

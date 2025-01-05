@@ -2,15 +2,17 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import android.util.Log;
 
-import com.example.assignment3_relationshipcounter.service.models.Relationship;
+import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class DataUtils {
@@ -36,8 +38,8 @@ public class DataUtils {
                 });
     }
 
-    public <T> void updateOneFieldById(String collection, String id, String field, T value, NormalCallback<Void> callback) {
-        db.collection(collection).document(id).update(field, value)
+    public void updateOneFieldById(String collection, String id, Map<String, Object> fields, NormalCallback<Void> callback) {
+        db.collection(collection).document(id).update( fields)
                 .addOnSuccessListener(aVoid -> {
                     callback.onSuccess();
                 })
@@ -73,6 +75,24 @@ public class DataUtils {
     }
 
     /**
+     * Add a collection into a document
+     * @param parentCollection the parent collection
+     * @param parentDocumentID the document in the parent collection that you want to add
+     * @param childCollection the collection that added into the parent document
+     *
+     * Use for "Chat function" do not delete
+     */
+    public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
+        db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
+            .addOnSuccessListener(documentReference -> {
+                callback.onSuccess();
+            })
+            .addOnFailureListener(e->{
+                callback.onFailure(new Exception("Cannot add new collection to document"));
+            });
+    }
+
+    /**
      * Delete the document by ID
      */
     public <T> void deleteById(String collection, String id, NormalCallback<T> callback) {
@@ -96,11 +116,13 @@ public class DataUtils {
                         T retrievedData = documentSnapshot.toObject(object);
                         if (retrievedData != null) {
                             callback.onSuccess(retrievedData);
-                        } else {
-                            callback.onFailure(new Exception("Data is null"));
                         }
                     }
-                });
+                    else {
+                        callback.onFailure(new Exception("Document dont exist"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
     }
 
 
@@ -121,6 +143,47 @@ public class DataUtils {
                     }
                 })
                 .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
+    }
+
+    /**
+     * This part is for chat room, will optimize later
+     */
+
+
+    //THIS ONE IS IMPORTANT PLEASE DO NOT DELETE
+    public Query getChatInChatroom(String chatRoomID){
+       return db.collection("chatrooms").document(chatRoomID).collection("chats").orderBy("lastMessageTime", Query.Direction.DESCENDING);
+    }
+
+    public <T> void getAllChatRoomOfUser(String userID, Class<T> object, FetchCallback<List<T>> callback){
+        db.collection("chatrooms").whereArrayContains("userIds",userID).orderBy("lastMessageTime", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.isEmpty()) {
+                        List<T> dataList = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            T retrievedData = doc.toObject(object);
+                            if(retrievedData != null){
+                                dataList.add(retrievedData);
+                            }
+                        }
+                        callback.onSuccess(dataList);
+                    }
+                    else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void createNewChatRoom(String chatRoomId, ChatRoom chatRoom, NormalCallback<Void> callback){
+        db.collection("chatrooms").document(chatRoomId).set(chatRoom)
+                .addOnSuccessListener(
+                        aVoid -> callback.onSuccess()
+                )
+                .addOnFailureListener(e -> {
+                    System.out.println("Error retrieving document: " + e.getMessage());
+                    callback.onFailure(e);
+                });
     }
 
     /**
@@ -173,66 +236,5 @@ public class DataUtils {
         void setId(String id);
     }
 
-    public <T> void getByField(String collection, String field, String value, Class<T> objectClass, FetchCallback<List<T>> callback) {
-        db.collection(collection)
-                .whereEqualTo(field, value)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        List<T> dataList = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            T retrievedData = document.toObject(objectClass);
-                            if (retrievedData != null) {
-                                dataList.add(retrievedData);
-                            }
-                        }
-                        callback.onSuccess(dataList); // Pass the list to onSuccess
-                    } else {
-                        callback.onSuccess(Collections.emptyList()); // Pass an empty list if no documents are found
-                    }
-                })
-                .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
-    }
-
-    public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
-        // Create a new document reference to generate the ID
-        DocumentReference docRef = db.collection("relationships").document();
-
-        // Set the generated ID in the Relationship object
-        relationship.setId(docRef.getId());
-
-        // Save the relationship object to Firestore
-        docRef.set(relationship)
-                .addOnSuccessListener(aVoid -> {
-                    callback.onSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    callback.onFailure(new Exception("Failed to add relationship"));
-                });
-    }
-
-    /**
-     * Updates an existing relationship in the Firestore database.
-     *
-     * @param relationship The relationship object to update.
-     * @param callback     Callback to indicate success or failure.
-     */
-    public void updateRelationship(Relationship relationship, NormalCallback<Void> callback) {
-        if (relationship == null || relationship.getId() == null || relationship.getId().isEmpty()) {
-            callback.onFailure(new IllegalArgumentException("Invalid relationship object. ID is required."));
-            return;
-        }
-
-        // Update the relationship in the Firestore database
-        db.collection("relationships") // Use 'db' instead of 'firestore'
-                .document(relationship.getId())
-                .set(relationship)
-                .addOnSuccessListener(unused -> {
-                    if (callback != null) callback.onSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    if (callback != null) callback.onFailure(e);
-                });
-    }
 
 }

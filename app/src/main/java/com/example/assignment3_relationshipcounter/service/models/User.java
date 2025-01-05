@@ -1,6 +1,7 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
@@ -15,20 +16,23 @@ public class User implements DataUtils.HasId, Serializable {
     private Gender gender;
     private String phoneNumber;
     private UserType accountType;
-
+    private double latitude;
+    private double longitude;
     public User() {
     }
 
-    public User(String id, String firstName, String lastName, String username, String email, String doB, Gender gender, String phoneNumber, UserType accountType) {
+    public User(String id, String firstName, String lastName, String username, String email, String doB, Gender gender, String phoneNumber, UserType accountType, double latitude, double longitude) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
         this.email = email;
         DoB = doB;
-        this.username = username;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.accountType = accountType;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getId() {
@@ -102,5 +106,21 @@ public class User implements DataUtils.HasId, Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
