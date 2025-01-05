@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/back_button2"
+            android:id="@+id/back_button_chat"
             style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
