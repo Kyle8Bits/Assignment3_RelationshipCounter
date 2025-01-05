@@ -75,7 +75,7 @@ public class ChatFragment extends AppCompatActivity {
 
                        @Override
                        public void onFailure(Exception e) {
-
+                           sendMessage(chatBox.getText().toString());
                        }
                    });
                 }
@@ -132,7 +132,7 @@ public class ChatFragment extends AppCompatActivity {
                 dataUtils.createNewChatRoom(chatRoomID, chatRoom, new DataUtils.NormalCallback<Void>() {
                     @Override
                     public void onSuccess() {
-                        callback.onSuccess();
+                        callback.onFailure(new Exception());
                     }
                     @Override
                     public void onFailure(Exception e) {
