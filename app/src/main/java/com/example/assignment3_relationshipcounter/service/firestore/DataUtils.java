@@ -177,9 +177,9 @@ public class DataUtils {
                 });
     }
 
-    public static String timestampToString(Timestamp timestamp) {
+    public static String timestampToString(Timestamp timestamp, String format) {
         if (timestamp != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
             return sdf.format(timestamp.toDate());
         }
         return "";
