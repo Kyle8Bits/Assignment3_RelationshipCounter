@@ -2,12 +2,18 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import android.util.Log;
 
+import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +79,24 @@ public class DataUtils {
     }
 
     /**
+     * Add a collection into a document
+     * @param parentCollection the parent collection
+     * @param parentDocumentID the document in the parent collection that you want to add
+     * @param childCollection the collection that added into the parent document
+     *
+     * Use for "Chat function" do not delete
+     */
+    public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
+        db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
+                .addOnSuccessListener(documentReference -> {
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e->{
+                    callback.onFailure(new Exception("Cannot add new collection to document"));
+                });
+    }
+
+    /**
      * Delete the document by ID
      */
     public <T> void deleteById(String collection, String id, NormalCallback<T> callback) {
@@ -123,12 +147,44 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
     }
 
+    //THIS ONE IS IMPORTANT PLEASE DO NOT DELETE
+    public Query getChatInChatroom(String chatRoomID){
+        return db.collection("chatrooms").document(chatRoomID).collection("chats").orderBy("lastMessageTime", Query.Direction.DESCENDING);
+    }
+
+    public DocumentReference getAllChatRoomOfUser(List<String> userID){
+        if(userID.get(0).equals(new Authentication().getFUser().getUid())){
+            return db.collection("users").document(userID.get(1));
+        }
+        else{
+            return db.collection("users").document(userID.get(0));
+        }
+    }
+
+    public Query getAllChatRoomOfUser(){
+        return db.collection("chatrooms").whereArrayContains("userIds", new Authentication().getFUser().getUid());
+    }
+
+    public void createNewChatRoom(String chatRoomId, ChatRoom chatRoom, NormalCallback<Void> callback){
+        db.collection("chatrooms").document(chatRoomId).set(chatRoom)
+                .addOnSuccessListener(
+                        aVoid -> callback.onSuccess()
+                )
+                .addOnFailureListener(e -> {
+                    System.out.println("Error retrieving document: " + e.getMessage());
+                    callback.onFailure(e);
+                });
+    }
+
+    public static String timestampToString(Timestamp time){
+        return new SimpleDateFormat("HH:MM").format(time.toDate());
+    }
+
     /**
      * Function use for update the daily counter
      * @see DailyFriendUpdateWorker
      * It called this function daily to updating the counter
      */
-
     public void updateCounterDaily( NormalCallback<Void> callback){
         db.collection("relationships")
             .whereEqualTo("status", "FRIEND") // Match only FRIEND status
