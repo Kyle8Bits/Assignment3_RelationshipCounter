@@ -26,6 +26,7 @@ import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.example.assignment3_relationshipcounter.service.models.Message;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Query;
 
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Queue;
 
 public class ChatFragment extends AppCompatActivity {
-
+    MaterialButton backButton;
     EditText chatBox;
     Button sendButton;
     ChatRoom chatRoom;
@@ -52,16 +53,19 @@ public class ChatFragment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.fragment_chat);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         User user = (User) getIntent().getSerializableExtra("otherUser");
         texterName= findViewById(R.id.texter_name);
         texterName.setText(user.getUsername());
         chatBox = findViewById(R.id.messBox);
         sendButton = findViewById(R.id.send);
+        backButton = findViewById(R.id.back_button_chat);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
