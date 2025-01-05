@@ -195,10 +195,44 @@ public class DataUtils {
     }
 
     public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
-        db.collection("relationships")
-                .add(relationship)
-                .addOnSuccessListener(documentReference -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to add relationship")));
+        // Create a new document reference to generate the ID
+        DocumentReference docRef = db.collection("relationships").document();
+
+        // Set the generated ID in the Relationship object
+        relationship.setId(docRef.getId());
+
+        // Save the relationship object to Firestore
+        docRef.set(relationship)
+                .addOnSuccessListener(aVoid -> {
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure(new Exception("Failed to add relationship"));
+                });
+    }
+
+    /**
+     * Updates an existing relationship in the Firestore database.
+     *
+     * @param relationship The relationship object to update.
+     * @param callback     Callback to indicate success or failure.
+     */
+    public void updateRelationship(Relationship relationship, NormalCallback<Void> callback) {
+        if (relationship == null || relationship.getId() == null || relationship.getId().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("Invalid relationship object. ID is required."));
+            return;
+        }
+
+        // Update the relationship in the Firestore database
+        db.collection("relationships") // Use 'db' instead of 'firestore'
+                .document(relationship.getId())
+                .set(relationship)
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onFailure(e);
+                });
     }
 
 }

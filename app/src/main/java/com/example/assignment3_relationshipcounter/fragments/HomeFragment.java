@@ -63,6 +63,18 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh My Friends list when the fragment resumes
+        if (tabLayout.getSelectedTabPosition() == 0) {
+            fetchMyFriends(); // Refresh My Friends tab
+        } else {
+            fetchFriendRequests(); // Refresh Requests tab
+        }
+    }
+
+
     private void navigateToSearchFriendFragment() {
         // Create a new instance of SearchFriendFragment
         SearchFriendFragment searchFriendFragment = new SearchFriendFragment();
@@ -97,7 +109,7 @@ public class HomeFragment extends Fragment {
         fetchMyFriends();
 
         // Fetch Data for Explore Tab
-        fetchExploreUsers();
+        fetchFriendRequests();
 
         // Add Tab Selection Logic
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -140,13 +152,13 @@ public class HomeFragment extends Fragment {
                 dataUtils.getAll("users", User.class, new DataUtils.FetchCallback<List<User>>() {
                     @Override
                     public void onSuccess(List<User> allUsers) {
-                        myFriendsList.clear();
+                        myFriendsList.clear(); // Clear old data
                         for (User user : allUsers) {
                             if (friendIds.contains(user.getId())) {
-                                myFriendsList.add(user);
+                                myFriendsList.add(user); // Add friends to the list
                             }
                         }
-                        myFriendsAdapter.updateList(myFriendsList);
+                        myFriendsAdapter.updateList(myFriendsList); // Update the adapter
                     }
 
                     @Override
@@ -163,34 +175,32 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fetchExploreUsers() {
+    private void fetchFriendRequests() {
         DataUtils dataUtils = new DataUtils();
         String currentUserId = UserSession.getInstance().getCurrentUser().getId();
 
-        dataUtils.getAll("users", User.class, new DataUtils.FetchCallback<List<User>>() {
+        dataUtils.getAll("relationships", Relationship.class, new DataUtils.FetchCallback<List<Relationship>>() {
             @Override
-            public void onSuccess(List<User> allUsers) {
-                dataUtils.getAll("relationships", Relationship.class, new DataUtils.FetchCallback<List<Relationship>>() {
+            public void onSuccess(List<Relationship> relationships) {
+                List<String> requestSenderIds = new ArrayList<>();
+
+                for (Relationship relationship : relationships) {
+                    // Check if the current user is the receiver and the status is pending
+                    if (relationship.getSecondUser().equals(currentUserId) && relationship.getStatus() == FriendStatus.PENDING) {
+                        requestSenderIds.add(relationship.getFirstUser());
+                    }
+                }
+
+                dataUtils.getAll("users", User.class, new DataUtils.FetchCallback<List<User>>() {
                     @Override
-                    public void onSuccess(List<Relationship> relationships) {
-                        List<String> excludedUserIds = new ArrayList<>();
-                        excludedUserIds.add(currentUserId); // Exclude the current user
-
-                        for (Relationship relationship : relationships) {
-                            if (relationship.getFirstUser().equals(currentUserId) || relationship.getSecondUser().equals(currentUserId)) {
-                                excludedUserIds.add(relationship.getFirstUser().equals(currentUserId)
-                                        ? relationship.getSecondUser()
-                                        : relationship.getFirstUser());
-                            }
-                        }
-
-                        exploreList.clear();
+                    public void onSuccess(List<User> allUsers) {
+                        exploreList.clear(); // Clear the current list
                         for (User user : allUsers) {
-                            if (!excludedUserIds.contains(user.getId())) {
-                                exploreList.add(user);
+                            if (requestSenderIds.contains(user.getId())) {
+                                exploreList.add(user); // Add users who sent friend requests
                             }
                         }
-                        exploreAdapter.updateList(exploreList);
+                        exploreAdapter.updateList(exploreList); // Update the adapter
                     }
 
                     @Override
@@ -206,5 +216,4 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
 }

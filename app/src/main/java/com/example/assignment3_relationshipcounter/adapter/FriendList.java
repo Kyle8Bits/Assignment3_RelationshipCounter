@@ -51,65 +51,104 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
         fetchRelationshipForUser(user, new DataUtils.FetchCallback<Relationship>() {
             @Override
             public void onSuccess(Relationship relationship) {
+                String currentUserId = UserSession.getInstance().getCurrentUser().getId();
+
                 switch (relationship.getStatus()) {
                     case FRIEND:
-                        // User is a friend
+                        // User is already a friend
                         holder.addFriendButton.setVisibility(View.GONE);
                         holder.navigateIcon.setVisibility(View.VISIBLE);
                         break;
                     case PENDING:
                         // Friend request is pending
                         holder.addFriendButton.setVisibility(View.VISIBLE);
-                        holder.addFriendButton.setText("Pending");
-                        holder.addFriendButton.setEnabled(false);
                         holder.navigateIcon.setVisibility(View.GONE);
+
+                        if (relationship.getFirstUser().equals(currentUserId)) {
+                            // Current user is the sender
+                            holder.addFriendButton.setText("Pending");
+                            holder.addFriendButton.setEnabled(false);
+                        } else if (relationship.getSecondUser().equals(currentUserId)) {
+                            // Current user is the receiver
+                            holder.addFriendButton.setText("Accept");
+                            holder.addFriendButton.setEnabled(true);
+
+                            // Handle "Accept" Button Click
+                            holder.addFriendButton.setOnClickListener(v -> {
+                                // Log the relationship details
+                                Log.d("AcceptButtonClick", "Accepting Friend Request: " + relationship.toString());
+
+                                // Update the status to "Friend" and set the created date
+                                relationship.setStatus(FriendStatus.FRIEND);
+                                relationship.setDateCreated(new Utils().getCurrentDate());
+
+                                new DataUtils().updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Toast.makeText(context, "You are now friends with " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                        holder.addFriendButton.setVisibility(View.GONE);
+                                        holder.navigateIcon.setVisibility(View.VISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Toast.makeText(context, "Failed to accept friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            });
+                        }
+
+                        break;
+                    case NOT_FRIEND:
+                        // User is not a friend
+                        holder.addFriendButton.setVisibility(View.VISIBLE);
+                        holder.addFriendButton.setText("Add Friend");
+                        holder.addFriendButton.setEnabled(true);
+                        holder.navigateIcon.setVisibility(View.GONE);
+
+                        // Handle "Add Friend" Button Click
+                        holder.addFriendButton.setOnClickListener(v -> {
+                            holder.addFriendButton.setText("Pending");
+                            holder.addFriendButton.setEnabled(false);
+
+                            // Create a new relationship with "Pending" status
+                            Relationship newRelationship = new Relationship(
+                                    null, // ID will be auto-generated
+                                    currentUserId,
+                                    user.getId(),
+                                    new Utils().getCurrentDate(), // Date created
+                                    null, // Date accepted (null for now)
+                                    FriendStatus.PENDING,
+                                    0
+                            );
+
+                            new DataUtils().addRelationship(newRelationship, new DataUtils.NormalCallback<Void>() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(context, "Friend request sent to " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    holder.addFriendButton.setText("Add Friend");
+                                    holder.addFriendButton.setEnabled(true);
+                                    Toast.makeText(context, "Failed to send friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        });
                         break;
                     default:
-                        // User is not a friend
+                        // Default case: NOT_FRIEND
                         holder.addFriendButton.setVisibility(View.VISIBLE);
                         holder.addFriendButton.setText("Add Friend");
                         holder.addFriendButton.setEnabled(true);
                         holder.navigateIcon.setVisibility(View.GONE);
                         break;
                 }
-
-                // Handle Add Friend Button Click
-                holder.addFriendButton.setOnClickListener(v -> {
-                    holder.addFriendButton.setText("Pending");
-                    holder.addFriendButton.setEnabled(false);
-                    holder.navigateIcon.setVisibility(View.GONE);
-
-                    // Send Friend Request Logic
-                    Relationship newRelationship = new Relationship(
-                            null, // ID will be auto-generated
-                            UserSession.getInstance().getCurrentUser().getId(), // Current user
-                            user.getId(), // Selected user
-                            new Utils().getCurrentDate(), // Date created
-                            null, // Date accepted (null for now)
-                            FriendStatus.PENDING, // Status is pending
-                            0 // Counter is 0 initially
-                    );
-
-                    DataUtils dataUtils = new DataUtils();
-                    dataUtils.addRelationship(newRelationship, new DataUtils.NormalCallback<Void>() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(context, "Friend request sent to " + user.getUsername(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            holder.addFriendButton.setText("Add Friend");
-                            holder.addFriendButton.setEnabled(true);
-                            Toast.makeText(context, "Failed to send request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                });
             }
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("FriendList", "Failed to fetch relationship for user: " + user.getId(), e);
                 holder.addFriendButton.setVisibility(View.VISIBLE);
                 holder.addFriendButton.setText("Add Friend");
                 holder.addFriendButton.setEnabled(true);
@@ -117,8 +156,6 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
             }
         });
     }
-
-
 
     private void fetchRelationshipForUser(User user, DataUtils.FetchCallback<Relationship> callback) {
         DataUtils dataUtils = new DataUtils();
