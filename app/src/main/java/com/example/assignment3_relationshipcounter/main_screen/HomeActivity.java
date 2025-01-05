@@ -27,7 +27,6 @@ import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.adapter.StoryList;
 import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
-import com.google.android.gms.location.LocationServices;
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser;
