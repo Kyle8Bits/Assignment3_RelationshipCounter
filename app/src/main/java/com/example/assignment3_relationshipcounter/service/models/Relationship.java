@@ -1,20 +1,21 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.google.firebase.Timestamp;
 
 // Separate the relationship to maintain code clarity
 public class Relationship implements DataUtils.HasId {
     private String id;
     private String firstUser;
     private String secondUser;
-    private String dateCreated;
-    private String dateAccept;
+    private Timestamp dateCreated;
+    private Timestamp dateAccept;
     private FriendStatus status;
     private int counter;
 
     public Relationship() {}
 
-    public Relationship(String id, String firstUser, String secondUser, String dateCreated, String dateAccept, FriendStatus status, int counter) {
+    public Relationship(String id, String firstUser, String secondUser, Timestamp dateCreated, Timestamp dateAccept, FriendStatus status, int counter) {
         this.id = id;
         this.firstUser = firstUser;
         this.secondUser = secondUser;
@@ -51,20 +52,19 @@ public class Relationship implements DataUtils.HasId {
         this.secondUser = secondUser;
     }
 
-    // Dates
-    public String getDateCreated() {
-        return dateCreated;
+    public Timestamp getDateCreated() {
+        return dateCreated; // Return the raw Timestamp
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public String getDateAccept() {
-        return dateAccept;
+    public Timestamp getDateAccept() {
+        return dateAccept; // Return the raw Timestamp
     }
 
-    public void setDateAccept(String dateAccept) {
+    public void setDateAccept(Timestamp dateAccept) {
         this.dateAccept = dateAccept;
     }
 

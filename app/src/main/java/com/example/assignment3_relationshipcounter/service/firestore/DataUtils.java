@@ -3,6 +3,7 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 import android.util.Log;
 
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
+
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.Timestamp;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class DataUtils {
@@ -43,8 +45,8 @@ public class DataUtils {
                 });
     }
 
-    public <T> void updateOneFieldById(String collection, String id, String field, T value, NormalCallback<Void> callback) {
-        db.collection(collection).document(id).update(field, value)
+    public void updateOneFieldById(String collection, String id, Map<String, Object> fields, NormalCallback<Void> callback) {
+        db.collection(collection).document(id).update( fields)
                 .addOnSuccessListener(aVoid -> {
                     callback.onSuccess();
                 })
@@ -89,12 +91,12 @@ public class DataUtils {
      */
     public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
         db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
-                .addOnSuccessListener(documentReference -> {
-                    callback.onSuccess();
-                })
-                .addOnFailureListener(e->{
-                    callback.onFailure(new Exception("Cannot add new collection to document"));
-                });
+            .addOnSuccessListener(documentReference -> {
+                callback.onSuccess();
+            })
+            .addOnFailureListener(e->{
+                callback.onFailure(new Exception("Cannot add new collection to document"));
+            });
     }
 
     /**
@@ -121,11 +123,13 @@ public class DataUtils {
                         T retrievedData = documentSnapshot.toObject(object);
                         if (retrievedData != null) {
                             callback.onSuccess(retrievedData);
-                        } else {
-                            callback.onFailure(new Exception("Data is null"));
                         }
                     }
-                });
+                    else {
+                        callback.onFailure(new Exception("Document dont exist"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
     }
 
 
@@ -190,6 +194,7 @@ public class DataUtils {
      * @see DailyFriendUpdateWorker
      * It called this function daily to updating the counter
      */
+
     public void updateCounterDaily( NormalCallback<Void> callback){
         db.collection("relationships")
             .whereEqualTo("status", "FRIEND") // Match only FRIEND status
@@ -256,21 +261,23 @@ public class DataUtils {
     }
 
     public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
-        // Create a new document reference to generate the ID
-        DocumentReference docRef = db.collection("relationships").document();
+        db.collection("relationships")
+                .add(relationship)
+                .addOnSuccessListener(documentReference -> {
+                    // Retrieve the generated document ID
+                    String generatedId = documentReference.getId();
 
-        // Set the generated ID in the Relationship object
-        relationship.setId(docRef.getId());
+                    // Update the relationship object with the generated ID
+                    relationship.setId(generatedId);
 
-        // Save the relationship object to Firestore
-        docRef.set(relationship)
-                .addOnSuccessListener(aVoid -> {
-                    callback.onSuccess();
+                    // Update the document in Firestore with the ID field
+                    documentReference.update("id", generatedId)
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to update relationship ID")));
                 })
-                .addOnFailureListener(e -> {
-                    callback.onFailure(new Exception("Failed to add relationship"));
-                });
+                .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to add relationship")));
     }
+
 
     /**
      * Updates an existing relationship in the Firestore database.
@@ -295,5 +302,4 @@ public class DataUtils {
                     if (callback != null) callback.onFailure(e);
                 });
     }
-
 }
