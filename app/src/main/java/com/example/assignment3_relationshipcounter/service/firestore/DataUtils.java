@@ -239,25 +239,57 @@ public class DataUtils {
         void setId(String id);
     }
 
-    public <T> void getByField(String collection, String field, String value, Class<T> objectClass, FetchCallback<List<T>> callback) {
-        db.collection(collection)
-                .whereEqualTo(field, value)
+    public void getFriendsOfUser(FetchCallback<List<User>> callback) {
+        String userId = new Authentication().getFUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // List to store friend user objects
+        List<User> friends = new ArrayList<>();
+
+        // Query 1: Where `firstUser` equals the given userId
+        db.collection("relationships")
+                .whereEqualTo("firstUser", userId)
+                .whereEqualTo("status", "FRIEND")
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        List<T> dataList = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            T retrievedData = document.toObject(objectClass);
-                            if (retrievedData != null) {
-                                dataList.add(retrievedData);
-                            }
-                        }
-                        callback.onSuccess(dataList); // Pass the list to onSuccess
-                    } else {
-                        callback.onSuccess(Collections.emptyList()); // Pass an empty list if no documents are found
+                .addOnSuccessListener(firstQuerySnapshot -> {
+                    List<String> friendIds = new ArrayList<>();
+
+                    // Collect `secondUser` IDs from the first query
+                    for (QueryDocumentSnapshot document : firstQuerySnapshot) {
+                        friendIds.add(document.getString("secondUser"));
                     }
+
+                    // Query 2: Where `secondUser` equals the given userId
+                    db.collection("relationships")
+                            .whereEqualTo("secondUser", userId)
+                            .whereEqualTo("status", "FRIEND")
+                            .get()
+                            .addOnSuccessListener(secondQuerySnapshot -> {
+                                // Collect `firstUser` IDs from the second query
+                                for (QueryDocumentSnapshot document : secondQuerySnapshot) {
+                                    friendIds.add(document.getString("firstUser"));
+                                }
+
+                                // Fetch `User` objects from the `users` collection for these IDs
+                                if (!friendIds.isEmpty()) {
+                                    db.collection("users")
+                                            .whereIn("id", friendIds)
+                                            .get()
+                                            .addOnSuccessListener(userSnapshot -> {
+                                                for (QueryDocumentSnapshot userDoc : userSnapshot) {
+                                                    User friend = userDoc.toObject(User.class);
+                                                    friends.add(friend);
+                                                }
+                                                callback.onSuccess(friends); // Return the list of friend `User` objects
+                                            })
+                                            .addOnFailureListener(callback::onFailure);
+                                } else {
+                                    callback.onSuccess(Collections.emptyList()); // No friends found
+                                }
+                            })
+                            .addOnFailureListener(callback::onFailure);
                 })
-                .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
+                .addOnFailureListener(callback::onFailure);
     }
 
     public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
