@@ -48,7 +48,7 @@ public class ChatRoomList extends FirestoreRecyclerAdapter<ChatRoom, ChatRoomLis
                         }
                         holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(user));
                         holder.lastTimeText.setVisibility(View.VISIBLE);
-                        holder.lastTimeText.setText(DataUtils.timestampToString(model.getLastMessageTime()));
+                        holder.lastTimeText.setText(DataUtils.timestampToString(model.getLastMessageTime(), "MMM dd, HH:mm"));
                     } else {
                         System.out.println("Error getting document: " + task.getException());
                     }
