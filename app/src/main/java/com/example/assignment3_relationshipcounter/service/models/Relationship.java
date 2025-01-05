@@ -52,17 +52,16 @@ public class Relationship implements DataUtils.HasId {
         this.secondUser = secondUser;
     }
 
-    // Dates
-    public String getDateCreated() {
-        return dateCreated.toDate().toString();
+    public Timestamp getDateCreated() {
+        return dateCreated; // Return the raw Timestamp
     }
 
     public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public String getDateAccept() {
-        return dateAccept.toDate().toString();
+    public Timestamp getDateAccept() {
+        return dateAccept; // Return the raw Timestamp
     }
 
     public void setDateAccept(Timestamp dateAccept) {

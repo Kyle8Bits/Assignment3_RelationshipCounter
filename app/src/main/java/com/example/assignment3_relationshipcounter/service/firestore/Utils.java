@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 import android.content.Intent;
 
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.firebase.Timestamp;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,5 +43,23 @@ public class Utils {
         }else{
             return userId2+"_"+userId1;
         }
+    }
+
+    /**
+     * Returns the current date as a Firestore Timestamp.
+     *
+     * @return Current date as a Firestore Timestamp.
+     */
+    public static Timestamp getCurrentTimestamp() {
+        return Timestamp.now();
+    }
+
+    /**
+     * Returns the current date as a formatted string (yyyy-MM-dd).
+     *
+     * @return Current date as a string.
+     */
+    public static Timestamp getCurrentDate() {
+        return Timestamp.now();
     }
 }
