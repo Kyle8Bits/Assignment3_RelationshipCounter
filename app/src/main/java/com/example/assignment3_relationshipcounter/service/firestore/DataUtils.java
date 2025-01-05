@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class DataUtils {
@@ -176,8 +177,12 @@ public class DataUtils {
                 });
     }
 
-    public static String timestampToString(Timestamp time){
-        return new SimpleDateFormat("HH:MM").format(time.toDate());
+    public static String timestampToString(Timestamp timestamp) {
+        if (timestamp != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault());
+            return sdf.format(timestamp.toDate());
+        }
+        return "";
     }
 
     /**
