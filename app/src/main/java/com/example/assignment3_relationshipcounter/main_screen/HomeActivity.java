@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
 //import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
+import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
 import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_chat:
-//                    selectedFragment = new ProfileFragment();
+                    selectedFragment = new ChatRoomFragment();
                     break;
                 default:
                     // Handle unexpected cases gracefully

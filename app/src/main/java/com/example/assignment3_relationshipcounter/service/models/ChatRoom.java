@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service.models;
 
 import com.google.firebase.Timestamp;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ChatRoom {
@@ -60,5 +61,5 @@ public class ChatRoom {
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
     }
-}
 
+}

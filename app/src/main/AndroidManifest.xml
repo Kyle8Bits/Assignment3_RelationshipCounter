@@ -42,6 +42,9 @@
             android:name=".main_screen.WelcomeActivity"
             android:exported="false" />
         <activity
+            android:name=".fragments.ChatFragment"
+            android:exported="false" />
+        <activity
             android:name=".main_screen.HomeActivity"
             android:exported="false" />
         <activity
