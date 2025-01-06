@@ -24,8 +24,6 @@
         android:background="@drawable/bg_bottom_navigation"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/nav_item_color"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 
