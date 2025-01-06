@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import com.example.assignment3_relationshipcounter.R;
 //import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
+import com.example.assignment3_relationshipcounter.fragments.MapsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
@@ -25,6 +26,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
 
         // Fetch user from Intent or Session
@@ -56,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_discover:
-                    selectedFragment = new SearchFriendFragment();
+                    selectedFragment = new MapsFragment();
                     break;
 
                 case R.id.nav_profile:
@@ -64,7 +66,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_friends:
-//                    selectedFragment = new ProfileFragment();
+                    selectedFragment = new SearchFriendFragment();
                     break;
 
                 case R.id.nav_chat:

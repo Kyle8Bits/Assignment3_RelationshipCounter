@@ -5,13 +5,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class Authentication {
-    private final FirebaseAuth mAuth;
-    private static FirebaseUser user;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
     private static User userDetail = new User();
     private final DataUtils dataUtils = new DataUtils();
 
     public Authentication() {
-        this.mAuth = FirebaseAuth.getInstance();
+    }
+
+    public FirebaseAuth getAuth() {
+        return mAuth;
     }
     public FirebaseUser getFUser() {
         return user;
