@@ -22,6 +22,7 @@ import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,13 @@ public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
 
     private FriendList myFriendsAdapter;
-    private FriendList exploreAdapter;
+    private FriendList requestAdapter;
 
     private List<User> myFriendsList;
-    private List<User> exploreList;
+    private List<User> requestList;
 
     private MaterialButton searchButton;
+
 
     @Nullable
     @Override
@@ -50,6 +52,18 @@ public class HomeFragment extends Fragment {
         tabRecyclerView = view.findViewById(R.id.home_recycler_view);
         tabLayout = view.findViewById(R.id.home_tab_layout);
         searchButton = view.findViewById(R.id.search_button);
+
+        // Initialize the lists for My Friends and Explore
+        myFriendsList = new ArrayList<>();
+        requestList = new ArrayList<>();
+
+        // Initialize adapters
+        myFriendsAdapter = new FriendList(requireContext(), myFriendsList);
+        requestAdapter = new FriendList(requireContext(), requestList);
+
+        // Set RecyclerView properties
+        tabRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        tabRecyclerView.setAdapter(myFriendsAdapter); // Default to My Friends
 
         // Load Stories
         loadStories();
@@ -63,17 +77,13 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Refresh My Friends list when the fragment resumes
-        if (tabLayout.getSelectedTabPosition() == 0) {
-            fetchMyFriends(); // Refresh My Friends tab
-        } else {
-            fetchFriendRequests(); // Refresh Requests tab
-        }
-    }
-
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        fetchMyFriends();
+//        Log.d("HomeFragment", "onResume called, refreshing data...");
+//    }
 
     private void navigateToSearchFriendFragment() {
         // Create a new instance of SearchFriendFragment
@@ -93,17 +103,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupTabs() {
-        // Initialize the lists for My Friends and Explore
-        myFriendsList = new ArrayList<>();
-        exploreList = new ArrayList<>();
-
-        // Initialize adapters
-        myFriendsAdapter = new FriendList(requireContext(), myFriendsList);
-        exploreAdapter = new FriendList(requireContext(), exploreList);
-
-        // Set RecyclerView properties
-        tabRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        tabRecyclerView.setAdapter(myFriendsAdapter); // Default to My Friends
 
         // Fetch Data for My Friends Tab
         fetchMyFriends();
@@ -118,9 +117,11 @@ public class HomeFragment extends Fragment {
                 if (tab.getPosition() == 0) {
                     // Switch to My Friends Tab
                     tabRecyclerView.setAdapter(myFriendsAdapter);
+                    fetchMyFriends(); // Refresh My Friends when tab is selected
                 } else if (tab.getPosition() == 1) {
                     // Switch to Explore Tab
-                    tabRecyclerView.setAdapter(exploreAdapter);
+                    tabRecyclerView.setAdapter(requestAdapter);
+                    fetchFriendRequests(); // Refresh Requests when tab is selected
                 }
             }
 
@@ -128,7 +129,13 @@ public class HomeFragment extends Fragment {
             public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    fetchMyFriends(); // Refresh My Friends on reselection
+                } else if (tab.getPosition() == 1) {
+                    fetchFriendRequests(); // Refresh Requests on reselection
+                }
+            }
         });
     }
 
@@ -156,21 +163,28 @@ public class HomeFragment extends Fragment {
                         for (User user : allUsers) {
                             if (friendIds.contains(user.getId())) {
                                 myFriendsList.add(user); // Add friends to the list
+
+                                // Log friend details
+                                Log.d("FetchMyFriends", "Friend: " + user.getUsername() + " (ID: " + user.getId() + ")");
                             }
                         }
+
+                        // Log total number of friends
+                        Log.d("FetchMyFriends", "Total Friends: " + myFriendsList.size());
+
                         myFriendsAdapter.updateList(myFriendsList); // Update the adapter
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        e.printStackTrace();
+                        Log.e("FetchMyFriends", "Failed to fetch users", e);
                     }
                 });
             }
 
             @Override
             public void onFailure(Exception e) {
-                e.printStackTrace();
+                Log.e("FetchMyFriends", "Failed to fetch relationships", e);
             }
         });
     }
@@ -194,13 +208,13 @@ public class HomeFragment extends Fragment {
                 dataUtils.getAll("users", User.class, new DataUtils.FetchCallback<List<User>>() {
                     @Override
                     public void onSuccess(List<User> allUsers) {
-                        exploreList.clear(); // Clear the current list
+                        requestList.clear(); // Clear the current list
                         for (User user : allUsers) {
                             if (requestSenderIds.contains(user.getId())) {
-                                exploreList.add(user); // Add users who sent friend requests
+                                requestList.add(user); // Add users who sent friend requests
                             }
                         }
-                        exploreAdapter.updateList(exploreList); // Update the adapter
+                        requestAdapter.updateList(requestList); // Update the adapter
                     }
 
                     @Override

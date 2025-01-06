@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
@@ -197,34 +198,46 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
     }
 
     public void updateList(List<User> newList) {
-        // Compare the old and new list sizes to determine specific changes
-        int oldSize = userList.size();
-        int newSize = newList.size();
+        // Log the update for debugging
+        Log.d("FriendList", "Refreshing adapter with " + newList.size() + " users.");
 
-        Log.d("FriendList", "Updating adapter with " + newList.size() + " users.");
+        // Clear the old list and add all items from the new list
+        userList.clear();
+        userList.addAll(newList);
 
-        // Remove items that are no longer in the new list
-        for (int i = oldSize - 1; i >= 0; i--) {
-            if (!newList.contains(userList.get(i))) {
-                userList.remove(i);
-                notifyItemRemoved(i);
-            }
-        }
-
-        // Add new items or update existing ones
-        for (int i = 0; i < newSize; i++) {
-            if (i >= oldSize || !userList.get(i).equals(newList.get(i))) {
-                if (i >= oldSize) {
-                    userList.add(newList.get(i)); // Add new item
-                    notifyItemInserted(i);
-                } else {
-                    userList.set(i, newList.get(i)); // Update existing item
-
-                    Log.d("FriendList", "Adapter dataset updated. Total items: " + userList.size());
-                    notifyItemChanged(i);
-                }
-            }
-        }
+        // Notify the adapter that the data has changed
+        notifyDataSetChanged();
+//        // Use DiffUtil to calculate the changes
+//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+//            @Override
+//            public int getOldListSize() {
+//                return userList.size();
+//            }
+//
+//            @Override
+//            public int getNewListSize() {
+//                return newList.size();
+//            }
+//
+//            @Override
+//            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+//                // Compare unique IDs to determine if items represent the same user
+//                return userList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
+//            }
+//
+//            @Override
+//            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+//                // Compare entire objects to determine if their content has changed
+//                return userList.get(oldItemPosition).equals(newList.get(newItemPosition));
+//            }
+//        });
+//
+//        // Update the internal list reference
+//        userList.clear();
+//        userList.addAll(newList);
+//
+//        // Notify the adapter of changes
+//        diffResult.dispatchUpdatesTo(this);
     }
 }
 
