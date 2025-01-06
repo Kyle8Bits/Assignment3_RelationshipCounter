@@ -8,7 +8,7 @@
     <corners android:radius="999dp" />
 
     <!-- Drop Shadow -->
-    <padding android:bottom="4dp" />
+<!--    <padding android:bottom="4dp" />-->
     <shadow
         android:color="#26752277"
         android:radius="10dp" />

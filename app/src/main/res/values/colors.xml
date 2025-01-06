@@ -72,6 +72,7 @@
         <color name="primary_with_opacity">#334B164C</color>
         <color name="tab_bar_background">#F8E7F6</color>
         <color name="stroke_back_button">#1422172A</color>
+        <color name="bg_nav_item_color">#DD88CF</color>
 
 
 </resources>
