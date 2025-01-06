@@ -17,6 +17,7 @@ import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.adapter.StoryList;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
@@ -46,7 +47,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        Location.requestLocationPermissions(requireActivity());
         // Initialize UI components
         storyRecyclerView = view.findViewById(R.id.home_story_list);
         tabRecyclerView = view.findViewById(R.id.home_recycler_view);
