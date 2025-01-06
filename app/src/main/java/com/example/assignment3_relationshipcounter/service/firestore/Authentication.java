@@ -69,6 +69,10 @@ public class Authentication {
                 });
     }
 
+    public void logout() {
+        mAuth.signOut();
+    }
+
     public interface LoginCallback {
         void onSuccess(FirebaseUser user);
 
