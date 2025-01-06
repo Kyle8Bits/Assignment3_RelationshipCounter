@@ -1,7 +1,6 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
