@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
     private MaterialButton searchButton;
 
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,18 +53,6 @@ public class HomeFragment extends Fragment {
         tabRecyclerView = view.findViewById(R.id.home_recycler_view);
         tabLayout = view.findViewById(R.id.home_tab_layout);
         searchButton = view.findViewById(R.id.search_button);
-
-        // Initialize the lists for My Friends and Explore
-        myFriendsList = new ArrayList<>();
-        requestList = new ArrayList<>();
-
-        // Initialize adapters
-        myFriendsAdapter = new FriendList(requireContext(), myFriendsList);
-        requestAdapter = new FriendList(requireContext(), requestList);
-
-        // Set RecyclerView properties
-        tabRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        tabRecyclerView.setAdapter(myFriendsAdapter); // Default to My Friends
 
         // Load Stories
         loadStories();
@@ -77,13 +66,25 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        fetchMyFriends();
-//        Log.d("HomeFragment", "onResume called, refreshing data...");
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Log the selected tab position
+        int selectedTabPosition = tabLayout.getSelectedTabPosition();
+        Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
+
+        // Force adapter reset and refresh data
+        if (selectedTabPosition == 0) {
+            tabRecyclerView.setAdapter(myFriendsAdapter);
+            fetchMyFriends();
+            Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
+        } else {
+            tabRecyclerView.setAdapter(requestAdapter);
+            fetchFriendRequests();
+        }
+    }
+
 
     private void navigateToSearchFriendFragment() {
         // Create a new instance of SearchFriendFragment
@@ -103,12 +104,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupTabs() {
+        // Initialize the lists for My Friends and Explore
+        myFriendsList = new ArrayList<>();
+        requestList = new ArrayList<>();
+
+        // Initialize adapters
+        myFriendsAdapter = new FriendList(requireContext(), myFriendsList);
+        requestAdapter = new FriendList(requireContext(), requestList);
+
+        // Set RecyclerView properties
+        tabRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         // Fetch Data for My Friends Tab
         fetchMyFriends();
 
-        // Fetch Data for Explore Tab
-        fetchFriendRequests();
+//        // Fetch Data for Explore Tab
+//        fetchFriendRequests();
 
         // Add Tab Selection Logic
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -117,11 +128,11 @@ public class HomeFragment extends Fragment {
                 if (tab.getPosition() == 0) {
                     // Switch to My Friends Tab
                     tabRecyclerView.setAdapter(myFriendsAdapter);
-                    fetchMyFriends(); // Refresh My Friends when tab is selected
+                    fetchMyFriends(); // Ensure the data is fetched every time the tab is selected
                 } else if (tab.getPosition() == 1) {
                     // Switch to Explore Tab
                     tabRecyclerView.setAdapter(requestAdapter);
-                    fetchFriendRequests(); // Refresh Requests when tab is selected
+                    fetchFriendRequests(); // Ensure the data is fetched every time the tab is selected
                 }
             }
 
@@ -130,14 +141,16 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                // Force refresh when a tab is reselected
                 if (tab.getPosition() == 0) {
-                    fetchMyFriends(); // Refresh My Friends on reselection
+                    fetchMyFriends();
                 } else if (tab.getPosition() == 1) {
-                    fetchFriendRequests(); // Refresh Requests on reselection
+                    fetchFriendRequests();
                 }
             }
         });
     }
+
 
     private void fetchMyFriends() {
         DataUtils dataUtils = new DataUtils();

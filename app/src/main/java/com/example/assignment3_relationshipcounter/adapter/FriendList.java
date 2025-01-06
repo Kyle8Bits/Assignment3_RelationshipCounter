@@ -22,6 +22,7 @@ import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendList extends RecyclerView.Adapter<FriendListView> {
@@ -198,47 +199,77 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
     }
 
     public void updateList(List<User> newList) {
-        // Log the update for debugging
-        Log.d("FriendList", "Refreshing adapter with " + newList.size() + " users.");
+        Log.d("FriendList", "Updating adapter with " + newList.size() + " users.");
 
-        // Clear the old list and add all items from the new list
-        userList.clear();
-        userList.addAll(newList);
+        // Use DiffUtil to calculate the changes
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return userList.size();
+            }
 
-        // Notify the adapter that the data has changed
-        notifyDataSetChanged();
-//        // Use DiffUtil to calculate the changes
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-//            @Override
-//            public int getOldListSize() {
-//                return userList.size();
-//            }
-//
-//            @Override
-//            public int getNewListSize() {
-//                return newList.size();
-//            }
-//
-//            @Override
-//            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-//                // Compare unique IDs to determine if items represent the same user
-//                return userList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
-//            }
-//
-//            @Override
-//            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-//                // Compare entire objects to determine if their content has changed
-//                return userList.get(oldItemPosition).equals(newList.get(newItemPosition));
-//            }
-//        });
-//
-//        // Update the internal list reference
-//        userList.clear();
-//        userList.addAll(newList);
-//
-//        // Notify the adapter of changes
-//        diffResult.dispatchUpdatesTo(this);
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                // Compare unique IDs to determine if items represent the same user
+                return userList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                // Compare entire objects to determine if their content has changed
+                return userList.get(oldItemPosition).equals(newList.get(newItemPosition));
+            }
+        });
+
+        // Merge new data with the existing list without clearing
+        mergeLists(newList);
+
+        Log.d("FriendList", "After Merge: Updating adapter with " + newList.size() + " users.");
+
+        // Notify the adapter of changes
+        diffResult.dispatchUpdatesTo(this);
     }
+
+    // Helper function to merge lists
+    private void mergeLists(List<User> newList) {
+        Log.d("FriendList", "Merging new list with the existing data.");
+        for (User newUser : newList) {
+            boolean exists = false;
+            for (User existingUser : userList) {
+                if (existingUser.getId().equals(newUser.getId())) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                userList.add(newUser);
+            }
+        }
+
+        // Remove users not in the new list
+        List<User> toRemove = new ArrayList<>();
+        for (User existingUser : userList) {
+            boolean stillExists = false;
+            for (User newUser : newList) {
+                if (existingUser.getId().equals(newUser.getId())) {
+                    stillExists = true;
+                    break;
+                }
+            }
+            if (!stillExists) {
+                toRemove.add(existingUser);
+            }
+        }
+
+        userList.removeAll(toRemove);
+        Log.d("FriendList", "Merge complete. Total users: " + userList.size());
+    }
+
 }
 
 // ViewHolder
