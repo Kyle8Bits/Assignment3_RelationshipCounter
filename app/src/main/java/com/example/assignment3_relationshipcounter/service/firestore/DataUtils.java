@@ -158,7 +158,7 @@ public class DataUtils {
     }
 
     public DocumentReference getAllChatRoomOfUser(List<String> userID){
-        if(userID.get(0).equals(new Authentication().getFUser().getUid())){
+        if(userID.get(0).equalsIgnoreCase(new Authentication().getFUser().getUid())){
             return db.collection("users").document(userID.get(1));
         }
         else{
