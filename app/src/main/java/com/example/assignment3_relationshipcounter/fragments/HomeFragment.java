@@ -1,5 +1,6 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,24 +67,24 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Log the selected tab position
-        int selectedTabPosition = tabLayout.getSelectedTabPosition();
-        Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
-
-        // Force adapter reset and refresh data
-        if (selectedTabPosition == 0) {
-            tabRecyclerView.setAdapter(myFriendsAdapter);
-            fetchMyFriends();
-            Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
-        } else {
-            tabRecyclerView.setAdapter(requestAdapter);
-            fetchFriendRequests();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        // Log the selected tab position
+//        int selectedTabPosition = tabLayout.getSelectedTabPosition();
+//        Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
+//
+//        // Force adapter reset and refresh data
+//        if (selectedTabPosition == 0) {
+//            tabRecyclerView.setAdapter(myFriendsAdapter);
+//            fetchMyFriends();
+//            Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
+//        } else {
+//            tabRecyclerView.setAdapter(requestAdapter);
+//            fetchFriendRequests();
+//        }
+//    }
 
 
     private void navigateToSearchFriendFragment() {
@@ -111,15 +112,18 @@ public class HomeFragment extends Fragment {
         // Initialize adapters
         myFriendsAdapter = new FriendList(requireContext(), myFriendsList);
         requestAdapter = new FriendList(requireContext(), requestList);
+        fetchFriendRequests();
 
         // Set RecyclerView properties
         tabRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // Set default tab
+        tabLayout.selectTab(tabLayout.getTabAt(0));
+
         // Fetch Data for My Friends Tab
+        tabRecyclerView.setAdapter(myFriendsAdapter);
         fetchMyFriends();
 
-//        // Fetch Data for Explore Tab
-//        fetchFriendRequests();
 
         // Add Tab Selection Logic
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -128,11 +132,11 @@ public class HomeFragment extends Fragment {
                 if (tab.getPosition() == 0) {
                     // Switch to My Friends Tab
                     tabRecyclerView.setAdapter(myFriendsAdapter);
-                    fetchMyFriends(); // Ensure the data is fetched every time the tab is selected
+                    fetchMyFriends();
                 } else if (tab.getPosition() == 1) {
                     // Switch to Explore Tab
                     tabRecyclerView.setAdapter(requestAdapter);
-                    fetchFriendRequests(); // Ensure the data is fetched every time the tab is selected
+                    fetchFriendRequests();
                 }
             }
 
@@ -170,6 +174,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 dataUtils.getAll("users", User.class, new DataUtils.FetchCallback<List<User>>() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onSuccess(List<User> allUsers) {
                         myFriendsList.clear(); // Clear old data
@@ -186,6 +191,7 @@ public class HomeFragment extends Fragment {
                         Log.d("FetchMyFriends", "Total Friends: " + myFriendsList.size());
 
                         myFriendsAdapter.updateList(myFriendsList); // Update the adapter
+                        myFriendsAdapter.notifyDataSetChanged();
                     }
 
                     @Override

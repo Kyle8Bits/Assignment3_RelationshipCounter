@@ -1,15 +1,8 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
-import androidx.annotation.NonNull;
-import androidx.work.ListenableWorker;
-
 import com.example.assignment3_relationshipcounter.service.models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.ktx.Firebase;
 
 public class Authentication {
     private final FirebaseAuth mAuth;

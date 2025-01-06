@@ -18,7 +18,7 @@ public class SplashActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
 
-       //TODO: Finish this function : Click on a notification, direct to the chat room of the user who sent the notification
+        //TODO: Finish this function : Click on a notification, direct to the chat room of the user who sent the notification
         if(getIntent().getExtras() != null){
             //from notification
             String userId = getIntent().getExtras().getString("userId");

@@ -51,39 +51,40 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal">
+
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
+                    android:layout_weight="1"
                     android:hint="First Name"
-                    app:boxStrokeWidth="1.5dp"
                     app:boxStrokeColor="@color/secondary1"
-                    app:cursorColor="@color/secondary1"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                    app:boxStrokeWidth="1.5dp"
+                    app:cursorColor="@color/secondary1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/e_first_name"
+                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="Last Name"
-                    app:boxStrokeWidth="1.5dp"
                     app:boxStrokeColor="@color/secondary1"
-                    app:cursorColor="@color/secondary1"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                    app:boxStrokeWidth="1.5dp"
+                    app:cursorColor="@color/secondary1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/e_last_name"
+                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -91,58 +92,58 @@
 
             <!-- Username -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Username"
-                app:boxStrokeWidth="1.5dp"
                 app:boxStrokeColor="@color/secondary1"
-                app:cursorColor="@color/secondary1"
-                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/e_username"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Email"
-                app:boxStrokeWidth="1.5dp"
                 app:boxStrokeColor="@color/secondary1"
-                app:cursorColor="@color/secondary1"
-                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/e_email"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+                    android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Password"
-                app:boxStrokeWidth="1.5dp"
+                android:hint="@string/prompt_password"
                 app:boxStrokeColor="@color/secondary1"
-                app:cursorColor="@color/secondary1"
-                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/e_password"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--      Date Picker      -->
@@ -181,7 +182,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:padding="15dp"
-                    android:text="Male"
+                    android:text="@string/male"
                     android:textColor="@drawable/text_box_selector" />
 
                 <TextView
@@ -189,14 +190,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/bg_box_selector"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
                     android:padding="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:text="Female"
+                    android:text="@string/female"
                     android:textColor="@drawable/text_box_selector" />
+
                 <TextView
                     android:id="@+id/other"
                     android:layout_width="0dp"
@@ -207,40 +209,44 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:padding="15dp"
-                    android:text="Other"
+                    android:text="@string/other"
                     android:textColor="@drawable/text_box_selector" />
             </GridLayout>
 
             <!--    Phone Number        -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Password"
-                app:boxStrokeWidth="1.5dp"
+                android:hint="@string/prompt_phone"
                 app:boxStrokeColor="@color/secondary1"
-                app:cursorColor="@color/secondary1"
-                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/e_phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/e_phone_number"
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
             <TextView
                 android:id="@+id/error_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/secondary1"
-                android:layout_marginTop="10dp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>
 
     <Button
         android:id="@+id/action_signup"
+        style="@style/Widget.Assignment3_RelationshipCounter.Button.Primary"
         android:layout_width="316dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -248,7 +254,6 @@
         android:fontFamily="@font/hellix_bold"
         android:text="@string/signup"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        style="@style/Widget.Assignment3_RelationshipCounter.Button.Primary" />
+        android:textColor="@color/white" />
 
 </RelativeLayout>

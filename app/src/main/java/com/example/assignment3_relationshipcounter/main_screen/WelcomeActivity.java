@@ -22,9 +22,12 @@ import com.example.assignment3_relationshipcounter.service.firestore.Authenticat
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    
 
     // Check if the user is current signed in
     @Override
@@ -32,16 +35,18 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         DataUtils dataUtils = new DataUtils();
         Authentication auth = new Authentication();
-        FirebaseUser user = auth.getFUser();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             user.reload();
-            // Get the user's role
-            dataUtils.getById("user", user.getUid(), User.class, new DataUtils.FetchCallback<User>() {
+            // Get the user information
+            dataUtils.getById("users", user.getUid(), User.class, new DataUtils.FetchCallback<User>() {
                 @Override
                 public void onSuccess(User user) {
                     Intent intent = new Intent(WelcomeActivity.this, HomeActivity.class);
                     intent.putExtra("currentUser", user);
                     startActivity(intent);
+                    finish();
 
                 }
 
@@ -63,6 +68,7 @@ public class WelcomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Intent intent = getIntent();
         FragmentContainerView authContainer = findViewById(R.id.auth_container);
         Button toLoginBtn = findViewById(R.id.button_to_login);
         toLoginBtn.setOnClickListener(v -> {

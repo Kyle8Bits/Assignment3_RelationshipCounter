@@ -58,7 +58,6 @@ public class LoginFragment extends Fragment {
             if (email.isEmpty() || password.isEmpty()) {
                 errorDisplay.setText("Please enter all fields");
             }
-            Toast.makeText(requireActivity(), "Reach login", Toast.LENGTH_SHORT).show();
             auth.login(email, password, new Authentication.LoginCallback() {
 
                 @Override
@@ -69,7 +68,6 @@ public class LoginFragment extends Fragment {
                     dataUtils.getById("users", user.getUid(), User.class, new DataUtils.FetchCallback<User>() {
                         @Override
                         public void onSuccess(User data) {
-                            Toast.makeText(requireActivity(), "Reach data", Toast.LENGTH_SHORT).show();
                             // Navigate to Home
                             ProgressManager.dismissProgress();
                             Intent intent = new Intent(requireActivity(), HomeActivity.class);
