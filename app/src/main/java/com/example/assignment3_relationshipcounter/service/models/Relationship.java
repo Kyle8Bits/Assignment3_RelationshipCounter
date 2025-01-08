@@ -9,7 +9,6 @@ public class Relationship implements DataUtils.HasId {
     private String firstUser;
     private String secondUser;
     private Timestamp dateCreated;
-    private Timestamp dateAccept;
     private FriendStatus status;
     private int counter;
 
@@ -20,7 +19,7 @@ public class Relationship implements DataUtils.HasId {
         this.firstUser = firstUser;
         this.secondUser = secondUser;
         this.dateCreated = dateCreated;
-        this.dateAccept = dateAccept;
+
         this.status = status;
         this.counter = counter;
     }
@@ -58,14 +57,6 @@ public class Relationship implements DataUtils.HasId {
 
     public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
-    }
-
-    public Timestamp getDateAccept() {
-        return dateAccept; // Return the raw Timestamp
-    }
-
-    public void setDateAccept(Timestamp dateAccept) {
-        this.dateAccept = dateAccept;
     }
 
     // Relationship Status
@@ -135,7 +126,6 @@ public class Relationship implements DataUtils.HasId {
                 ", firstUser='" + firstUser + '\'' +
                 ", secondUser='" + secondUser + '\'' +
                 ", dateCreated='" + dateCreated + '\'' +
-                ", dateAccept='" + dateAccept + '\'' +
                 ", status=" + status +
                 ", counter=" + counter +
                 '}';

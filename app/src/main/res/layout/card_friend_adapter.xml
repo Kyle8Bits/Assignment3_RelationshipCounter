@@ -30,12 +30,12 @@
         android:text="Friend 1"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/display_param"
+        app:layout_constraintStart_toStartOf="@+id/day_count"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Day Count -->
     <TextView
-        android:id="@+id/display_param"
+        android:id="@+id/day_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"

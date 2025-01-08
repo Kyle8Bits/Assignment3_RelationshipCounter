@@ -197,9 +197,7 @@ public class SearchFriendFragment extends Fragment {
                     Log.d("RelationshipLog", "ID: " + relationship.getId() +
                             ", FirstUser: " + relationship.getFirstUser() +
                             ", SecondUser: " + relationship.getSecondUser() +
-                            ", Status: " + relationship.getStatus() +
-                            ", DateCreated: " + relationship.getDateCreated() +
-                            ", DateAccepted: " + relationship.getDateAccept());
+                            ", Status: " + relationship.getStatus());
                 }
             }
 

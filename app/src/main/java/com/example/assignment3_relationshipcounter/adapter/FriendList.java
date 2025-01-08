@@ -1,5 +1,6 @@
 package com.example.assignment3_relationshipcounter.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
 
         // Fetch relationship for the user
         fetchRelationshipForUser(user, new DataUtils.FetchCallback<Relationship>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess(Relationship relationship) {
                 String currentUserId = UserSession.getInstance().getCurrentUser().getId();
@@ -60,11 +62,17 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         // User is already a friend
                         holder.addFriendButton.setVisibility(View.GONE);
                         holder.navigateIcon.setVisibility(View.VISIBLE);
+
+                        // Calculate and display the Day Count
+                        long dayCount = Utils.calculateDayCount(relationship.getDateCreated());
+                        holder.dayCount.setText(dayCount + " days"); // Bind day count
+                        holder.dayCount.setVisibility(View.VISIBLE);
                         break;
                     case PENDING:
                         // Friend request is pending
                         holder.addFriendButton.setVisibility(View.VISIBLE);
                         holder.navigateIcon.setVisibility(View.GONE);
+                        holder.dayCount.setVisibility(View.GONE);
 
                         if (relationship.getFirstUser().equals(currentUserId)) {
                             // Current user is the sender
@@ -107,6 +115,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         holder.addFriendButton.setText("Add Friend");
                         holder.addFriendButton.setEnabled(true);
                         holder.navigateIcon.setVisibility(View.GONE);
+                        holder.dayCount.setVisibility(View.GONE);
 
                         // Handle "Add Friend" Button Click
                         holder.addFriendButton.setOnClickListener(v -> {
@@ -275,14 +284,16 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
 // ViewHolder
 class FriendListView extends RecyclerView.ViewHolder {
 
-    TextView friendName;
+    TextView friendName, dayCount;
     Button addFriendButton;
     FrameLayout navigateIcon;
 
     public FriendListView(@NonNull View itemView) {
         super(itemView);
 
+        // Initialize views
         friendName = itemView.findViewById(R.id.card_friendname);
+        dayCount = itemView.findViewById(R.id.day_count);
         addFriendButton = itemView.findViewById(R.id.btn_add_friend);
         navigateIcon = itemView.findViewById(R.id.card_navigate);
 

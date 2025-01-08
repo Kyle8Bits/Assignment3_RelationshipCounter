@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 public class Utils {
 
@@ -61,5 +62,16 @@ public class Utils {
      */
     public static Timestamp getCurrentDate() {
         return Timestamp.now();
+    }
+
+    public static long calculateDayCount(Timestamp startDate) {
+        if (startDate == null) return 0;
+
+        long currentTimeMillis = System.currentTimeMillis();
+        long startTimeMillis = startDate.toDate().getTime();
+
+        // Calculate the difference in milliseconds and convert to days
+        long diffInMillis = currentTimeMillis - startTimeMillis;
+        return TimeUnit.MILLISECONDS.toDays(diffInMillis);
     }
 }

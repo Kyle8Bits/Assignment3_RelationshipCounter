@@ -70,7 +70,7 @@ public class ChatRoomList extends FirestoreRecyclerAdapter<ChatRoom, ChatRoomLis
         public ChatRoomViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameText = itemView.findViewById(R.id.card_friendname);
-            lastMessageText = itemView.findViewById(R.id.display_param);
+            lastMessageText = itemView.findViewById(R.id.day_count);
             lastTimeText = itemView.findViewById(R.id.last_time_message);
         }
     }
