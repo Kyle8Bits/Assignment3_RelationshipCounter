@@ -1,6 +1,7 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 import static androidx.core.content.ContentProviderCompat.requireContext;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.assignment3_relationshipcounter.NotificationBR;
 import com.example.assignment3_relationshipcounter.R;
 //import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
@@ -17,6 +19,7 @@ import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
+import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
@@ -26,7 +29,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser; // Store the current user object
-
+    private DataUtils dataUtils = new DataUtils();
     @Override
     protected void onStart(){
         super.onStart();
@@ -39,6 +42,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        dataUtils.setupBroadcastReceiver(this);
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+        Location.updateUserPosition(this);
 
         setContentView(R.layout.activity_home);
 
@@ -143,12 +150,5 @@ public class HomeActivity extends AppCompatActivity {
      */
     public User getCurrentUser() {
         return currentUser;
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Location.updateUserPosition(this);
     }
 }

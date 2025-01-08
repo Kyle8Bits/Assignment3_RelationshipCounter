@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
@@ -69,8 +70,8 @@ public class Location {
         // Create a location request
         LocationRequest locationRequest = new LocationRequest.Builder(
                 LocationRequest.PRIORITY_HIGH_ACCURACY, // High accuracy
-                5000 // Interval in milliseconds
-        ).setMinUpdateIntervalMillis(2000) // Fastest interval
+                300000 // Interval in milliseconds
+        ).setMinUpdateIntervalMillis(300000) // Fastest interval
                 .build();
 
         // Create a location callback to handle location updates
@@ -83,12 +84,14 @@ public class Location {
 
                 for (android.location.Location location : locationResult.getLocations()) {
                     try {
+                        Authentication auth = new Authentication();
+                        FirebaseUser user = auth.getAuth().getCurrentUser();
                         Map<String, Object> fieldsToUpdate = new HashMap<>();
                         fieldsToUpdate.put("latitude", location.getLatitude());
                         fieldsToUpdate.put("longitude", location.getLongitude());
                         dataUt.updateOneFieldById(
                                 "users",
-                                new Authentication().getUserDetail().getId(),
+                               user.getUid(),
                                 fieldsToUpdate,
                                 new DataUtils.NormalCallback<Void>() {
                                     @Override
@@ -98,12 +101,12 @@ public class Location {
 
                                     @Override
                                     public void onFailure(Exception e) {
-                                        Log.e("FirestoreUpdate", "Failed to update fields", e);
+                                        System.out.println("FirestoreUpdate" + "Failed to update fields" + e);
                                     }
                                 }
                         );
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("Update location error" + e.getMessage());
                     }
                 }
             }
