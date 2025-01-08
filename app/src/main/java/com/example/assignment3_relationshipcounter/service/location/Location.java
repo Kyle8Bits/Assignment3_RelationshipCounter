@@ -20,7 +20,11 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
@@ -46,7 +50,8 @@ public class Location {
     public static void handlePermissionResult(int requestCode, @NonNull int[] grantResults, Activity activity) {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
+                // Start updating user position if permission granted
+                updateUserPosition(activity);
                 Toast.makeText(activity, "Location permission granted", Toast.LENGTH_SHORT).show();
             } else {
                 // Permission denied
@@ -55,8 +60,9 @@ public class Location {
         }
     }
 
+
     @SuppressLint("MissingPermission")
-    public static void updateUserPosition(Context context ,LocationUpdateListener listener) {
+    public static void updateUserPosition(Context context) {
         DataUtils dataUt = new DataUtils();
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
 
@@ -87,7 +93,7 @@ public class Location {
                                 new DataUtils.NormalCallback<Void>() {
                                     @Override
                                     public void onSuccess() {
-                                        listener.onLocationUpdated(location);
+                                        System.out.println("Update");
                                     }
 
                                     @Override
