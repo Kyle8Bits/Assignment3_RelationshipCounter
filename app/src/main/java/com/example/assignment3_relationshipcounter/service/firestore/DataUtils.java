@@ -1,26 +1,38 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.example.assignment3_relationshipcounter.NotificationBR;
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class DataUtils {
 
@@ -333,5 +345,47 @@ public class DataUtils {
                 .addOnFailureListener(e -> {
                     if (callback != null) callback.onFailure(e);
                 });
+    }
+
+    /**
+     * Broadcast receiver part
+     */
+    public void setupBroadcastReceiver(Context context) {
+        // Flag to track initial load
+        final boolean[] isInitialLoad = {true};
+
+        db.collection("notifications").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("FirestoreListener", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshots != null) {
+                    // Process document changes
+                    for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
+                        String documentId = documentChange.getDocument().getId();
+
+                        // Only notify on new documents after the initial load
+                        if (documentChange.getType() == DocumentChange.Type.ADDED && !isInitialLoad[0]) {
+                            Log.d("FirestoreListener", "New document added: " + documentChange.getDocument().getData());
+
+                            // Trigger a broadcast
+                            Intent intent = new Intent("com.example.NOTIFICATION_RECEIVED");
+                            intent.setClass(context, NotificationBR.class);
+                            intent.putExtra("document_id", documentId);
+                            intent.putExtra("document_data", documentChange.getDocument().getData().toString());
+                            context.sendBroadcast(intent);
+                        }
+                    }
+
+                    // Mark the initial load as complete after processing the first snapshot
+                    isInitialLoad[0] = false;
+                } else {
+                    Log.d("FirestoreListener", "No changes in the collection");
+                }
+            }
+        });
     }
 }
