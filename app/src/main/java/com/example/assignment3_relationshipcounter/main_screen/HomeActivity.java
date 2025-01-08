@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.main_screen;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -14,6 +15,7 @@ import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragmen
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,6 +30,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        Location.requestLocationPermissions(this);
 
         // Fetch user from Intent or Session
         currentUser = (User) getIntent().getSerializableExtra("currentUser");
@@ -87,6 +91,12 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Location.handlePermissionResult(requestCode, grantResults, this);
+    }
+
     /**
      * Load the specified fragment.
      */
@@ -124,5 +134,12 @@ public class HomeActivity extends AppCompatActivity {
      */
     public User getCurrentUser() {
         return currentUser;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Location.updateUserPosition(this);
     }
 }
