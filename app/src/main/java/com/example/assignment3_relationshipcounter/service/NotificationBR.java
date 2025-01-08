@@ -1,4 +1,4 @@
-package com.example.assignment3_relationshipcounter;
+package com.example.assignment3_relationshipcounter.service;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -6,9 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+
+import com.example.assignment3_relationshipcounter.R;
 
 public class NotificationBR extends BroadcastReceiver {
     @Override

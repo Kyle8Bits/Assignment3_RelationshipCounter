@@ -1,5 +1,4 @@
 package com.example.assignment3_relationshipcounter.main_screen;
-import static androidx.core.content.ContentProviderCompat.requireContext;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.assignment3_relationshipcounter.NotificationBR;
 import com.example.assignment3_relationshipcounter.R;
 //import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
