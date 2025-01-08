@@ -1,9 +1,12 @@
 package com.example.assignment3_relationshipcounter.main_screen;
+import static androidx.core.content.ContentProviderCompat.requireContext;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
@@ -22,16 +25,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class HomeActivity extends AppCompatActivity {
-
     private User currentUser; // Store the current user object
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Location.requestLocationPermissions(this);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-
-        Location.requestLocationPermissions(this);
 
         // Fetch user from Intent or Session
         currentUser = (User) getIntent().getSerializableExtra("currentUser");

@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,6 +18,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.adapter.CreateChatRoomList;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -39,11 +44,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragment extends Fragment {
     private DataUtils dataUtils = new DataUtils();
+    private RecyclerView searchPeople;
+    private CreateChatRoomList resultAdapter;
     private FusedLocationProviderClient client;
+
+    private TextInputEditText search_bar;
 
     public MapsFragment() {
 
@@ -68,17 +80,24 @@ public class MapsFragment extends Fragment {
                 getPosition(googleMap);
                 setUpFriendLocation(googleMap);
                 friendSetOnMarker(googleMap);
+                setupSearchResult(googleMap);
             }
 
         }
     };
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_maps, container, false);
+        View view =  inflater.inflate(R.layout.fragment_maps, container, false);
+
+        searchPeople = view.findViewById(R.id.search_bar);
+        search_bar = view.findViewById(R.id.et_search_friend);
+
+        return view;
     }
 
     @Override
@@ -89,6 +108,65 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+    }
+
+    void setupSearchResult(GoogleMap gMap){
+        resultAdapter = new CreateChatRoomList(requireContext(), user -> {
+            // Handle user click, e.g., open chat with the user
+            LatLng currentLocation = new LatLng(user.getLatitude(), user.getLongitude());
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+        });
+
+        searchPeople.setLayoutManager(new LinearLayoutManager(getContext()));
+        searchPeople.setAdapter(resultAdapter);
+
+
+        search_bar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = s.toString().trim();
+
+                if (query.isEmpty()) {
+                    searchPeople.setVisibility(View.GONE); // Hide search results
+                    resultAdapter.updateUserList(new ArrayList<>()); // Clear the search adapter
+                } else {
+                    searchPeople.setVisibility(View.VISIBLE);
+                    performSearch(query, resultAdapter);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+            }
+        });
+    }
+
+    private void performSearch(String query, CreateChatRoomList resultAdapter) {
+        DataUtils dataUtils = new DataUtils();
+        dataUtils.getFriendsOfUser(new DataUtils.FetchCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                List<User> filteredUsers = new ArrayList<>();
+                for (User user : data) {
+                    if (user.getUsername().toLowerCase().contains(query.toLowerCase())) {
+                        filteredUsers.add(user);
+                    }
+                }
+                if (!filteredUsers.isEmpty()) {
+                    resultAdapter.updateUserList(filteredUsers);
+                }
+            }
+            @Override
+            public void onFailure(Exception e) {
+                // Handle failure
+            }
+        });
     }
 
     public void setUpFriendLocation(GoogleMap gMap){
