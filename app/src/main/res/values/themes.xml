@@ -2,8 +2,8 @@
     <!-- Base application theme -->
     <style name="Base.Theme.Assignment3_RelationshipCounter" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Set the default font for the entire app -->
-        <item name="android:fontFamily">@font/hellix_regular</item>
-        <item name="fontFamily">@font/hellix_regular</item>
+<!--        <item name="android:fontFamily">@font/hellix_regular</item>-->
+<!--        <item name="fontFamily">@font/hellix_regular</item>-->
 
         <!-- Primary Colors -->
         <item name="colorPrimary">@color/colorPrimary</item>
