@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="CalendarTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarHeaderConfirmButton">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>

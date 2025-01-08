@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Row 1: Friendship Tag -->
+        <TextView
+            android:id="@+id/friendship_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:text="Close Friend"
+            android:background="@drawable/bg_rounded_tag"
+            android:fontFamily="@font/hellix_bold"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Row 2: User Images and Names -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <!-- Current User Image -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    app:cardCornerRadius="999dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    >
+
+                    <ImageView
+                        android:id="@+id/current_user_image"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/sample"
+
+                        />
+                </androidx.cardview.widget.CardView>
+
+
+            <!-- Current User Name -->
+                <TextView
+                    android:id="@+id/current_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your Name"
+                    android:fontFamily="@font/hellix_regular"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Heart Divider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❤️"
+                android:textSize="24sp"
+                android:layout_marginHorizontal="16dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <!-- Friend Image -->
+                <ImageView
+                    android:id="@+id/friend_image"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/sample"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_circle" />
+
+                <!-- Friend Name -->
+                <TextView
+                    android:id="@+id/friend_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Friend Name"
+                    android:fontFamily="@font/hellix_regular"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Row 3: Days Together -->
+        <TextView
+            android:id="@+id/total_days_together"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Days Together: 100"
+            android:fontFamily="@font/hellix_bold"
+            android:textSize="16sp"
+            android:textColor="@color/primary"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Row 4: Activity Dashboard -->
+        <TextView
+            android:id="@+id/activity_dashboard_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activity Dashboard"
+            android:fontFamily="@font/hellix_bold"
+            android:textSize="18sp"
+            android:textColor="@color/primary"
+            android:layout_marginBottom="8dp" />
+
+
+    </LinearLayout>
+</ScrollView>
