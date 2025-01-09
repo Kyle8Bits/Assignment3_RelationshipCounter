@@ -141,7 +141,7 @@ public class ForegroundService extends Service {
                 if (snapshots != null) {
                     for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
                         CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
-                        Query chatsQuery = chatsCollection.orderBy("time", Query.Direction.DESCENDING)
+                        Query chatsQuery = chatsCollection.orderBy("lastMessageTime", Query.Direction.DESCENDING)
                                 .limit(1); // Optionally limit to the 10 newest messages
                         List<String> userIds = (List<String>) chatroomDoc.get("userIds");
 
@@ -156,14 +156,11 @@ public class ForegroundService extends Service {
                                         return;
                                     }
 
-                                    if (chatsSnapshots != null) {
+                                    if (chatsSnapshots != null && !chatsSnapshots.isEmpty()) {
 
                                         DocumentSnapshot newChatDoc = chatsSnapshots.getDocuments().get(0);
                                         String message = newChatDoc.getString("message");
                                         String sender = newChatDoc.getString("senderId");
-
-
-
 
                                                 // A new chat message was added
 
