@@ -76,6 +76,10 @@ public class ForegroundService extends Service {
                 return;
             }
             if (snapshots != null) {
+                if(isInitialLoadFriend){
+                    isInitialLoadFriend = false;
+                }
+
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
                     // Listen for updated documents
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED || documentChange.getType() == DocumentChange.Type.ADDED) {
@@ -122,7 +126,7 @@ public class ForegroundService extends Service {
                         });
                     }
                 }
-                isInitialLoadFriend = false;
+
             }
         });
     }
@@ -140,6 +144,11 @@ public class ForegroundService extends Service {
                 }
 
                 if (snapshots != null) {
+
+                    if (isInitialLoadChat) {
+                        isInitialLoadChat = false;  // Allow notifications after the initial load
+                    }
+
                     for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
                         CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
                         Query chatsQuery = chatsCollection.orderBy("lastMessageTime", Query.Direction.DESCENDING)
@@ -198,7 +207,6 @@ public class ForegroundService extends Service {
 
                         }
                     }
-                    isInitialLoadChat = false;
                 }
             }
         });
