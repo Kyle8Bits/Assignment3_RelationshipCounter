@@ -40,7 +40,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        dataUtils.setupBroadcastReceiver(this);
         Intent serviceIntent = new Intent(this, ForegroundService.class);
         ContextCompat.startForegroundService(this, serviceIntent);
         Location.updateUserPosition(this);

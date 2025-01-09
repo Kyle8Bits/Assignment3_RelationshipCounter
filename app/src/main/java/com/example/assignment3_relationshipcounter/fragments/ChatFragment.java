@@ -93,6 +93,7 @@ public class ChatFragment extends AppCompatActivity {
         receiveUserId = user.getId();
         chatRoomID = util.getChatRoomId(receiveUserId, startUserId);
 
+
         setUpChatHistory();
     }
 

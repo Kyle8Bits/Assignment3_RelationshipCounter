@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.fragments.ChatFragment;
+import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
@@ -108,10 +111,9 @@ public class ForegroundService extends Service {
                             @Override
                             public void onSuccess(User data) {
                                 if(!isInitialLoadFriend){
-                                System.out.println("Add");
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
-                                sendNotification(sentUserId[0], notification, title);
+                                sendNotification(false,null,sentUserId[0], notification, title);
                                 }
                             }
 
@@ -128,13 +130,10 @@ public class ForegroundService extends Service {
     }
 
     private void setupChatListener() {
-        // Firestore reference to the "chatrooms" collection
         CollectionReference chatroomsCollection = db.collection("chatrooms");
 
-        // Query to listen for chatrooms where "userIds" array contains "123"
         Query query = chatroomsCollection.whereArrayContains("userIds", user.getUid());
 
-        // Add a snapshot listener for the query using a lambda expression
         query.addSnapshotListener((snapshots, e) -> {
             if (e != null) {
                 Log.w("Firestore", "Listen failed.", e);
@@ -148,6 +147,7 @@ public class ForegroundService extends Service {
                         Map<String, Object> documentData = documentChange.getDocument().getData();
                         String lastMessage = (String) documentData.get("lastMessage");
                         String lastMessageSenderId = (String) documentData.get("lastMessageSenderId");
+                        String roomId = (String) documentData.get("chatroomId");
 
                         if(!lastMessageSenderId.equals(user.getUid())){
                             dataUtils.getById("users", lastMessageSenderId, User.class, new DataUtils.FetchCallback<User>() {
@@ -156,7 +156,7 @@ public class ForegroundService extends Service {
                                     if (!isInitialLoadChat) {
                                         String notification = data.getUsername() + ": " + lastMessage;
                                         String title = "You have new message";
-                                        sendNotification(user.getUid(), notification, title);
+                                        sendNotification(true,data,user.getUid(), notification, title);
                                     }
                                 }
 
@@ -173,11 +173,19 @@ public class ForegroundService extends Service {
         });
     }
 
-    private void sendNotification(String sentToId, String notification, String title) {
+    private void sendNotification(Boolean isChat, User userOther,String sentToId, String notification, String title) {
         String currentUid = user.getUid();
-
+        PendingIntent pendingIntent;
         if (sentToId.equals(currentUid)) {
-
+            if(isChat) {
+                Intent intent = new Intent(this, ChatFragment.class);  // Replace ChatActivity with the activity you want to open
+                intent.putExtra("otherUser", userOther);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            }
+            else {
+                Intent intent = new Intent(this, HomeActivity.class);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            }
         // Create and display the notification
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -185,7 +193,9 @@ public class ForegroundService extends Service {
                 .setSmallIcon(R.drawable.ic_notification) // Replace with your actual icon
                 .setContentTitle(title)
                 .setContentText(notification)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
