@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.assignment3_relationshipcounter.R;
@@ -17,8 +18,14 @@ import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +36,7 @@ import java.util.Set;
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Set<String> processedDocumentIds = new HashSet<>();
-    private boolean isInitialLoad = true;
+    private boolean[] isInitialLoad = {true, true};
     Authentication auth = new Authentication();
     FirebaseUser user = auth.getAuth().getCurrentUser();
     DataUtils dataUtils = new DataUtils();
@@ -58,6 +65,7 @@ public class ForegroundService extends Service {
         startForeground(1, builder.build());
 
         setupAcceptFriendListener();
+        setupChatListener();
     }
 
     private void setupAcceptFriendListener() {
@@ -81,7 +89,6 @@ public class ForegroundService extends Service {
                             usersId.add(firstUser);
                             usersId.add(secondUser);
                         }
-
                         String otherUserId = Utils.getOtherId(user.getUid(), usersId); // Ensure usersId has data
                         final String[] sentUserId = new String[1];
                         if(check!=null){
@@ -99,7 +106,8 @@ public class ForegroundService extends Service {
                         dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
                             @Override
                             public void onSuccess(User data) {
-                                if(!isInitialLoad){
+                                if(!isInitialLoad[0]){
+                                    System.out.println("Add");
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
                                 sendNotification(sentUserId[0], notification, title);
@@ -113,38 +121,78 @@ public class ForegroundService extends Service {
                         });
                     }
                 }
-                isInitialLoad = false;
+                isInitialLoad[0] = false;
             }
         });
     }
 
-    private void setUpAddFriendListener(){
-        db.collection("relationships").addSnapshotListener((snapshots, e) -> {
-            if (e != null) {
-                Log.w("FirestoreService", "Listen failed.", e);
-                return;
-            }
+    private void setupChatListener(){
+        CollectionReference chatroomsCollection = db.collection("chatrooms");
+        Query query = chatroomsCollection.whereArrayContains("userIds", user.getUid());
 
-            if (snapshots != null) {
-                for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
-                    String documentId = documentChange.getDocument().getId();
-
-                    // Only notify on new documents after the initial load
-                    if (documentChange.getType() == DocumentChange.Type.ADDED && !processedDocumentIds.contains(documentId) && !isInitialLoad) {
-                        Log.d("FirestoreService", "New document added: " + documentChange.getDocument().getData());
-
-                        // Add document ID to processed list
-                        processedDocumentIds.add(documentId);
-
-                        // Trigger a notification
-                    }
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("Firestore", "Listen failed.", e);
+                    return;
                 }
 
-                // Mark the initial load as complete
-                isInitialLoad = false;
+                if (snapshots != null) {
+                    for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
+                        CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
+                        List<String> userIds = (List<String>) chatroomDoc.get("userIds"); // Assuming there's a "name" field
+
+                        if(userIds != null && userIds.contains(user.getUid())) {
+                            String sentToId = Utils.getOtherId(user.getUid(), userIds);
+
+                            chatsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot chatsSnapshots, @Nullable FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.w("Firestore", "Listen failed.", e);
+                                        return;
+                                    }
+                                    // Check if there are any documents in the "chats" subcollection
+                                    if (chatsSnapshots != null) {
+                                        for (DocumentChange docChange : chatsSnapshots.getDocumentChanges()) {
+                                            if (docChange.getType() == DocumentChange.Type.ADDED) {
+                                                // A new chat message was added
+                                                // Get the DocumentSnapshot of the newly added chat message
+                                                DocumentSnapshot newChatDoc = docChange.getDocument();
+                                                String message = newChatDoc.getString("message");
+                                                String senderId = newChatDoc.getString("senderId");
+
+                                                dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
+                                                    @Override
+                                                    public void onSuccess(User data) {
+                                                        if (!isInitialLoad[1]) {
+                                                            String who = data.getUsername()+": " + message;
+                                                            sendNotification(sentToId, who, "You have a new message");
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Exception e) {
+
+                                                    }
+                                                });
+                                                // You can also get other fields from the document as needed
+                                                // Example: String otherField = newChatDoc.getString("fieldName");
+                                            }
+                                        }
+                                        isInitialLoad[1] = false;
+                                    }
+                                }
+                            });
+
+                        }
+
+
+                    }
+                }
             }
         });
-
     }
 
     private void sendNotification(String sentToId, String notification, String title) {
