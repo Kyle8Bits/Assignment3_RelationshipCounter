@@ -76,10 +76,6 @@ public class ForegroundService extends Service {
                 return;
             }
             if (snapshots != null) {
-                if(isInitialLoadFriend){
-                    isInitialLoadFriend = false;
-                }
-
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
                     // Listen for updated documents
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED || documentChange.getType() == DocumentChange.Type.ADDED) {
@@ -112,7 +108,7 @@ public class ForegroundService extends Service {
                             @Override
                             public void onSuccess(User data) {
                                 if(!isInitialLoadFriend){
-                                    System.out.println("Add");
+                                System.out.println("Add");
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
                                 sendNotification(sentUserId[0], notification, title);
@@ -126,88 +122,53 @@ public class ForegroundService extends Service {
                         });
                     }
                 }
-
+                isInitialLoadFriend = false;
             }
         });
     }
 
-    private void setupChatListener(){
+    private void setupChatListener() {
+        // Firestore reference to the "chatrooms" collection
         CollectionReference chatroomsCollection = db.collection("chatrooms");
+
+        // Query to listen for chatrooms where "userIds" array contains "123"
         Query query = chatroomsCollection.whereArrayContains("userIds", user.getUid());
 
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("Firestore", "Listen failed.", e);
-                    return;
-                }
+        // Add a snapshot listener for the query using a lambda expression
+        query.addSnapshotListener((snapshots, e) -> {
+            if (e != null) {
+                Log.w("Firestore", "Listen failed.", e);
+                return;
+            }
 
-                if (snapshots != null) {
+            // Ensure that the snapshots are not null and contain data
+            if (snapshots != null) {
+                for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
+                    if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
+                        Map<String, Object> documentData = documentChange.getDocument().getData();
+                        String lastMessage = (String) documentData.get("lastMessage");
+                        String lastMessageSenderId = (String) documentData.get("lastMessageSenderId");
 
-                    if (isInitialLoadChat) {
-                        isInitialLoadChat = false;  // Allow notifications after the initial load
-                    }
-
-                    for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
-                        CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
-                        Query chatsQuery = chatsCollection.orderBy("lastMessageTime", Query.Direction.DESCENDING)
-                                .limit(1); // Optionally limit to the 10 newest messages
-                        List<String> userIds = (List<String>) chatroomDoc.get("userIds");
-
-                        if(userIds != null && userIds.contains(user.getUid())) {
-                            String sentToId = Utils.getOtherId(user.getUid(), userIds);
-
-                            chatsQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        if(!lastMessageSenderId.equals(user.getUid())){
+                            dataUtils.getById("users", lastMessageSenderId, User.class, new DataUtils.FetchCallback<User>() {
                                 @Override
-                                public void onEvent(@Nullable QuerySnapshot chatsSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.w("Firestore", "Listen failed.", e);
-                                        return;
+                                public void onSuccess(User data) {
+                                    if (!isInitialLoadChat) {
+                                        String notification = data.getUsername() + ": " + lastMessage;
+                                        String title = "You have new message";
+                                        sendNotification(user.getUid(), notification, title);
                                     }
+                                }
 
-
-                                    if (chatsSnapshots != null && !chatsSnapshots.isEmpty()) {
-                                        for (DocumentChange docChange : chatsSnapshots.getDocumentChanges()) {
-                                            if (docChange.getType() == DocumentChange.Type.ADDED) {
-                                                DocumentSnapshot newChatDoc = docChange.getDocument();
-                                                String message = newChatDoc.getString("message");
-                                                String sender = newChatDoc.getString("senderId");
-
-                                                // A new chat message was added
-
-
-                                                if (!user.getUid().equals(sender)) {
-                                                    dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
-                                                        @Override
-                                                        public void onSuccess(User data) {
-                                                            if (!isInitialLoadChat) {
-                                                                String who = data.getUsername() + ": " + message;
-                                                                System.out.println(who);
-                                                                sendNotification(user.getUid(), who, "You have a new message");
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onFailure(Exception e) {
-
-                                                        }
-                                                    });
-                                                }
-                                                // You can also get other fields from the document as needed
-                                                // Example: String otherField = newChatDoc.getString("fieldName");
-                                            }
-                                        }
-                                    }
-
-
+                                @Override
+                                public void onFailure(Exception e) {
 
                                 }
                             });
-
                         }
                     }
                 }
+                isInitialLoadChat = false;
             }
         });
     }
