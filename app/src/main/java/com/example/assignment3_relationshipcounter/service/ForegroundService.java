@@ -161,7 +161,6 @@ public class ForegroundService extends Service {
                                                 // Get the DocumentSnapshot of the newly added chat message
                                                 DocumentSnapshot newChatDoc = docChange.getDocument();
                                                 String message = newChatDoc.getString("message");
-                                                String senderId = newChatDoc.getString("senderId");
 
                                                 dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
                                                     @Override
