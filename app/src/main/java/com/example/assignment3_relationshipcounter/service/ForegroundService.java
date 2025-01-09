@@ -142,7 +142,6 @@ public class ForegroundService extends Service {
                     for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
                         CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
                         List<String> userIds = (List<String>) chatroomDoc.get("userIds"); // Assuming there's a "name" field
-
                         if(userIds != null && userIds.contains(user.getUid())) {
                             String sentToId = Utils.getOtherId(user.getUid(), userIds);
 
@@ -161,23 +160,14 @@ public class ForegroundService extends Service {
                                                 // Get the DocumentSnapshot of the newly added chat message
                                                 DocumentSnapshot newChatDoc = docChange.getDocument();
                                                 String message = newChatDoc.getString("message");
+                                                String sender = newChatDoc.getString("senderId");
 
-                                                dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
-                                                    @Override
-                                                    public void onSuccess(User data) {
-                                                        if (!isInitialLoad[1]) {
-                                                            String who = data.getUsername()+": " + message;
-                                                            sendNotification(sentToId, who, "You have a new message");
-                                                        }
-                                                    }
+                                                if (!isInitialLoad[1] && !user.getUid().equals(sender)) {
+                                                    String who = auth.getUserDetail().getUsername()+": " + message;
+                                                    System.out.println(who);
+                                                    sendNotification(user.getUid(), who, "You have a new message");
+                                                }
 
-                                                    @Override
-                                                    public void onFailure(Exception e) {
-
-                                                    }
-                                                });
-                                                // You can also get other fields from the document as needed
-                                                // Example: String otherField = newChatDoc.getString("fieldName");
                                             }
                                         }
                                         isInitialLoad[1] = false;
