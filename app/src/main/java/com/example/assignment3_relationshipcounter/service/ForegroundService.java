@@ -141,11 +141,14 @@ public class ForegroundService extends Service {
                 if (snapshots != null) {
                     for (DocumentSnapshot chatroomDoc : snapshots.getDocuments()) {
                         CollectionReference chatsCollection = chatroomDoc.getReference().collection("chats");
-                        List<String> userIds = (List<String>) chatroomDoc.get("userIds"); // Assuming there's a "name" field
+                        Query chatsQuery = chatsCollection.orderBy("time", Query.Direction.DESCENDING)
+                                .limit(1); // Optionally limit to the 10 newest messages
+                        List<String> userIds = (List<String>) chatroomDoc.get("userIds");
+
                         if(userIds != null && userIds.contains(user.getUid())) {
                             String sentToId = Utils.getOtherId(user.getUid(), userIds);
 
-                            chatsCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            chatsQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override
                                 public void onEvent(@Nullable QuerySnapshot chatsSnapshots, @Nullable FirebaseFirestoreException e) {
                                     if (e != null) {
@@ -183,12 +186,13 @@ public class ForegroundService extends Service {
                                                 // Example: String otherField = newChatDoc.getString("fieldName");
                                             }
                                         }
-                                        isInitialLoad[1] = false;
                                     }
                                 }
                             });
+
                         }
                     }
+                    isInitialLoad[1] = false;
                 }
             }
         });
