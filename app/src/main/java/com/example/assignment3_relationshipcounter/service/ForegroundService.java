@@ -155,15 +155,18 @@ public class ForegroundService extends Service {
                                         Log.w("Firestore", "Listen failed.", e);
                                         return;
                                     }
-                                    // Check if there are any documents in the "chats" subcollection
+
                                     if (chatsSnapshots != null) {
-                                        for (DocumentChange docChange : chatsSnapshots.getDocumentChanges()) {
-                                            if (docChange.getType() == DocumentChange.Type.ADDED) {
+
+                                        DocumentSnapshot newChatDoc = chatsSnapshots.getDocuments().get(0);
+                                        String message = newChatDoc.getString("message");
+                                        String sender = newChatDoc.getString("senderId");
+
+
+
+
                                                 // A new chat message was added
-                                                // Get the DocumentSnapshot of the newly added chat message
-                                                DocumentSnapshot newChatDoc = docChange.getDocument();
-                                                String message = newChatDoc.getString("message");
-                                                String sender = newChatDoc.getString("senderId");
+
 
                                                 if(!user.getUid().equals(sender)) {
                                                     dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
@@ -184,8 +187,6 @@ public class ForegroundService extends Service {
                                                 }
                                                 // You can also get other fields from the document as needed
                                                 // Example: String otherField = newChatDoc.getString("fieldName");
-                                            }
-                                        }
                                     }
                                 }
                             });
