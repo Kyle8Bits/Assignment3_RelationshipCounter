@@ -36,7 +36,7 @@ import java.util.Set;
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Set<String> processedDocumentIds = new HashSet<>();
-    private boolean[] isInitialLoad = {true, true};
+    private final boolean[] isInitialLoad = {true, true};
     Authentication auth = new Authentication();
     FirebaseUser user = auth.getAuth().getCurrentUser();
     DataUtils dataUtils = new DataUtils();
