@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -73,5 +74,13 @@ public class Utils {
         // Calculate the difference in milliseconds and convert to days
         long diffInMillis = currentTimeMillis - startTimeMillis;
         return TimeUnit.MILLISECONDS.toDays(diffInMillis);
+    }
+
+    public static String getOtherId(String currentId, List<String> listId){
+        if(currentId.equals(listId.get(0))){
+            return listId.get(1);
+        }else{
+            return listId.get(0);
+        }
     }
 }

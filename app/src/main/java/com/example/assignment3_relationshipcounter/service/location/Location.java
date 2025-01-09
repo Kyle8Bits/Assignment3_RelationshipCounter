@@ -20,7 +20,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
@@ -46,7 +51,8 @@ public class Location {
     public static void handlePermissionResult(int requestCode, @NonNull int[] grantResults, Activity activity) {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
+                // Start updating user position if permission granted
+                updateUserPosition(activity);
                 Toast.makeText(activity, "Location permission granted", Toast.LENGTH_SHORT).show();
             } else {
                 // Permission denied
@@ -55,16 +61,17 @@ public class Location {
         }
     }
 
+
     @SuppressLint("MissingPermission")
-    public static void updateUserPosition(Context context ,LocationUpdateListener listener) {
+    public static void updateUserPosition(Context context) {
         DataUtils dataUt = new DataUtils();
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
 
         // Create a location request
         LocationRequest locationRequest = new LocationRequest.Builder(
                 LocationRequest.PRIORITY_HIGH_ACCURACY, // High accuracy
-                5000 // Interval in milliseconds
-        ).setMinUpdateIntervalMillis(2000) // Fastest interval
+                300000 // Interval in milliseconds
+        ).setMinUpdateIntervalMillis(300000) // Fastest interval
                 .build();
 
         // Create a location callback to handle location updates
@@ -77,27 +84,29 @@ public class Location {
 
                 for (android.location.Location location : locationResult.getLocations()) {
                     try {
+                        Authentication auth = new Authentication();
+                        FirebaseUser user = auth.getAuth().getCurrentUser();
                         Map<String, Object> fieldsToUpdate = new HashMap<>();
                         fieldsToUpdate.put("latitude", location.getLatitude());
                         fieldsToUpdate.put("longitude", location.getLongitude());
                         dataUt.updateOneFieldById(
                                 "users",
-                                new Authentication().getUserDetail().getId(),
+                               user.getUid(),
                                 fieldsToUpdate,
                                 new DataUtils.NormalCallback<Void>() {
                                     @Override
                                     public void onSuccess() {
-                                        listener.onLocationUpdated(location);
+                                        System.out.println("Update");
                                     }
 
                                     @Override
                                     public void onFailure(Exception e) {
-                                        Log.e("FirestoreUpdate", "Failed to update fields", e);
+                                        System.out.println("FirestoreUpdate" + "Failed to update fields" + e);
                                     }
                                 }
                         );
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("Update location error" + e.getMessage());
                     }
                 }
             }
