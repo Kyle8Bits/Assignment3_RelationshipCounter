@@ -83,13 +83,16 @@ public class ForegroundService extends Service {
                         }
 
                         String otherUserId = Utils.getOtherId(user.getUid(), usersId); // Ensure usersId has data
-
+                        final String[] sentUserId = new String[1];
                         if(check!=null){
                             if (check){
                                 message[0] = " has accepted your friend request";
+                                sentUserId[0] = firstUser;
                             }
                             else {
+
                                 message[0] = " has sent you a friend request";
+                                sentUserId[0] = secondUser;
                             }
                         }
 
@@ -99,7 +102,7 @@ public class ForegroundService extends Service {
                                 if(!isInitialLoad){
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
-                                sendNotification(otherUserId, notification, title);
+                                sendNotification(sentUserId[0], notification, title);
                                 }
                             }
 
