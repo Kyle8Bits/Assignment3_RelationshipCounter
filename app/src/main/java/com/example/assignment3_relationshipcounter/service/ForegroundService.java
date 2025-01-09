@@ -183,13 +183,12 @@ public class ForegroundService extends Service {
                                                 // Example: String otherField = newChatDoc.getString("fieldName");
                                             }
                                         }
+                                        isInitialLoad[1] = false;
                                     }
                                 }
                             });
-
                         }
                     }
-                    isInitialLoad[1] = false;
                 }
             }
         });
