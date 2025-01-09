@@ -36,7 +36,8 @@ import java.util.Set;
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Set<String> processedDocumentIds = new HashSet<>();
-    private final boolean[] isInitialLoad = {true, true};
+    private boolean isInitialLoadFriend = true;
+    private boolean isInitialLoadChat = true;
     Authentication auth = new Authentication();
     FirebaseUser user = auth.getAuth().getCurrentUser();
     DataUtils dataUtils = new DataUtils();
@@ -106,7 +107,7 @@ public class ForegroundService extends Service {
                         dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
                             @Override
                             public void onSuccess(User data) {
-                                if(!isInitialLoad[0]){
+                                if(!isInitialLoadFriend){
                                     System.out.println("Add");
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
@@ -121,7 +122,7 @@ public class ForegroundService extends Service {
                         });
                     }
                 }
-                isInitialLoad[0] = false;
+                isInitialLoadFriend = false;
             }
         });
     }
@@ -156,20 +157,22 @@ public class ForegroundService extends Service {
                                         return;
                                     }
 
-                                    if (chatsSnapshots != null && !chatsSnapshots.isEmpty()) {
 
-                                        DocumentSnapshot newChatDoc = chatsSnapshots.getDocuments().get(0);
-                                        String message = newChatDoc.getString("message");
-                                        String sender = newChatDoc.getString("senderId");
+                                    if (chatsSnapshots != null && !chatsSnapshots.isEmpty()) {
+                                        for (DocumentChange docChange : chatsSnapshots.getDocumentChanges()) {
+                                            if (docChange.getType() == DocumentChange.Type.ADDED) {
+                                                DocumentSnapshot newChatDoc = docChange.getDocument();
+                                                String message = newChatDoc.getString("message");
+                                                String sender = newChatDoc.getString("senderId");
 
                                                 // A new chat message was added
 
 
-                                                if(!user.getUid().equals(sender)) {
+                                                if (!user.getUid().equals(sender)) {
                                                     dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
                                                         @Override
                                                         public void onSuccess(User data) {
-                                                            if (!isInitialLoad[1]) {
+                                                            if (!isInitialLoadChat) {
                                                                 String who = data.getUsername() + ": " + message;
                                                                 System.out.println(who);
                                                                 sendNotification(user.getUid(), who, "You have a new message");
@@ -184,13 +187,18 @@ public class ForegroundService extends Service {
                                                 }
                                                 // You can also get other fields from the document as needed
                                                 // Example: String otherField = newChatDoc.getString("fieldName");
+                                            }
+                                        }
                                     }
+
+
+
                                 }
                             });
 
                         }
                     }
-                    isInitialLoad[1] = false;
+                    isInitialLoadChat = false;
                 }
             }
         });
