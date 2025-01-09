@@ -162,23 +162,34 @@ public class ForegroundService extends Service {
                                                 String message = newChatDoc.getString("message");
                                                 String sender = newChatDoc.getString("senderId");
 
-                                                if (!isInitialLoad[1] && !user.getUid().equals(sender)) {
-                                                    String who = auth.getUserDetail().getUsername()+": " + message;
-                                                    System.out.println(who);
-                                                    sendNotification(user.getUid(), who, "You have a new message");
-                                                }
+                                                if(!user.getUid().equals(sender)) {
+                                                    dataUtils.getById("users", sentToId, User.class, new DataUtils.FetchCallback<User>() {
+                                                        @Override
+                                                        public void onSuccess(User data) {
+                                                            if (!isInitialLoad[1]) {
+                                                                String who = data.getUsername() + ": " + message;
+                                                                System.out.println(who);
+                                                                sendNotification(user.getUid(), who, "You have a new message");
+                                                            }
+                                                        }
 
+                                                        @Override
+                                                        public void onFailure(Exception e) {
+
+                                                        }
+                                                    });
+                                                }
+                                                // You can also get other fields from the document as needed
+                                                // Example: String otherField = newChatDoc.getString("fieldName");
                                             }
                                         }
-                                        isInitialLoad[1] = false;
                                     }
                                 }
                             });
 
                         }
-
-
                     }
+                    isInitialLoad[1] = false;
                 }
             }
         });
