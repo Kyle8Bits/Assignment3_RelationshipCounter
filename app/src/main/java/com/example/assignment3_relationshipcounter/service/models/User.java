@@ -2,29 +2,36 @@ package com.example.assignment3_relationshipcounter.service.models;
 
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 
+import java.io.Serializable;
+
 //normal user
-public class User implements DataUtils.HasId {
+public class User implements DataUtils.HasId, Serializable {
     private String id;
     private String firstName;
     private String lastName;
+    private String username;
     private String email;
     private String DoB;
     private Gender gender;
     private String phoneNumber;
     private UserType accountType;
-
+    private double latitude;
+    private double longitude;
     public User() {
     }
 
-    public User(String id, String firstName, String lastName, String email, String doB, Gender gender, String phoneNumber, UserType accountType) {
+    public User(String id, String firstName, String lastName, String username, String email, String doB, Gender gender, String phoneNumber, UserType accountType, double latitude, double longitude) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
         this.email = email;
         DoB = doB;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.accountType = accountType;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getId() {
@@ -90,5 +97,29 @@ public class User implements DataUtils.HasId {
 
     public void setAccountType(UserType accountType) {
         this.accountType = accountType;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

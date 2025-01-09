@@ -2,14 +2,24 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import android.util.Log;
 
+import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
+
+import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class DataUtils {
@@ -35,8 +45,8 @@ public class DataUtils {
                 });
     }
 
-    public <T> void updateOneFieldById(String collection, String id, String field, T value, NormalCallback<Void> callback) {
-        db.collection(collection).document(id).update(field, value)
+    public void updateOneFieldById(String collection, String id, Map<String, Object> fields, NormalCallback<Void> callback) {
+        db.collection(collection).document(id).update( fields)
                 .addOnSuccessListener(aVoid -> {
                     callback.onSuccess();
                 })
@@ -72,6 +82,24 @@ public class DataUtils {
     }
 
     /**
+     * Add a collection into a document
+     * @param parentCollection the parent collection
+     * @param parentDocumentID the document in the parent collection that you want to add
+     * @param childCollection the collection that added into the parent document
+     *
+     * Use for "Chat function" do not delete
+     */
+    public <T> void addNewCollectionToDocument(String parentCollection, String parentDocumentID, String childCollection, T data, NormalCallback<T> callback) {
+        db.collection(parentCollection).document(parentDocumentID).collection(childCollection).add(data)
+            .addOnSuccessListener(documentReference -> {
+                callback.onSuccess();
+            })
+            .addOnFailureListener(e->{
+                callback.onFailure(new Exception("Cannot add new collection to document"));
+            });
+    }
+
+    /**
      * Delete the document by ID
      */
     public <T> void deleteById(String collection, String id, NormalCallback<T> callback) {
@@ -95,11 +123,13 @@ public class DataUtils {
                         T retrievedData = documentSnapshot.toObject(object);
                         if (retrievedData != null) {
                             callback.onSuccess(retrievedData);
-                        } else {
-                            callback.onFailure(new Exception("Data is null"));
                         }
                     }
-                });
+                    else {
+                        callback.onFailure(new Exception("Document dont exist"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
     }
 
 
@@ -120,6 +150,43 @@ public class DataUtils {
                     }
                 })
                 .addOnFailureListener(callback::onFailure); // Pass the exception to onFailure
+    }
+
+    //THIS ONE IS IMPORTANT PLEASE DO NOT DELETE
+    public Query getChatInChatroom(String chatRoomID){
+        return db.collection("chatrooms").document(chatRoomID).collection("chats").orderBy("lastMessageTime", Query.Direction.DESCENDING);
+    }
+
+    public DocumentReference getAllChatRoomOfUser(List<String> userID){
+        if(userID.get(0).equalsIgnoreCase(new Authentication().getFUser().getUid())){
+            return db.collection("users").document(userID.get(1));
+        }
+        else{
+            return db.collection("users").document(userID.get(0));
+        }
+    }
+
+    public Query getAllChatRoomOfUser(){
+        return db.collection("chatrooms").whereArrayContains("userIds", new Authentication().getFUser().getUid()).orderBy("lastMessageTime", Query.Direction.DESCENDING);
+    }
+
+    public void createNewChatRoom(String chatRoomId, ChatRoom chatRoom, NormalCallback<Void> callback){
+        db.collection("chatrooms").document(chatRoomId).set(chatRoom)
+                .addOnSuccessListener(
+                        aVoid -> callback.onSuccess()
+                )
+                .addOnFailureListener(e -> {
+                    System.out.println("Error retrieving document: " + e.getMessage());
+                    callback.onFailure(e);
+                });
+    }
+
+    public static String timestampToString(Timestamp timestamp, String format) {
+        if (timestamp != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+            return sdf.format(timestamp.toDate());
+        }
+        return "";
     }
 
     /**
@@ -172,5 +239,99 @@ public class DataUtils {
         void setId(String id);
     }
 
+    public void getFriendsOfUser(FetchCallback<List<User>> callback) {
+        String userId = new Authentication().getFUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // List to store friend user objects
+        List<User> friends = new ArrayList<>();
+
+        // Query 1: Where `firstUser` equals the given userId
+        db.collection("relationships")
+                .whereEqualTo("firstUser", userId)
+                .whereEqualTo("status", "FRIEND")
+                .get()
+                .addOnSuccessListener(firstQuerySnapshot -> {
+                    List<String> friendIds = new ArrayList<>();
+
+                    // Collect `secondUser` IDs from the first query
+                    for (QueryDocumentSnapshot document : firstQuerySnapshot) {
+                        friendIds.add(document.getString("secondUser"));
+                    }
+
+                    // Query 2: Where `secondUser` equals the given userId
+                    db.collection("relationships")
+                            .whereEqualTo("secondUser", userId)
+                            .whereEqualTo("status", "FRIEND")
+                            .get()
+                            .addOnSuccessListener(secondQuerySnapshot -> {
+                                // Collect `firstUser` IDs from the second query
+                                for (QueryDocumentSnapshot document : secondQuerySnapshot) {
+                                    friendIds.add(document.getString("firstUser"));
+                                }
+
+                                // Fetch `User` objects from the `users` collection for these IDs
+                                if (!friendIds.isEmpty()) {
+                                    db.collection("users")
+                                            .whereIn("id", friendIds)
+                                            .get()
+                                            .addOnSuccessListener(userSnapshot -> {
+                                                for (QueryDocumentSnapshot userDoc : userSnapshot) {
+                                                    User friend = userDoc.toObject(User.class);
+                                                    friends.add(friend);
+                                                }
+                                                callback.onSuccess(friends); // Return the list of friend `User` objects
+                                            })
+                                            .addOnFailureListener(callback::onFailure);
+                                } else {
+                                    callback.onSuccess(Collections.emptyList()); // No friends found
+                                }
+                            })
+                            .addOnFailureListener(callback::onFailure);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void addRelationship(Relationship relationship, NormalCallback<Void> callback) {
+        db.collection("relationships")
+                .add(relationship)
+                .addOnSuccessListener(documentReference -> {
+                    // Retrieve the generated document ID
+                    String generatedId = documentReference.getId();
+
+                    // Update the relationship object with the generated ID
+                    relationship.setId(generatedId);
+
+                    // Update the document in Firestore with the ID field
+                    documentReference.update("id", generatedId)
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to update relationship ID")));
+                })
+                .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to add relationship")));
+    }
+
+
+    /**
+     * Updates an existing relationship in the Firestore database.
+     *
+     * @param relationship The relationship object to update.
+     * @param callback     Callback to indicate success or failure.
+     */
+    public void updateRelationship(Relationship relationship, NormalCallback<Void> callback) {
+        if (relationship == null || relationship.getId() == null || relationship.getId().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("Invalid relationship object. ID is required."));
+            return;
+        }
+
+        // Update the relationship in the Firestore database
+        db.collection("relationships") // Use 'db' instead of 'firestore'
+                .document(relationship.getId())
+                .set(relationship)
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onFailure(e);
+                });
+    }
 }

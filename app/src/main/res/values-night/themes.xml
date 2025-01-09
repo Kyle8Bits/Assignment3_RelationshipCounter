@@ -1,6 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Assignment3_RelationshipCounter" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+    <style name="Theme.Assignment3_RelationshipCounter" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Set the default font for the entire app -->
+        <item name="android:fontFamily">@font/hellix_regular</item>
+        <item name="fontFamily">@font/hellix_regular</item>
     </style>
 </resources>

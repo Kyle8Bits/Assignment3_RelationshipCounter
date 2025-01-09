@@ -8,6 +8,7 @@
     android:layout_marginBottom="8dp"
     android:background="@drawable/bg_round_corner">
 
+    <!-- Profile Picture -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/shapeableImageView"
         android:layout_width="64dp"
@@ -19,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/CustomRoundedImage" />
 
+    <!-- Friend Name -->
     <TextView
         android:id="@+id/card_friendname"
         android:layout_width="wrap_content"
@@ -28,11 +30,12 @@
         android:text="Friend 1"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/friend_day_count"
+        app:layout_constraintStart_toStartOf="@+id/day_count"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Day Count -->
     <TextView
-        android:id="@+id/friend_day_count"
+        android:id="@+id/day_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
@@ -44,13 +47,46 @@
         app:layout_constraintStart_toEndOf="@+id/shapeableImageView"
         app:layout_constraintTop_toBottomOf="@+id/card_friendname" />
 
+    <!-- Add Friend Button -->
+
+    <TextView
+        android:id="@+id/last_time_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="00:00"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_add_friend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="4dp"
+        android:text="Add Friend"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/secondary1"
+        android:fontFamily="@font/hellix_semibold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone" />
+
+    <!-- Navigate Icon (Right Side) -->
     <FrameLayout
         android:id="@+id/card_navigate"
         android:layout_width="30dp"
         android:layout_height="84dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView3"

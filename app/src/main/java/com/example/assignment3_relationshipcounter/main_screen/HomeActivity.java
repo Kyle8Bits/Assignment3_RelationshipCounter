@@ -1,59 +1,126 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
 import android.os.Bundle;
-import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
-import com.example.assignment3_relationshipcounter.adapter.FriendList;
-import com.example.assignment3_relationshipcounter.adapter.StoryList;
+//import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
+import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
+import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
+import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
+import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
+//import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.utils.UserSession;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 public class HomeActivity extends AppCompatActivity {
 
-    Button friend, searchFriend;
+    private User currentUser; // Store the current user object
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Fetch user from Intent or Session
+        currentUser = (User) getIntent().getSerializableExtra("currentUser");
+
+        // Save user to UserSession for global access
+        if (currentUser != null) {
+            UserSession.getInstance().setCurrentUser(currentUser);
+        } else {
+            fetchUserData(); // Fetch user data if not passed
+        }
+
+        // Bottom Navigation setup
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // Set default fragment
+        if (savedInstanceState == null) {
+            loadFragment(new HomeFragment());
+        }
+
+        // Handle navigation item selection
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+
+            switch (item.getItemId()) {
+                case R.id.nav_home:
+                    // Load HomeFragment
+                    selectedFragment = new HomeFragment();
+                    break;
+
+                case R.id.nav_discover:
+                    selectedFragment = new SearchFriendFragment();
+                    break;
+
+                case R.id.nav_profile:
+                    selectedFragment = new ProfileFragment();
+                    break;
+
+                case R.id.nav_friends:
+//                    selectedFragment = new ProfileFragment();
+                    break;
+
+                case R.id.nav_chat:
+                    selectedFragment = new ChatRoomFragment();
+                    break;
+                default:
+                    // Handle unexpected cases gracefully
+                    selectedFragment = new HomeFragment(); // Fallback to HomeFragment
+                    break;
+            }
+
+
+            if (selectedFragment != null) {
+                loadFragment(selectedFragment);
+            }
+            return true;
         });
 
-        loadingAppUi();
-        loadingFriendListUI();
-        loadingStoryList();
     }
 
-    private void loadingAppUi(){
-        friend = findViewById(R.id.home_friendlist);
-        friend.setSelected(true);
+    /**
+     * Load the specified fragment.
+     */
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
-    private void loadingFriendListUI(){
-        FriendList adapter = new FriendList(this);
-        RecyclerView recyclerView = findViewById(R.id.home_friend_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+    /**
+     * Fetch user data from Firestore if not passed via Intent.
+     */
+    private void fetchUserData() {
+        String userId = getIntent().getStringExtra("userId"); // Assume userId is passed
+        if (userId == null) return;
+
+        DataUtils dataUtils = new DataUtils();
+        dataUtils.getById("users", userId, User.class, new DataUtils.FetchCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+                currentUser = user;
+                UserSession.getInstance().setCurrentUser(user); // Save user to session
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // Handle error (e.g., show error message)
+                e.printStackTrace();
+            }
+        });
     }
 
-    private void loadingStoryList(){
-        StoryList adapter = new StoryList(this);
-        RecyclerView recyclerView = findViewById(R.id.home_story_list);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        recyclerView.setAdapter(adapter);
+    /**
+     * Get the current user object.
+     */
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

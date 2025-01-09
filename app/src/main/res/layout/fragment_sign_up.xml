@@ -1,0 +1,259 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_sign_up"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/soft_pink"
+    android:padding="16dp"
+    tools:context=".fragments.SignUpFragment">
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/signup"
+        android:src="@drawable/icon_back" />
+
+    <ScrollView
+        android:id="@+id/form_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/action_signup"
+        android:layout_below="@id/button_back"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/hellix_bold"
+                android:lineSpacingExtra="8dp"
+                android:text="@string/signup"
+                android:textColor="@color/primary"
+                android:textSize="28sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:hint="First Name"
+                    app:boxStrokeColor="@color/secondary1"
+                    app:boxStrokeWidth="1.5dp"
+                    app:cursorColor="@color/secondary1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/e_first_name"
+                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Last Name"
+                    app:boxStrokeColor="@color/secondary1"
+                    app:boxStrokeWidth="1.5dp"
+                    app:cursorColor="@color/secondary1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/e_last_name"
+                        style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <!-- Username -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Username"
+                app:boxStrokeColor="@color/secondary1"
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/e_username"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Email -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Email"
+                app:boxStrokeColor="@color/secondary1"
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/e_email"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Password -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/prompt_password"
+                app:boxStrokeColor="@color/secondary1"
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/e_password"
+                    style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--      Date Picker      -->
+            <TextView
+                android:id="@+id/e_dob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_input_selector"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/date_of_birth"
+                android:paddingHorizontal="5dp"
+                android:paddingVertical="15dp"
+                android:textColorHint="@color/secondary1"
+                android:textSize="16sp"
+                app:drawableEndCompat="@drawable/icon_calendar" />
+
+            <GridLayout
+                android:id="@+id/gender_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:rowCount="1">
+
+                <TextView
+                    android:id="@+id/male"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_box_selector"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:text="@string/male"
+                    android:textColor="@drawable/text_box_selector" />
+
+                <TextView
+                    android:id="@+id/female"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_box_selector"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:text="@string/female"
+                    android:textColor="@drawable/text_box_selector" />
+
+                <TextView
+                    android:id="@+id/other"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:background="@drawable/bg_box_selector"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:text="@string/other"
+                    android:textColor="@drawable/text_box_selector" />
+            </GridLayout>
+
+            <!--    Phone Number        -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/prompt_phone"
+                app:boxStrokeColor="@color/secondary1"
+                app:boxStrokeWidth="1.5dp"
+                app:cursorColor="@color/secondary1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/e_phone_number"
+                style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/secondary1"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/action_signup"
+        style="@style/Widget.Assignment3_RelationshipCounter.Button.Primary"
+        android:layout_width="316dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/hellix_bold"
+        android:text="@string/signup"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+</RelativeLayout>
