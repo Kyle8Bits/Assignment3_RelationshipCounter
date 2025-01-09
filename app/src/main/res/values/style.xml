@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="CalendarTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarHeaderConfirmButton">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>
@@ -102,13 +103,21 @@
         <item name="strokeWidth">1.5dp</item>
     </style>
 
-    <!-- Circular Shape Appearance -->
+    <!-- Circular For Button Shape Appearance -->
     <style name="ShapeAppearanceOverlay.Assignment3.Button.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="CircleImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
-
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/secondary1</item>
+        <item name="android:width">50dp</item>
+        <item name="android:height">50dp</item>
+    </style>
 
 </resources>

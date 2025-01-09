@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.fragments.FriendshipDetailFragment;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
@@ -67,12 +70,19 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         long dayCount = Utils.calculateDayCount(relationship.getDateCreated());
                         holder.dayCount.setText(dayCount + " days"); // Bind day count
                         holder.dayCount.setVisibility(View.VISIBLE);
+
+                        // Set click listener to navigate to Friendship Detail
+                        holder.itemView.setOnClickListener(v -> {
+                            navigateToFriendshipDetail(user, relationship);
+                        });
                         break;
                     case PENDING:
                         // Friend request is pending
                         holder.addFriendButton.setVisibility(View.VISIBLE);
                         holder.navigateIcon.setVisibility(View.GONE);
                         holder.dayCount.setVisibility(View.GONE);
+                        // Remove click listener since it's not a friend
+                        holder.itemView.setOnClickListener(null);
 
                         if (relationship.getFirstUser().equals(currentUserId)) {
                             // Current user is the sender
@@ -116,6 +126,8 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         holder.addFriendButton.setEnabled(true);
                         holder.navigateIcon.setVisibility(View.GONE);
                         holder.dayCount.setVisibility(View.GONE);
+                        // Remove click listener since it's not a friend
+                        holder.itemView.setOnClickListener(null);
 
                         // Handle "Add Friend" Button Click
                         holder.addFriendButton.setOnClickListener(v -> {
@@ -278,6 +290,32 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
         userList.removeAll(toRemove);
         Log.d("FriendList", "Merge complete. Total users: " + userList.size());
     }
+
+    private void navigateToFriendshipDetail(User friend, Relationship relationship) {
+        // Create instance of FriendshipDetailFragment
+        FriendshipDetailFragment fragment = new FriendshipDetailFragment();
+
+        // Pass user and relationship details using Bundle
+        Bundle args = new Bundle();
+        args.putString("friendId", friend.getId());
+        args.putString("friendName", friend.getUsername());
+        args.putLong("daysTogether", Utils.calculateDayCount(relationship.getDateCreated())); // Pass day count
+        args.putString("relationshipId", relationship.getId()); // Pass relationship ID if needed
+        fragment.setArguments(args);
+
+        // Perform navigation
+        if (context instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) context;
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment) // Replace with your container ID
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            Log.e("FriendList", "Context is not an instance of AppCompatActivity");
+        }
+    }
+
 
 }
 
