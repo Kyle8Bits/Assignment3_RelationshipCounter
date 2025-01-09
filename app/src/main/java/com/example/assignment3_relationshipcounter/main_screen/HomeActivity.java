@@ -1,30 +1,50 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
 //import com.example.assignment3_relationshipcounter.fragments.FriendsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ChatRoomFragment;
+import com.example.assignment3_relationshipcounter.fragments.MapsFragment;
 import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
+import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class HomeActivity extends AppCompatActivity {
-
     private User currentUser; // Store the current user object
+    private DataUtils dataUtils = new DataUtils();
+    @Override
+    protected void onStart(){
+        super.onStart();
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Location.requestLocationPermissions(this);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        dataUtils.setupBroadcastReceiver(this);
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+        Location.updateUserPosition(this);
+
         setContentView(R.layout.activity_home);
 
         // Fetch user from Intent or Session
@@ -56,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_discover:
-                    selectedFragment = new SearchFriendFragment();
+                    selectedFragment = new MapsFragment();
                     break;
 
                 case R.id.nav_profile:
@@ -64,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_friends:
-//                    selectedFragment = new ProfileFragment();
+                    selectedFragment = new SearchFriendFragment();
                     break;
 
                 case R.id.nav_chat:
@@ -83,6 +103,12 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Location.handlePermissionResult(requestCode, grantResults, this);
     }
 
     /**

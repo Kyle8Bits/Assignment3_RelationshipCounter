@@ -27,16 +27,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    
-
     // Check if the user is current signed in
     @Override
     public void onStart() {
         super.onStart();
         DataUtils dataUtils = new DataUtils();
         Authentication auth = new Authentication();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = auth.getAuth().getCurrentUser();
         if (user != null) {
             user.reload();
             // Get the user information
@@ -62,7 +59,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_welcome);
-        Location.requestLocationPermissions(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

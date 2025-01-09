@@ -72,6 +72,7 @@ public class LoginFragment extends Fragment {
                             ProgressManager.dismissProgress();
                             Intent intent = new Intent(requireActivity(), HomeActivity.class);
                             intent.putExtra("currentUser", data); // Pass the User object
+                            auth.setUserDetail(data);
                             startActivity(intent);
                             requireActivity().finish(); // Prevent going back to login
                         }
