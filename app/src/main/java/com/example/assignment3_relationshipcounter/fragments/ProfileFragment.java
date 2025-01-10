@@ -22,7 +22,6 @@ import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.main_screen.WelcomeActivity;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
-import com.example.assignment3_relationshipcounter.service.models.Gender;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.storage.FirebaseStorage;
@@ -33,7 +32,7 @@ public class ProfileFragment extends Fragment {
     private ImageView avatar;
     private EditText firstName, lastName, email, phoneNumber, username;
     private TextView dob;
-    private Uri avatarUri;
+    private String storageUrl;
     private User user;
 
     public ProfileFragment() {
@@ -63,7 +62,7 @@ public class ProfileFragment extends Fragment {
         loadProfile();
 
         avatar.setOnClickListener(v -> pickImage());
-        saveButton.setOnClickListener(v -> saveProfile(String.valueOf(avatarUri)));
+        saveButton.setOnClickListener(v -> saveProfile());
         cancelButton.setOnClickListener(v -> cancelChanges());
 
 
@@ -118,47 +117,40 @@ public class ProfileFragment extends Fragment {
         if (requestCode == 1001) {
             if (resultCode == RESULT_OK && data != null) {
                 Uri imageURI = data.getData();
-                // Display image
                 avatar.setImageURI(imageURI);
-                this.avatarUri = imageURI;
-                uploadToFirebase(imageURI);
+                uploadToFirebase(imageURI, this::saveProfile);
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 String errorMessage = ImagePicker.getError(data);
                 Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT).show();
             } else {
-                // if user cancels the action
                 Toast.makeText(requireActivity(), "Canceled choosing avatar", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
-    private void uploadToFirebase(Uri imageUri) {
+    private void uploadToFirebase(Uri imageUri, Runnable onSuccess) {
 
         StorageReference storageRef = FirebaseStorage.getInstance()
                 .getReference("avatars/" + user.getId());
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri ->
-                        Toast.makeText(requireActivity(), "Upload image successfully", Toast.LENGTH_SHORT).show()))
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    this.storageUrl = uri.toString();
+                    onSuccess.run();
+                }))
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    private void saveProfile(String avatarUrl) {
+    private void saveProfile() {
 
-        // Prepare the updated user object
-        User updatedUser = new User();
-        updatedUser.setFirstName(firstName.getText().toString());
-        updatedUser.setLastName(lastName.getText().toString());
-        updatedUser.setUsername(username.getText().toString());
-        updatedUser.setEmail(email.getText().toString());
-        updatedUser.setDoB(dob.getText().toString());
-        updatedUser.setGender(Gender.valueOf(user.getGender().toString()));
-        updatedUser.setPhoneNumber(phoneNumber.getText().toString());
-        updatedUser.setAvatarUrl(avatarUrl);
+        user.setFirstName(firstName.getText().toString());
+        user.setLastName(lastName.getText().toString());
+        user.setUsername(username.getText().toString());
+        user.setDoB(dob.getText().toString());
+        user.setPhoneNumber(phoneNumber.getText().toString());
+        user.setAvatarUrl(this.storageUrl);
 
-        // Use updateById to update the user document
-        new DataUtils().updateById("users", user.getId(), updatedUser, new DataUtils.NormalCallback<User>() {
+        new DataUtils().updateById("users", user.getId(), user, new DataUtils.NormalCallback<User>() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getContext(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
@@ -180,8 +172,7 @@ public class ProfileFragment extends Fragment {
         phoneNumber.setText(user.getPhoneNumber());
         Glide.with(requireContext())
                 .load(user.getAvatarUrl())
-                .placeholder(R.drawable.sample)
-                .circleCrop()
+                .centerCrop()
                 .into(avatar);
     }
 

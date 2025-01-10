@@ -11,17 +11,26 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Avatar -->
-        <ImageView
-            android:id="@+id/avatar"
+        <androidx.cardview.widget.CardView
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_profile"
-            android:scaleType="centerCrop"
-            android:background="@drawable/bg_circle"
-            android:contentDescription="@string/avatar" />
-
+            android:elevation="12dp"
+            android:id="@+id/view2"
+            app:cardCornerRadius="100dp"
+            android:layout_centerHorizontal="true"
+            android:innerRadius="0dp"
+            android:shape="ring"
+            android:backgroundTint="@color/secondary1"
+            android:thicknessRatio="1.9">
+            <ImageView
+                android:layout_height="150dp"
+                android:layout_width="150dp"
+                android:id="@+id/avatar"
+                android:src="@drawable/sample"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true">
+            </ImageView>
+        </androidx.cardview.widget.CardView>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="180dp"
             android:layout_height="wrap_content"
@@ -86,7 +95,7 @@
                     android:fontFamily="@font/hellix_bold"
                     />
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="180dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_first_name"
                     app:boxStrokeWidth="1.5dp"

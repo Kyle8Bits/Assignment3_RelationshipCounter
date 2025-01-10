@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragment extends Fragment {
-    private DataUtils dataUtils = new DataUtils();
+    private final DataUtils dataUtils = new DataUtils();
     private RecyclerView searchPeople;
     private CreateChatRoomList resultAdapter;
     private FusedLocationProviderClient client;
@@ -91,7 +91,7 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_maps, container, false);
+        View view = inflater.inflate(R.layout.fragment_maps, container, false);
 
         searchPeople = view.findViewById(R.id.search_bar);
         search_bar = view.findViewById(R.id.et_search_friend);
@@ -109,7 +109,7 @@ public class MapsFragment extends Fragment {
         }
     }
 
-    void setupSearchResult(GoogleMap gMap){
+    void setupSearchResult(GoogleMap gMap) {
         resultAdapter = new CreateChatRoomList(requireContext(), user -> {
             // Handle user click, e.g., open chat with the user
             LatLng currentLocation = new LatLng(user.getLatitude(), user.getLongitude());
@@ -161,6 +161,7 @@ public class MapsFragment extends Fragment {
                     resultAdapter.updateUserList(filteredUsers);
                 }
             }
+
             @Override
             public void onFailure(Exception e) {
                 // Handle failure
@@ -168,16 +169,16 @@ public class MapsFragment extends Fragment {
         });
     }
 
-    public void setUpFriendLocation(GoogleMap gMap){
+    public void setUpFriendLocation(GoogleMap gMap) {
         dataUtils.getFriendsOfUser(new DataUtils.FetchCallback<List<User>>() {
             @Override
             public void onSuccess(List<User> data) {
-                if(!data.isEmpty()) {
+                if (!data.isEmpty()) {
                     for (User user : data) {
                         LatLng userLocation = new LatLng(user.getLatitude(), user.getLongitude());
                         Glide.with(requireContext())
                                 .asBitmap()
-                                .load("https://gamelade.vn/wp-content/uploads/2024/07/Them-tieu-de-1-74.png") // Use the profile image URL
+                                .load(user.getAvatarUrl())
                                 .into(new CustomTarget<Bitmap>() {
                                     @Override
                                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -198,8 +199,7 @@ public class MapsFragment extends Fragment {
                                     }
                                 });
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(getContext(), "No friends found", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -211,23 +211,20 @@ public class MapsFragment extends Fragment {
     }
 
     //Move to the profile when click on user
-    public void friendSetOnMarker(GoogleMap gMap){
-       gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-           @Override
-           public boolean onMarkerClick(@NonNull Marker marker) {
-               User user = (User) marker.getTag();
+    public void friendSetOnMarker(GoogleMap gMap) {
+        gMap.setOnMarkerClickListener(marker -> {
+            User user = (User) marker.getTag();
 
-               /**
-                * Put the user' id as intent Extra then start profile activity and get the information from Firebase
-                */
-               Toast.makeText(
-                       getContext(),
-                       "Friend: " + user.getUsername(),
-                       Toast.LENGTH_SHORT
-               ).show();
-               return false;
-           }
-       });
+            /**
+             * Put the user' id as intent Extra then start profile activity and get the information from Firebase
+             */
+            Toast.makeText(
+                    getContext(),
+                    "Friend: " + user.getUsername(),
+                    Toast.LENGTH_SHORT
+            ).show();
+            return false;
+        });
     }
 
     private BitmapDescriptor createCustomMarker(Bitmap profileImage, int circleColor) {
@@ -272,20 +269,17 @@ public class MapsFragment extends Fragment {
     }
 
     @SuppressLint("MissingPermission")
-    public void getPosition(GoogleMap mMap){
+    public void getPosition(GoogleMap mMap) {
         client = LocationServices.getFusedLocationProviderClient(getContext());
-        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<android.location.Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                try {
-                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(currentLocation).title("Your location"));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-
+        client.getLastLocation().addOnSuccessListener(location -> {
+            try {
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(currentLocation).title("Your location"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
+
         });
     }
 }

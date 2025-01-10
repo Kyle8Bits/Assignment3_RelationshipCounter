@@ -64,25 +64,6 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        // Log the selected tab position
-//        int selectedTabPosition = tabLayout.getSelectedTabPosition();
-//        Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
-//
-//        // Force adapter reset and refresh data
-//        if (selectedTabPosition == 0) {
-//            tabRecyclerView.setAdapter(myFriendsAdapter);
-//            fetchMyFriends();
-//            Log.d("HomeFragment", "Selected Tab Position: " + selectedTabPosition);
-//        } else {
-//            tabRecyclerView.setAdapter(requestAdapter);
-//            fetchFriendRequests();
-//        }
-//    }
-
 
     private void navigateToSearchFriendFragment() {
         // Create a new instance of SearchFriendFragment
@@ -91,7 +72,7 @@ public class HomeFragment extends Fragment {
         // Replace the current fragment with SearchFriendFragment
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, searchFriendFragment);
-        transaction.addToBackStack(null); // Add to back stack to allow user to navigate back
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
