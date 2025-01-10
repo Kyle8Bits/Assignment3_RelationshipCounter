@@ -80,6 +80,14 @@ public class ForegroundService extends Service {
             }
             if (snapshots != null) {
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
+
+                    String documentId = documentChange.getDocument().getId();
+
+                    // Skip already-processed documents
+                    if (processedDocumentIds.contains(documentId)) {
+                        continue;
+                    }
+
                     // Listen for updated documents
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED || documentChange.getType() == DocumentChange.Type.ADDED) {
                         Map<String, Object> documentData = documentChange.getDocument().getData();
@@ -111,9 +119,13 @@ public class ForegroundService extends Service {
                             @Override
                             public void onSuccess(User data) {
                                 if(!isInitialLoadFriend){
-                                String notification = data.getFirstName() + " " + data.getLastName() + message[0];
-                                String title = "You have a new friend";
-                                sendNotification(false,null,sentUserId[0], notification, title);
+                                    String notification = data.getFirstName() + " " + data.getLastName() + message[0];
+                                    String title = "You have a new friend";
+                                    sendNotification(false,null,sentUserId[0], notification, title);
+                                    processedDocumentIds.add(documentId);
+                                }
+                                else {
+                                    System.out.println("first friend");
                                 }
                             }
 
@@ -157,6 +169,9 @@ public class ForegroundService extends Service {
                                         String notification = data.getUsername() + ": " + lastMessage;
                                         String title = "You have new message";
                                         sendNotification(true,data,user.getUid(), notification, title);
+                                    }
+                                    else {
+                                        System.out.println("first chat");
                                     }
                                 }
 
