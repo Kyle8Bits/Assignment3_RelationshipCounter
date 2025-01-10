@@ -1,11 +1,18 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -21,19 +28,40 @@ import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.permission.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.permission.Notification;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser; // Store the current user object
-    private DataUtils dataUtils = new DataUtils();
+
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d("NotificationPermission", "Notification permission granted.");
+                } else {
+                    Log.d("NotificationPermission", "Notification permission denied.");
+                }
+            });
+
     @Override
     protected void onStart(){
         super.onStart();
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             Location.requestLocationPermissions(this);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Notification notificationHandler = new Notification(this);
+            if (!notificationHandler.isNotificationPermissionGranted()) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+                    // Show rationale for notification permission
+                    Toast.makeText(this, "Please enable notification permission to receive alerts.", Toast.LENGTH_LONG).show();
+                } else {
+                    notificationHandler.requestNotificationPermission(this, notificationPermissionLauncher);
+                }
+            }
         }
     }
 
