@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.main_screen;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragmen
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.service.ForegroundService;
+import com.example.assignment3_relationshipcounter.service.broadcast.BatteryReceiver;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.permission.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
@@ -35,7 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser; // Store the current user object
-
+    private BatteryReceiver batteryLevelReceiver;
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -84,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(this, ForegroundService.class);
         ContextCompat.startForegroundService(this, serviceIntent);
         Location.updateUserPosition(this);
-
+        setUpReceiverBattery();
         setContentView(R.layout.activity_home);
 
         // Fetch user from Intent or Session
@@ -183,6 +185,11 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpReceiverBattery(){
+        batteryLevelReceiver = new BatteryReceiver();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(batteryLevelReceiver, filter);
+    }
     /**
      * Get the current user object.
      */
