@@ -52,10 +52,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/prompt_email"
             app:boxStrokeWidth="1.5dp"
             android:layout_marginTop="10dp"
             android:layout_gravity="start"
+            android:hint=""
             app:boxStrokeColor="@color/secondary1"
             app:cursorColor="@color/secondary1"
             style="@style/Widget.Assignment3_RelationshipCounter.TextInputLayout">
@@ -65,6 +65,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:enabled="false"
+                android:hint=""
                 style="@style/Widget.Assignment3_RelationshipCounter.TextInputEditText" />
         </com.google.android.material.textfield.TextInputLayout>
 

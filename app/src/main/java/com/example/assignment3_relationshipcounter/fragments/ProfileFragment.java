@@ -33,11 +33,7 @@ public class ProfileFragment extends Fragment {
     private ImageView avatar;
     private EditText firstName, lastName, email, phoneNumber, username;
     private TextView dob;
-    private Button saveButton;
     private Uri avatarUri;
-    private Authentication auth;
-    private DataUtils dataUtils;
-    private Button cancelButton;
     private User user;
 
     public ProfileFragment() {
@@ -61,16 +57,14 @@ public class ProfileFragment extends Fragment {
         email = view.findViewById(R.id.email);
         dob = view.findViewById(R.id.e_dob);
         phoneNumber = view.findViewById(R.id.e_phone_number);
-        saveButton = view.findViewById(R.id.save_button);
-        cancelButton = view.findViewById(R.id.cancel_button);
-
-        auth = new Authentication();
-        dataUtils = new DataUtils();
+        Button saveButton = view.findViewById(R.id.save_button);
+        Button cancelButton = view.findViewById(R.id.cancel_button);
 
         loadProfile();
 
         avatar.setOnClickListener(v -> pickImage());
         saveButton.setOnClickListener(v -> saveProfile(String.valueOf(avatarUri)));
+        cancelButton.setOnClickListener(v -> cancelChanges());
 
 
         return view;
@@ -107,16 +101,15 @@ public class ProfileFragment extends Fragment {
     }
 
     private void pickImage() {
-        avatar.setOnClickListener(view -> {
-            ImagePicker.with(this)
-                    .crop()
-                    .compress(1024)
-                    .maxResultSize(512, 512)
-                    .createIntent(intent -> {
-                        startActivityForResult(intent, 1001);
-                        return null;
-                    });
-        });
+        avatar.setOnClickListener(view ->
+                ImagePicker.with(this)
+                        .crop()
+                        .compress(1024)
+                        .maxResultSize(512, 512)
+                        .createIntent(intent -> {
+                            startActivityForResult(intent, 1001);
+                            return null;
+                        }));
     }
 
     @Override
@@ -145,12 +138,10 @@ public class ProfileFragment extends Fragment {
         StorageReference storageRef = FirebaseStorage.getInstance()
                 .getReference("avatars/" + user.getId());
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    Toast.makeText(requireActivity(), "Upload image successfully", Toast.LENGTH_SHORT).show();
-                }))
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri ->
+                        Toast.makeText(requireActivity(), "Upload image successfully", Toast.LENGTH_SHORT).show()))
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void saveProfile(String avatarUrl) {
@@ -178,6 +169,28 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loadFields(User user) {
+        firstName.setText(user.getFirstName());
+        lastName.setText(user.getLastName());
+        email.setText(user.getEmail());
+        dob.setText(user.getDoB());
+        username.setText(user.getUsername());
+        phoneNumber.setText(user.getPhoneNumber());
+        Glide.with(requireContext())
+                .load(user.getAvatarUrl())
+                .placeholder(R.drawable.sample)
+                .circleCrop()
+                .into(avatar);
+    }
+
+
+    // Revert input fields to the original user data
+    private void cancelChanges() {
+        if (user != null) {
+            loadFields(user);
+        }
     }
 
 
