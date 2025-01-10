@@ -1,11 +1,19 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -18,24 +26,59 @@ import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragmen
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.service.ForegroundService;
+import com.example.assignment3_relationshipcounter.service.broadcast.BatteryReceiver;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
-import com.example.assignment3_relationshipcounter.service.location.Location;
+import com.example.assignment3_relationshipcounter.service.permission.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.permission.Notification;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class HomeActivity extends AppCompatActivity {
     private User currentUser; // Store the current user object
-    private DataUtils dataUtils = new DataUtils();
-    @Override
-    protected void onStart(){
+    private BatteryReceiver batteryLevelReceiver;
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d("NotificationPermission", "Notification permission granted.");
+                } else {
+                    Log.d("NotificationPermission", "Notification permission denied.");
+                }
+
+                // After handling notification permission, check location permission
+                requestLocationPermission();
+            });
+
+    protected void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+        // Step 1: Request Notification Permission First (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Notification notificationHandler = new Notification(this);
+            if (!notificationHandler.isNotificationPermissionGranted()) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+                    // Show rationale for notification permission
+                    Toast.makeText(this, "Please enable notification permission to receive alerts.", Toast.LENGTH_LONG).show();
+                } else {
+                    notificationHandler.requestNotificationPermission(this, notificationPermissionLauncher);
+                    return; // Exit here to wait for notification permission result
+                }
+            }
+        }
+
+        // Step 2: If Notification Permission is Already Granted, Check Location Permission
+        requestLocationPermission();
+    }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             Location.requestLocationPermissions(this);
         }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(this, ForegroundService.class);
         ContextCompat.startForegroundService(this, serviceIntent);
         Location.updateUserPosition(this);
-
+        setUpReceiverBattery();
         setContentView(R.layout.activity_home);
 
         // Fetch user from Intent or Session
@@ -142,6 +185,11 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpReceiverBattery(){
+        batteryLevelReceiver = new BatteryReceiver();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(batteryLevelReceiver, filter);
+    }
     /**
      * Get the current user object.
      */

@@ -9,6 +9,12 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -54,16 +60,22 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".service.NotificationBR" android:exported="false">
-            <intent-filter>
-                <action android:name="com.example.NOTIFICATION_RECEIVED" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".service.ForegroundService"
             android:exported="true"
             android:foregroundServiceType="dataSync" />
+
+        <receiver android:name=".service.broadcast.CallReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.CALL_PERSON" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".service.broadcast.BatteryReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

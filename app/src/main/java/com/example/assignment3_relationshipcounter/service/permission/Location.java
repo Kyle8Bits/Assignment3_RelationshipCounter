@@ -1,4 +1,4 @@
-package com.example.assignment3_relationshipcounter.service.location;
+package com.example.assignment3_relationshipcounter.service.permission;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -20,13 +20,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
 import java.util.Map;

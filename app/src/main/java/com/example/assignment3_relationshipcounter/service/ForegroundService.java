@@ -38,7 +38,7 @@ import java.util.Set;
 
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final Set<String> processedDocumentIds = new HashSet<>();
+
     private boolean isInitialLoadFriend = true;
     private boolean isInitialLoadChat = true;
     Authentication auth = new Authentication();
@@ -80,6 +80,7 @@ public class ForegroundService extends Service {
             }
             if (snapshots != null) {
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
+
                     // Listen for updated documents
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED || documentChange.getType() == DocumentChange.Type.ADDED) {
                         Map<String, Object> documentData = documentChange.getDocument().getData();
@@ -111,9 +112,12 @@ public class ForegroundService extends Service {
                             @Override
                             public void onSuccess(User data) {
                                 if(!isInitialLoadFriend){
-                                String notification = data.getFirstName() + " " + data.getLastName() + message[0];
-                                String title = "You have a new friend";
-                                sendNotification(false,null,sentUserId[0], notification, title);
+                                    String notification = data.getFirstName() + " " + data.getLastName() + message[0];
+                                    String title = "You have a new friend";
+                                    sendNotification(false,null,sentUserId[0], notification, title);
+                                }
+                                else {
+                                    System.out.println("first friend");
                                 }
                             }
 
@@ -157,6 +161,9 @@ public class ForegroundService extends Service {
                                         String notification = data.getUsername() + ": " + lastMessage;
                                         String title = "You have new message";
                                         sendNotification(true,data,user.getUid(), notification, title);
+                                    }
+                                    else {
+                                        System.out.println("first chat");
                                     }
                                 }
 
