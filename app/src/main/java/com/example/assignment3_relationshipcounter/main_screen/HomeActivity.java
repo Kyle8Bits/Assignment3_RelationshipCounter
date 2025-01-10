@@ -43,15 +43,15 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     Log.d("NotificationPermission", "Notification permission denied.");
                 }
+
+                // After handling notification permission, check location permission
+                requestLocationPermission();
             });
 
-    @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Location.requestLocationPermissions(this);
-        }
+
+        // Step 1: Request Notification Permission First (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Notification notificationHandler = new Notification(this);
             if (!notificationHandler.isNotificationPermissionGranted()) {
@@ -60,10 +60,23 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please enable notification permission to receive alerts.", Toast.LENGTH_LONG).show();
                 } else {
                     notificationHandler.requestNotificationPermission(this, notificationPermissionLauncher);
+                    return; // Exit here to wait for notification permission result
                 }
             }
         }
+
+        // Step 2: If Notification Permission is Already Granted, Check Location Permission
+        requestLocationPermission();
     }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Location.requestLocationPermissions(this);
+        }
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
