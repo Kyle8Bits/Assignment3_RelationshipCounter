@@ -19,7 +19,7 @@ import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
-import com.example.assignment3_relationshipcounter.service.location.Location;
+import com.example.assignment3_relationshipcounter.service.permission.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
