@@ -1,5 +1,7 @@
 package com.example.assignment3_relationshipcounter.adapter;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.fragments.FriendshipDetailFragment;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
@@ -25,6 +28,7 @@ import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ import java.util.List;
 public class FriendList extends RecyclerView.Adapter<FriendListView> {
 
     private final Context context;
-    private List<User> userList;
+    private final List<User> userList;
 
     public FriendList(Context context, List<User> userList) {
         this.context = context;
@@ -52,6 +56,11 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
 
         // Set Friend Name
         holder.friendName.setText(user.getUsername());
+        Glide.with(context)
+                .load(user.getAvatarUrl())
+                .placeholder(R.drawable.sample)
+                .circleCrop()
+                .into(holder.avatar);
 
         // Fetch relationship for the user
         fetchRelationshipForUser(user, new DataUtils.FetchCallback<Relationship>() {
@@ -100,7 +109,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
 
                                 // Update the status to "Friend" and set the created date
                                 relationship.setStatus(FriendStatus.FRIEND);
-                                relationship.setDateCreated(new Utils().getCurrentDate());
+                                relationship.setDateCreated(Utils.getCurrentDate());
 
                                 new DataUtils().updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
                                     @Override
@@ -139,7 +148,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                                     null, // ID will be auto-generated
                                     currentUserId,
                                     user.getId(),
-                                    new Utils().getCurrentDate(), // Date created
+                                    Utils.getCurrentDate(),
                                     null, // Date accepted (null for now)
                                     FriendStatus.PENDING,
                                     0
@@ -198,7 +207,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         "rel_" + user.getId(),
                         UserSession.getInstance().getCurrentUser().getId(),
                         user.getId(),
-                        new Utils().getCurrentDate(),
+                        Utils.getCurrentDate(),
                         null,
                         FriendStatus.NOT_FRIEND,
                         0
@@ -323,6 +332,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
 class FriendListView extends RecyclerView.ViewHolder {
 
     TextView friendName, dayCount;
+    ShapeableImageView avatar;
     Button addFriendButton;
     FrameLayout navigateIcon;
 
@@ -330,6 +340,7 @@ class FriendListView extends RecyclerView.ViewHolder {
         super(itemView);
 
         // Initialize views
+        avatar = itemView.findViewById(R.id.avatar);
         friendName = itemView.findViewById(R.id.card_friendname);
         dayCount = itemView.findViewById(R.id.day_count);
         addFriendButton = itemView.findViewById(R.id.btn_add_friend);

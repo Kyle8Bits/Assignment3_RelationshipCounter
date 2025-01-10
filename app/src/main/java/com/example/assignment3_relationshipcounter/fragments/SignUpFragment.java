@@ -82,64 +82,52 @@ public class SignUpFragment extends Fragment {
         auth = new Authentication();
         signUpBtn.setOnClickListener(v -> {
             Toast.makeText(requireActivity(), "Reach sign up", Toast.LENGTH_SHORT).show();
-            ProgressManager.showProgress(getChildFragmentManager());
+//            ProgressManager.showProgress(getChildFragmentManager());
 
             // Retrieve user input
             String firstName = eFirstName.getText().toString();
+            Toast.makeText(requireActivity(), firstName, Toast.LENGTH_SHORT).show();
             String lastName = eLastName.getText().toString();
             String username = eUsername.getText().toString();
             String email = eEmail.getText().toString();
             String password = ePassword.getText().toString();
             String phoneNumber = ePhone.getText().toString();
             String dob = eDOB.getText().toString();
+            Toast.makeText(requireActivity(), dob, Toast.LENGTH_SHORT).show();
             // Validate input fields
             if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || email.isEmpty()
                     || password.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || selectedGender.getText().toString().isEmpty()) {
-                ProgressManager.dismissProgress();
+//                ProgressManager.dismissProgress();
                 errorDisplay.setText("Please fill in all fields");
                 return;
             }
             // Create new user object
             Gender gender = Gender.fromString(selectedGender.getText().toString().toLowerCase());
 
-            FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(requireActivity());
-            client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            User newUser = new User("", firstName, lastName, username, email, dob, gender, phoneNumber, UserType.USER, 0, 0);
+            // Register user
+            auth.registerNewUser(email, password, newUser, new Authentication.RegisterNewUserCallback() {
+
                 @Override
-                public void onSuccess(Location location) {
-                    try {
-                        Toast.makeText(requireActivity(), "Reach success", Toast.LENGTH_SHORT).show();
-                        User newUser = new User("", firstName, lastName, username, email, dob, gender, phoneNumber, UserType.USER,location.getLatitude(), location.getLongitude());
-                        // Register user
-                        auth.registerNewUser(email, password, newUser, new Authentication.RegisterNewUserCallback() {
+                public void onSuccess() {
+                    ProgressManager.dismissProgress();
+                    Toast.makeText(requireActivity(), "Reach success", Toast.LENGTH_SHORT).show();
+                    // Navigate to HomeActivity
+                    Intent intent = new Intent(requireActivity(), HomeActivity.class);
+                    intent.putExtra("currentUser", newUser);
+                    startActivity(intent);
+                }
 
-                            @Override
-                            public void onSuccess() {
-                                ProgressManager.dismissProgress();
-
-                                // Navigate to HomeActivity
-                                Intent intent = new Intent(requireActivity(), HomeActivity.class);
-                                intent.putExtra("currentUser", newUser);
-                                startActivity(intent);
-                                requireActivity().finish();
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                ProgressManager.dismissProgress();
-                                errorDisplay.setText(e.getMessage());
-                            }
-                        });
-
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-
+                @Override
+                public void onFailure(Exception e) {
+                    ProgressManager.dismissProgress();
+                    errorDisplay.setText(e.getMessage());
                 }
             });
+
         });
         return view;
     }
-
     private void selectGender(TextView selected) {
         if (selectedGender != null) {
             selectedGender.setSelected(false);
