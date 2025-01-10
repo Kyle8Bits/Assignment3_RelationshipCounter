@@ -50,6 +50,9 @@ public class HomeActivity extends AppCompatActivity {
                 requestLocationPermission();
             });
 
+    private DataUtils dataUtils = new DataUtils();
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -122,7 +125,10 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_profile:
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user", currentUser);
                     selectedFragment = new ProfileFragment();
+                    selectedFragment.setArguments(bundle);
                     break;
 
                 case R.id.nav_friends:
@@ -134,21 +140,19 @@ public class HomeActivity extends AppCompatActivity {
                     break;
                 default:
                     // Handle unexpected cases gracefully
-                    selectedFragment = new HomeFragment(); // Fallback to HomeFragment
+                    selectedFragment = new HomeFragment();
                     break;
             }
 
 
-            if (selectedFragment != null) {
-                loadFragment(selectedFragment);
-            }
+            loadFragment(selectedFragment);
             return true;
         });
 
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Location.handlePermissionResult(requestCode, grantResults, this);
     }

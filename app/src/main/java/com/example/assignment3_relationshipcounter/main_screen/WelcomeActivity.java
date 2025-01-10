@@ -1,7 +1,9 @@
 package com.example.assignment3_relationshipcounter.main_screen;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -62,6 +64,9 @@ public class WelcomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Context context = getApplicationContext();
+        String packageName = context.getPackageName();
+        Log.d("PackageName", "App Package Name: " + packageName);
         Intent intent = getIntent();
         FragmentContainerView authContainer = findViewById(R.id.auth_container);
         Button toLoginBtn = findViewById(R.id.button_to_login);

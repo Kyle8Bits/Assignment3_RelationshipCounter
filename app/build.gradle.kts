@@ -37,9 +37,10 @@ android {
 }
 
 dependencies {
-    implementation("com.firebaseui:firebase-ui-firestore:8.0.1")
+    implementation(libs.firebase.ui.firestore.v801)
     implementation(libs.firebase.analytics)
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
     implementation(libs.play.services.maps)
     implementation ("androidx.work:work-runtime:2.8.1")
     implementation (libs.glide)
@@ -57,4 +58,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation (libs.material.v190)
+    implementation (libs.dhaval2404.imagepicker)
+
 }

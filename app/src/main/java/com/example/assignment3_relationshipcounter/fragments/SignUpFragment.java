@@ -81,6 +81,7 @@ public class SignUpFragment extends Fragment {
         Button signUpBtn = view.findViewById(R.id.action_signup);
         auth = new Authentication();
         signUpBtn.setOnClickListener(v -> {
+            Toast.makeText(requireActivity(), "Reach sign up", Toast.LENGTH_SHORT).show();
             ProgressManager.showProgress(getChildFragmentManager());
 
             // Retrieve user input
@@ -106,6 +107,7 @@ public class SignUpFragment extends Fragment {
                 @Override
                 public void onSuccess(Location location) {
                     try {
+                        Toast.makeText(requireActivity(), "Reach success", Toast.LENGTH_SHORT).show();
                         User newUser = new User("", firstName, lastName, username, email, dob, gender, phoneNumber, UserType.USER,location.getLatitude(), location.getLongitude());
                         // Register user
                         auth.registerNewUser(email, password, newUser, new Authentication.RegisterNewUserCallback() {
