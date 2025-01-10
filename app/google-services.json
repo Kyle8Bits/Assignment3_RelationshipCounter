@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "30846665607",
-    "project_id": "relationshipcounterapp-8065d",
-    "storage_bucket": "relationshipcounterapp-8065d.firebasestorage.app"
+    "project_number": "5914704506",
+    "project_id": "android-asm3-group",
+    "storage_bucket": "android-asm3-group.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:30846665607:android:6e38318f2164bb08870922",
+        "mobilesdk_app_id": "1:5914704506:android:7093acf6f49cf018d019c3",
         "android_client_info": {
           "package_name": "com.example.assignment3_relationshipcounter"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBr1gZwXW0us9TDU0YsHK3BBJx4T9AuunU"
+          "current_key": "AIzaSyCBDsDFFdPI9q-zFV5clZSYDNBq0UMn5d4"
         }
       ],
       "services": {

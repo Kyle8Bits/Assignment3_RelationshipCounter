@@ -17,6 +17,7 @@ public class User implements DataUtils.HasId, Serializable {
     private UserType accountType;
     private double latitude;
     private double longitude;
+    private String avatarUrl;
     public User() {
     }
 
@@ -32,6 +33,15 @@ public class User implements DataUtils.HasId, Serializable {
         this.accountType = accountType;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.avatarUrl = "";
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getId() {
