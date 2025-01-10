@@ -22,9 +22,7 @@ import com.example.assignment3_relationshipcounter.fragments.LoginFragment;
 import com.example.assignment3_relationshipcounter.fragments.SignUpFragment;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
-import com.example.assignment3_relationshipcounter.service.location.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class WelcomeActivity extends AppCompatActivity {

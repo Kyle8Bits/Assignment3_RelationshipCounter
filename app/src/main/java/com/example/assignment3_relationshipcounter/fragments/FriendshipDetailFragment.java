@@ -1,13 +1,18 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
@@ -20,27 +25,35 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import android.net.Uri;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FriendshipDetailFragment extends Fragment {
-
+    private static final int REQUEST_CALL_PERMISSION = 1;
     private BarChart activityBarChart;
     private MaterialButton backButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_friendship_detail, container, false);
 
         // Access currentUser from HomeActivity
         HomeActivity homeActivity = (HomeActivity) requireActivity();
         User currentUser = homeActivity.getCurrentUser();
 
+//        make a call button for this call, also set the xxxx to the number want to call
+//        callButton.setOnClickListener(v -> {
+//            String phoneNumber = "xxxxxx"; // Replace with the phone number you want to call
+//            makeCall(phoneNumber);
+//        });
+
         backButton = view.findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+//        backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
         // Initialize BarChart
         activityBarChart = view.findViewById(R.id.activity_bar_chart);
@@ -120,5 +133,31 @@ public class FriendshipDetailFragment extends Fragment {
         activityBarChart.setFitBars(true);
         activityBarChart.getDescription().setEnabled(false); // Disable description text
         activityBarChart.invalidate(); // Refresh the chart
+    }
+
+
+    private void makeCall(String phoneNumber) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // Request CALL_PHONE permission
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        } else {
+            // Permission granted, make the call
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+            startActivity(callIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(requireContext(), "Permission granted. Please press the call button again.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "CALL_PHONE permission denied.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

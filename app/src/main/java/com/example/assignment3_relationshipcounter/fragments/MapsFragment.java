@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -75,7 +74,7 @@ public class MapsFragment extends Fragment {
         public void onMapReady(@NonNull GoogleMap googleMap) {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
-                com.example.assignment3_relationshipcounter.service.location.Location.requestLocationPermissions(requireActivity());
+                com.example.assignment3_relationshipcounter.service.permission.Location.requestLocationPermissions(requireActivity());
             } else {
                 getPosition(googleMap);
                 setUpFriendLocation(googleMap);
