@@ -38,7 +38,7 @@ import java.util.Set;
 
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final Set<String> processedDocumentIds = new HashSet<>();
+
     private boolean isInitialLoadFriend = true;
     private boolean isInitialLoadChat = true;
     Authentication auth = new Authentication();
@@ -81,13 +81,6 @@ public class ForegroundService extends Service {
             if (snapshots != null) {
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
 
-                    String documentId = documentChange.getDocument().getId();
-
-                    // Skip already-processed documents
-                    if (processedDocumentIds.contains(documentId)) {
-                        continue;
-                    }
-
                     // Listen for updated documents
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED || documentChange.getType() == DocumentChange.Type.ADDED) {
                         Map<String, Object> documentData = documentChange.getDocument().getData();
@@ -122,7 +115,6 @@ public class ForegroundService extends Service {
                                     String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                     String title = "You have a new friend";
                                     sendNotification(false,null,sentUserId[0], notification, title);
-                                    processedDocumentIds.add(documentId);
                                 }
                                 else {
                                     System.out.println("first friend");
