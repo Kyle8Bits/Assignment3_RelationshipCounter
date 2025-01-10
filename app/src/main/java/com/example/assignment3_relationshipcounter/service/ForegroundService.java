@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +10,25 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.fragments.ChatFragment;
+import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +39,8 @@ import java.util.Set;
 public class ForegroundService extends Service {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Set<String> processedDocumentIds = new HashSet<>();
-    private boolean isInitialLoad = true;
+    private boolean isInitialLoadFriend = true;
+    private boolean isInitialLoadChat = true;
     Authentication auth = new Authentication();
     FirebaseUser user = auth.getAuth().getCurrentUser();
     DataUtils dataUtils = new DataUtils();
@@ -58,6 +69,7 @@ public class ForegroundService extends Service {
         startForeground(1, builder.build());
 
         setupAcceptFriendListener();
+        setupChatListener();
     }
 
     private void setupAcceptFriendListener() {
@@ -81,7 +93,6 @@ public class ForegroundService extends Service {
                             usersId.add(firstUser);
                             usersId.add(secondUser);
                         }
-
                         String otherUserId = Utils.getOtherId(user.getUid(), usersId); // Ensure usersId has data
                         final String[] sentUserId = new String[1];
                         if(check!=null){
@@ -99,10 +110,10 @@ public class ForegroundService extends Service {
                         dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
                             @Override
                             public void onSuccess(User data) {
-                                if(!isInitialLoad){
+                                if(!isInitialLoadFriend){
                                 String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                 String title = "You have a new friend";
-                                sendNotification(sentUserId[0], notification, title);
+                                sendNotification(false,null,sentUserId[0], notification, title);
                                 }
                             }
 
@@ -113,45 +124,68 @@ public class ForegroundService extends Service {
                         });
                     }
                 }
-                isInitialLoad = false;
+                isInitialLoadFriend = false;
             }
         });
     }
 
-    private void setUpAddFriendListener(){
-        db.collection("relationships").addSnapshotListener((snapshots, e) -> {
+    private void setupChatListener() {
+        CollectionReference chatroomsCollection = db.collection("chatrooms");
+
+        Query query = chatroomsCollection.whereArrayContains("userIds", user.getUid());
+
+        query.addSnapshotListener((snapshots, e) -> {
             if (e != null) {
-                Log.w("FirestoreService", "Listen failed.", e);
+                Log.w("Firestore", "Listen failed.", e);
                 return;
             }
 
+            // Ensure that the snapshots are not null and contain data
             if (snapshots != null) {
                 for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
-                    String documentId = documentChange.getDocument().getId();
+                    if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
+                        Map<String, Object> documentData = documentChange.getDocument().getData();
+                        String lastMessage = (String) documentData.get("lastMessage");
+                        String lastMessageSenderId = (String) documentData.get("lastMessageSenderId");
+                        String roomId = (String) documentData.get("chatroomId");
 
-                    // Only notify on new documents after the initial load
-                    if (documentChange.getType() == DocumentChange.Type.ADDED && !processedDocumentIds.contains(documentId) && !isInitialLoad) {
-                        Log.d("FirestoreService", "New document added: " + documentChange.getDocument().getData());
+                        if(!lastMessageSenderId.equals(user.getUid())){
+                            dataUtils.getById("users", lastMessageSenderId, User.class, new DataUtils.FetchCallback<User>() {
+                                @Override
+                                public void onSuccess(User data) {
+                                    if (!isInitialLoadChat) {
+                                        String notification = data.getUsername() + ": " + lastMessage;
+                                        String title = "You have new message";
+                                        sendNotification(true,data,user.getUid(), notification, title);
+                                    }
+                                }
 
-                        // Add document ID to processed list
-                        processedDocumentIds.add(documentId);
+                                @Override
+                                public void onFailure(Exception e) {
 
-                        // Trigger a notification
+                                }
+                            });
+                        }
                     }
                 }
-
-                // Mark the initial load as complete
-                isInitialLoad = false;
+                isInitialLoadChat = false;
             }
         });
-
     }
 
-    private void sendNotification(String sentToId, String notification, String title) {
+    private void sendNotification(Boolean isChat, User userOther,String sentToId, String notification, String title) {
         String currentUid = user.getUid();
-
+        PendingIntent pendingIntent;
         if (sentToId.equals(currentUid)) {
-
+            if(isChat) {
+                Intent intent = new Intent(this, ChatFragment.class);  // Replace ChatActivity with the activity you want to open
+                intent.putExtra("otherUser", userOther);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            }
+            else {
+                Intent intent = new Intent(this, HomeActivity.class);
+                pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            }
         // Create and display the notification
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -159,7 +193,9 @@ public class ForegroundService extends Service {
                 .setSmallIcon(R.drawable.ic_notification) // Replace with your actual icon
                 .setContentTitle(title)
                 .setContentText(notification)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
