@@ -82,22 +82,20 @@ public class SignUpFragment extends Fragment {
         auth = new Authentication();
         signUpBtn.setOnClickListener(v -> {
             Toast.makeText(requireActivity(), "Reach sign up", Toast.LENGTH_SHORT).show();
-//            ProgressManager.showProgress(getChildFragmentManager());
+            ProgressManager.showProgress(getChildFragmentManager());
 
             // Retrieve user input
             String firstName = eFirstName.getText().toString();
-            Toast.makeText(requireActivity(), firstName, Toast.LENGTH_SHORT).show();
             String lastName = eLastName.getText().toString();
             String username = eUsername.getText().toString();
             String email = eEmail.getText().toString();
             String password = ePassword.getText().toString();
             String phoneNumber = ePhone.getText().toString();
             String dob = eDOB.getText().toString();
-            Toast.makeText(requireActivity(), dob, Toast.LENGTH_SHORT).show();
             // Validate input fields
             if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || email.isEmpty()
                     || password.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || selectedGender.getText().toString().isEmpty()) {
-//                ProgressManager.dismissProgress();
+                ProgressManager.dismissProgress();
                 errorDisplay.setText("Please fill in all fields");
                 return;
             }

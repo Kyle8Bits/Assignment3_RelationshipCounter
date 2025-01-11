@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.fragments.FriendshipDetailFragment;
+import com.example.assignment3_relationshipcounter.fragments.UserProfileFragment;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
@@ -59,7 +60,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
         Glide.with(context)
                 .load(user.getAvatarUrl())
                 .placeholder(R.drawable.sample)
-                .circleCrop()
+                .centerCrop()
                 .into(holder.avatar);
 
         // Fetch relationship for the user
@@ -90,8 +91,7 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         holder.addFriendButton.setVisibility(View.VISIBLE);
                         holder.navigateIcon.setVisibility(View.GONE);
                         holder.dayCount.setVisibility(View.GONE);
-                        // Remove click listener since it's not a friend
-                        holder.itemView.setOnClickListener(null);
+                        holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
 
                         if (relationship.getFirstUser().equals(currentUserId)) {
                             // Current user is the sender
@@ -135,8 +135,8 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                         holder.addFriendButton.setEnabled(true);
                         holder.navigateIcon.setVisibility(View.GONE);
                         holder.dayCount.setVisibility(View.GONE);
-                        // Remove click listener since it's not a friend
-                        holder.itemView.setOnClickListener(null);
+
+                        holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
 
                         // Handle "Add Friend" Button Click
                         holder.addFriendButton.setOnClickListener(v -> {
@@ -187,6 +187,23 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                 holder.navigateIcon.setVisibility(View.GONE);
             }
         });
+    }
+
+    // Navigate to the user's profile details
+    private void navigateToUserProfile(User user) {
+        UserProfileFragment fragment = new UserProfileFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("user", user);
+        fragment.setArguments(args);
+
+        if (context instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) context;
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     private void fetchRelationshipForUser(User user, DataUtils.FetchCallback<Relationship> callback) {

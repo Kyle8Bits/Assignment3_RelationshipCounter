@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +41,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -111,15 +109,20 @@ public class MapsFragment extends Fragment {
 
     void setupSearchResult(GoogleMap gMap) {
         resultAdapter = new CreateChatRoomList(requireContext(), user -> {
-            // Handle user click, e.g., open chat with the user
-            LatLng currentLocation = new LatLng(user.getLatitude(), user.getLongitude());
-            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            // Animate camera to the user's location
+            LatLng userLocation = new LatLng(user.getLatitude(), user.getLongitude());
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+
+            // Optionally, add a marker at the user's location
+            gMap.addMarker(new MarkerOptions()
+                    .position(userLocation)
+                    .title(user.getUsername()));
         });
 
         searchPeople.setLayoutManager(new LinearLayoutManager(getContext()));
         searchPeople.setAdapter(resultAdapter);
 
-
+        // Add text change listener for live search
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -145,6 +148,7 @@ public class MapsFragment extends Fragment {
             }
         });
     }
+
 
     private void performSearch(String query, CreateChatRoomList resultAdapter) {
         DataUtils dataUtils = new DataUtils();
@@ -215,9 +219,6 @@ public class MapsFragment extends Fragment {
         gMap.setOnMarkerClickListener(marker -> {
             User user = (User) marker.getTag();
 
-            /**
-             * Put the user' id as intent Extra then start profile activity and get the information from Firebase
-             */
             Toast.makeText(
                     getContext(),
                     "Friend: " + user.getUsername(),
