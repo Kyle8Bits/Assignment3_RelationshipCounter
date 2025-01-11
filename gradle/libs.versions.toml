@@ -23,6 +23,8 @@ googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 playServicesMaps = "19.0.0"
 firebaseUiFirestore = "8.0.2"
 materialCalendarviewVersion = "1.4.3"
+legacySupportV4 = "1.0.0"
+recyclerview = "1.3.2"
 
 [libraries]
 dhaval2404-imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepickerVersion" }
@@ -48,6 +50,8 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 firebase-ui-firestore = { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseUiFirestore" }
 prolificinteractive-material-calendarview = { group = "com.prolificinteractive", name = "material-calendarview", version.ref = "materialCalendarviewVersion" }
+legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

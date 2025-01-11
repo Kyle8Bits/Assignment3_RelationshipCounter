@@ -18,10 +18,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.adapter.EventAdapter;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.models.Event;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
@@ -32,24 +36,28 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FriendshipDetailFragment extends Fragment {
 
     private static final int REQUEST_CALL_PERMISSION = 1;
-    private BarChart activityBarChart;
+    private MaterialCalendarView calendarView;
     private MaterialButton backButton, optionButton;
-    private MaterialButton callButton;
     private TextView daysCountTextView;
     private User currentUser;
     private DataUtils dataUtils;
+    private List<Event> sharedEvents;
 
     @Nullable
     @Override
@@ -63,6 +71,7 @@ public class FriendshipDetailFragment extends Fragment {
         HomeActivity homeActivity = (HomeActivity) requireActivity();
         currentUser = homeActivity.getCurrentUser();
 
+
         // Retrieve arguments
         if (getArguments() != null) {
             handleFragmentArguments(view);
@@ -74,14 +83,12 @@ public class FriendshipDetailFragment extends Fragment {
     private void initializeUI(View view) {
         backButton = view.findViewById(R.id.back_button);
         optionButton = view.findViewById(R.id.option_button);
-//        callButton = view.findViewById(R.id.call_button);
         daysCountTextView = view.findViewById(R.id.days_count);
-//        activityBarChart = view.findViewById(R.id.activity_bar_chart);
+        calendarView = view.findViewById(R.id.calendar);
 
         backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
-//        setupCallButton();
         setupOptionButton();
-        setupBarChart();
+        setupCalendar(calendarView);
     }
 
     private void handleFragmentArguments(View view) {
@@ -91,7 +98,6 @@ public class FriendshipDetailFragment extends Fragment {
         String friendId = getArguments().getString("friendId");
         String friendName = getArguments().getString("friendName");
         String relationshipId = getArguments().getString("relationshipId");
-
         currentUserNameTextView.setText(currentUser.getUsername() + " \uD83D\uDC4B");
         friendNameTextView.setText(friendName + " \uD83D\uDC4B");
 
@@ -99,12 +105,6 @@ public class FriendshipDetailFragment extends Fragment {
         loadFriendshipDetails(relationshipId);
     }
 
-//    private void setupCallButton() {
-//        callButton.setOnClickListener(v -> {
-//            String phoneNumber = "xxxxxx"; // Replace with actual phone number
-//            makeCall(phoneNumber);
-//        });
-//    }
 
     private void setupOptionButton() {
         optionButton.setOnClickListener(v -> {
@@ -112,7 +112,7 @@ public class FriendshipDetailFragment extends Fragment {
             popupMenu.inflate(R.menu.friendship_detail_menu);
 
             // Apply the custom style
-            popupMenu.setForceShowIcon(true); // Optional, to show icons if added in the future
+            popupMenu.setForceShowIcon(true);
             try {
                 Field mPopup = popupMenu.getClass().getDeclaredField("mPopup");
                 mPopup.setAccessible(true);
@@ -228,61 +228,6 @@ public class FriendshipDetailFragment extends Fragment {
         return differenceInMilliseconds / (1000 * 60 * 60 * 24); // Convert milliseconds to days
     }
 
-    private void setupBarChart() {
-        List<BarEntry> barEntries = createDummyData();
-
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Activity in the Week");
-        barDataSet.setColor(getResources().getColor(R.color.primary));
-        barDataSet.setValueTextColor(getResources().getColor(R.color.secondary1));
-        barDataSet.setValueTextSize(12f);
-
-        BarData barData = new BarData(barDataSet);
-        barData.setBarWidth(0.9f);
-
-        XAxis xAxis = activityBarChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setLabelCount(7);
-        xAxis.setValueFormatter(new ValueFormatter() {
-            private final String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-
-            @Override
-            public String getFormattedValue(float value) {
-                return days[(int) value];
-            }
-        });
-
-        YAxis leftAxis = activityBarChart.getAxisLeft();
-        leftAxis.setAxisMinimum(0f);
-        activityBarChart.getAxisRight().setEnabled(false);
-
-        activityBarChart.setData(barData);
-        activityBarChart.setFitBars(true);
-        activityBarChart.getDescription().setEnabled(false);
-        activityBarChart.invalidate();
-    }
-
-    private List<BarEntry> createDummyData() {
-        List<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(0, 5)); // Monday
-        barEntries.add(new BarEntry(1, 8)); // Tuesday
-        barEntries.add(new BarEntry(2, 3)); // Wednesday
-        barEntries.add(new BarEntry(3, 6)); // Thursday
-        barEntries.add(new BarEntry(4, 9)); // Friday
-        barEntries.add(new BarEntry(5, 7)); // Saturday
-        barEntries.add(new BarEntry(6, 4)); // Sunday
-        return barEntries;
-    }
-
-    private void makeCall(String phoneNumber) {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
-        } else {
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:" + phoneNumber));
-            startActivity(callIntent);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -295,5 +240,49 @@ public class FriendshipDetailFragment extends Fragment {
                 Toast.makeText(requireContext(), "CALL_PHONE permission denied.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    private void setupCalendar(MaterialCalendarView calendarView) {
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+                    date.getYear(), date.getMonth(), date.getDay());
+
+            fetchEventsForDate(selectedDate);
+        });
+    }
+
+    private void fetchEventsForDate(String selectedDate) {
+        String relationshipId = getArguments().getString("relationshipId");
+
+        new DataUtils().getEventsForRelationship(relationshipId, selectedDate, new DataUtils.FetchCallback<List<Event>>() {
+            @Override
+            public void onSuccess(List<Event> events) {
+                if (events.isEmpty()) {
+                    Toast.makeText(requireContext(), "No events found for " + selectedDate, Toast.LENGTH_SHORT).show();
+                } else {
+                    displayEventsInBottomSheet(events);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireContext(), "Failed to load events: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void displayEventsInBottomSheet(List<Event> events) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        View bottomSheetView = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_event_bottom_sheet, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+
+        RecyclerView eventRecyclerView = bottomSheetView.findViewById(R.id.event_recycler_view);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        EventAdapter eventAdapter = new EventAdapter(events);
+        eventRecyclerView.setAdapter(eventAdapter);
+
+        bottomSheetDialog.show();
     }
 }

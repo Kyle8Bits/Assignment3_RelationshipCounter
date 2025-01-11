@@ -2,11 +2,13 @@ package com.example.assignment3_relationshipcounter.service.firestore;
 
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 
+import com.example.assignment3_relationshipcounter.service.models.Event;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -472,5 +474,32 @@ public class DataUtils {
                 })
                 .addOnFailureListener(callback::onFailure);
     }
+
+    public void getEventsForRelationship(String relationshipId, String selectedDate, FetchCallback<List<Event>> callback) {
+        db.collection("relationships")
+                .document(relationshipId)
+                .collection("events")
+                .whereEqualTo("date", selectedDate) // Match the selected date
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Event> events = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Event event = doc.toObject(Event.class);
+                        events.add(event);
+                    }
+                    callback.onSuccess(events);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void addEventToRelationship(String relationshipId, Event event, NormalCallback<Void> callback) {
+        db.collection("relationships")
+                .document(relationshipId)
+                .collection("events")
+                .add(event)
+                .addOnSuccessListener(docRef -> callback.onSuccess())
+                .addOnFailureListener(callback::onFailure);
+    }
+
 
 }
