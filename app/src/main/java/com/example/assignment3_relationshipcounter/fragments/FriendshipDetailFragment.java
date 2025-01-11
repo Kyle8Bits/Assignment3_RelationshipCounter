@@ -76,7 +76,7 @@ public class FriendshipDetailFragment extends Fragment {
         optionButton = view.findViewById(R.id.option_button);
 //        callButton = view.findViewById(R.id.call_button);
         daysCountTextView = view.findViewById(R.id.days_count);
-        activityBarChart = view.findViewById(R.id.activity_bar_chart);
+//        activityBarChart = view.findViewById(R.id.activity_bar_chart);
 
         backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 //        setupCallButton();
