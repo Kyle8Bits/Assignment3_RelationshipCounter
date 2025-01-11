@@ -120,4 +120,9 @@
         <item name="android:height">50dp</item>
     </style>
 
+    <style name="CustomPopupMenu" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_rounded_popup_menu</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
 </resources>

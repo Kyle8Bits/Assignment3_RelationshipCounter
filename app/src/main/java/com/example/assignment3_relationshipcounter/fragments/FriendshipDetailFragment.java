@@ -1,10 +1,13 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,11 +15,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
+import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
+import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,95 +32,217 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import android.net.Uri;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FriendshipDetailFragment extends Fragment {
+
     private static final int REQUEST_CALL_PERMISSION = 1;
     private BarChart activityBarChart;
-    private MaterialButton backButton;
+    private MaterialButton backButton, optionButton;
+    private MaterialButton callButton;
+    private TextView daysCountTextView;
+    private User currentUser;
+    private DataUtils dataUtils;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_friendship_detail, container, false);
 
-        // Access currentUser from HomeActivity
+        // Initialize UI components
+        initializeUI(view);
+
+        // Access current user from HomeActivity
         HomeActivity homeActivity = (HomeActivity) requireActivity();
-        User currentUser = homeActivity.getCurrentUser();
-
-//        make a call button for this call, also set the xxxx to the number want to call
-//        callButton.setOnClickListener(v -> {
-//            String phoneNumber = "xxxxxx"; // Replace with the phone number you want to call
-//            makeCall(phoneNumber);
-//        });
-
-        backButton = view.findViewById(R.id.back_button);
-//        backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
-
-        // Initialize BarChart
-        activityBarChart = view.findViewById(R.id.activity_bar_chart);
-        setupBarChart();
+        currentUser = homeActivity.getCurrentUser();
 
         // Retrieve arguments
         if (getArguments() != null) {
-            TextView currentUserNameTextView = view.findViewById(R.id.current_user_name);
-            String friendId = getArguments().getString("friendId");
-            String friendName = getArguments().getString("friendName");
-            long daysTogether = getArguments().getLong("daysTogether");
-            String relationshipId = getArguments().getString("relationshipId");
-
-            // Update UI
-            currentUserNameTextView.setText(currentUser.getUsername() + " \uD83D\uDC4B");
-
-            TextView friendNameTextView = view.findViewById(R.id.friend_name);
-            friendNameTextView.setText(friendName + " \uD83D\uDC4B");
-
-            TextView daysTogetherTextView = view.findViewById(R.id.days_count);
-            daysTogetherTextView.setText("123 Days");
-
-            // Additional logic to load and display relationship/activity details
-            loadFriendshipDetails(friendId, relationshipId);
+            handleFragmentArguments(view);
         }
 
         return view;
     }
 
-    private void loadFriendshipDetails(String friendId, String relationshipId) {
-        // Fetch additional details from Firestore or other data sources if needed
-        // Implement this based on your app's requirements
+    private void initializeUI(View view) {
+        backButton = view.findViewById(R.id.back_button);
+        optionButton = view.findViewById(R.id.option_button);
+//        callButton = view.findViewById(R.id.call_button);
+        daysCountTextView = view.findViewById(R.id.days_count);
+        activityBarChart = view.findViewById(R.id.activity_bar_chart);
+
+        backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+//        setupCallButton();
+        setupOptionButton();
+        setupBarChart();
+    }
+
+    private void handleFragmentArguments(View view) {
+        TextView currentUserNameTextView = view.findViewById(R.id.current_user_name);
+        TextView friendNameTextView = view.findViewById(R.id.friend_name);
+
+        String friendId = getArguments().getString("friendId");
+        String friendName = getArguments().getString("friendName");
+        String relationshipId = getArguments().getString("relationshipId");
+
+        currentUserNameTextView.setText(currentUser.getUsername() + " \uD83D\uDC4B");
+        friendNameTextView.setText(friendName + " \uD83D\uDC4B");
+
+        // Load friendship details from Firestore
+        loadFriendshipDetails(relationshipId);
+    }
+
+//    private void setupCallButton() {
+//        callButton.setOnClickListener(v -> {
+//            String phoneNumber = "xxxxxx"; // Replace with actual phone number
+//            makeCall(phoneNumber);
+//        });
+//    }
+
+    private void setupOptionButton() {
+        optionButton.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(requireContext(), optionButton);
+            popupMenu.inflate(R.menu.friendship_detail_menu);
+
+            // Apply the custom style
+            popupMenu.setForceShowIcon(true); // Optional, to show icons if added in the future
+            try {
+                Field mPopup = popupMenu.getClass().getDeclaredField("mPopup");
+                mPopup.setAccessible(true);
+                Object menuPopupHelper = mPopup.get(popupMenu);
+                Class<?> popupHelperClass = Class.forName(menuPopupHelper.getClass().getName());
+                Method setStyle = popupHelperClass.getDeclaredMethod("setStyle", Context.class, int.class);
+                setStyle.invoke(menuPopupHelper, requireContext(), R.style.CustomPopupMenu);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+            popupMenu.show();
+        });
+    }
+
+    private boolean onMenuItemClick(MenuItem menuItem) {
+        String relationshipId = getArguments().getString("relationshipId");
+        switch (menuItem.getItemId()) {
+            case R.id.action_unfriend:
+                handleUnfriendAction(relationshipId);
+                return true;
+            case R.id.action_block:
+                handleBlockAction(relationshipId);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void handleUnfriendAction(String relationshipId) {
+        if (relationshipId == null) {
+            Toast.makeText(requireContext(), "Invalid relationship ID.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dataUtils = new DataUtils();
+        dataUtils.deleteById("relationships", relationshipId, new DataUtils.NormalCallback<Void>() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(requireContext(), "Successfully unfriended.", Toast.LENGTH_SHORT).show();
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireContext(), "Failed to unfriend.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void handleBlockAction(String relationshipId) {
+        if (relationshipId == null) {
+            Toast.makeText(requireContext(), "Invalid relationship ID.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dataUtils = new DataUtils();
+        dataUtils.getById("relationships", relationshipId, Relationship.class, new DataUtils.FetchCallback<Relationship>() {
+            @Override
+            public void onSuccess(Relationship relationship) {
+                relationship.setStatus(FriendStatus.BLOCKED);
+                dataUtils.updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(requireContext(), "Friend has been blocked.", Toast.LENGTH_SHORT).show();
+                        requireActivity().getSupportFragmentManager().popBackStack();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(requireContext(), "Failed to block friend.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireContext(), "Failed to block friend.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loadFriendshipDetails(String relationshipId) {
+        if (relationshipId == null) {
+            Toast.makeText(requireContext(), "Invalid relationship ID.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dataUtils = new DataUtils();
+        dataUtils.getById("relationships", relationshipId, Relationship.class, new DataUtils.FetchCallback<Relationship>() {
+            @Override
+            public void onSuccess(Relationship relationship) {
+                long daysTogether = calculateDaysTogether(relationship.getDateCreated());
+                daysCountTextView.setText(daysTogether + " Days");
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireContext(), "Failed to load relationship details.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private long calculateDaysTogether(Timestamp dateCreated) {
+        if (dateCreated == null) {
+            return 0;
+        }
+
+        Date creationDate = dateCreated.toDate();
+        Date currentDate = new Date();
+        long differenceInMilliseconds = currentDate.getTime() - creationDate.getTime();
+        return differenceInMilliseconds / (1000 * 60 * 60 * 24); // Convert milliseconds to days
     }
 
     private void setupBarChart() {
-        // Create dummy data for the BarChart
-        List<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(0, 5)); // Monday
-        barEntries.add(new BarEntry(1, 8)); // Tuesday
-        barEntries.add(new BarEntry(2, 3)); // Wednesday
-        barEntries.add(new BarEntry(3, 6)); // Thursday
-        barEntries.add(new BarEntry(4, 9)); // Friday
-        barEntries.add(new BarEntry(5, 7)); // Saturday
-        barEntries.add(new BarEntry(6, 4)); // Sunday
+        List<BarEntry> barEntries = createDummyData();
 
-        // Set up the data set
         BarDataSet barDataSet = new BarDataSet(barEntries, "Activity in the Week");
-        barDataSet.setColor(getResources().getColor(R.color.primary)); // Bar color
-        barDataSet.setValueTextColor(getResources().getColor(R.color.secondary1)); // Value text color
-        barDataSet.setValueTextSize(12f); // Value text size
+        barDataSet.setColor(getResources().getColor(R.color.primary));
+        barDataSet.setValueTextColor(getResources().getColor(R.color.secondary1));
+        barDataSet.setValueTextSize(12f);
 
-        // Create BarData
         BarData barData = new BarData(barDataSet);
-        barData.setBarWidth(0.9f); // Bar width
+        barData.setBarWidth(0.9f);
 
-        // Configure the X-Axis
         XAxis xAxis = activityBarChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setLabelCount(7); // Number of days
+        xAxis.setLabelCount(7);
         xAxis.setValueFormatter(new ValueFormatter() {
             private final String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
@@ -123,25 +252,32 @@ public class FriendshipDetailFragment extends Fragment {
             }
         });
 
-        // Configure the Y-Axis
         YAxis leftAxis = activityBarChart.getAxisLeft();
-        leftAxis.setAxisMinimum(0f); // Start from 0
-        activityBarChart.getAxisRight().setEnabled(false); // Disable right Y-Axis
+        leftAxis.setAxisMinimum(0f);
+        activityBarChart.getAxisRight().setEnabled(false);
 
-        // Finalize BarChart setup
         activityBarChart.setData(barData);
         activityBarChart.setFitBars(true);
-        activityBarChart.getDescription().setEnabled(false); // Disable description text
-        activityBarChart.invalidate(); // Refresh the chart
+        activityBarChart.getDescription().setEnabled(false);
+        activityBarChart.invalidate();
     }
 
+    private List<BarEntry> createDummyData() {
+        List<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(0, 5)); // Monday
+        barEntries.add(new BarEntry(1, 8)); // Tuesday
+        barEntries.add(new BarEntry(2, 3)); // Wednesday
+        barEntries.add(new BarEntry(3, 6)); // Thursday
+        barEntries.add(new BarEntry(4, 9)); // Friday
+        barEntries.add(new BarEntry(5, 7)); // Saturday
+        barEntries.add(new BarEntry(6, 4)); // Sunday
+        return barEntries;
+    }
 
     private void makeCall(String phoneNumber) {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // Request CALL_PHONE permission
             requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
         } else {
-            // Permission granted, make the call
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + phoneNumber));
             startActivity(callIntent);
