@@ -132,4 +132,5 @@ public class User implements DataUtils.HasId, Serializable {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
 }

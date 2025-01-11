@@ -28,6 +28,7 @@ import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.broadcast.BatteryReceiver;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
+import com.example.assignment3_relationshipcounter.service.models.UserType;
 import com.example.assignment3_relationshipcounter.service.permission.Location;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.service.permission.Notification;
@@ -105,10 +106,17 @@ public class HomeActivity extends AppCompatActivity {
         // Bottom Navigation setup
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+//        // Disable navigation items for non-premium users
+//        if (currentUser != null && currentUser.getAccountType() == UserType.USER) { // Non-premium user
+//            bottomNavigationView.getMenu().findItem(R.id.nav_discover).setEnabled(false);
+//            bottomNavigationView.getMenu().findItem(R.id.nav_chat).setEnabled(false);
+//        }
+
         // Set default fragment
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
         }
+
 
         // Handle navigation item selection
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -116,11 +124,14 @@ public class HomeActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    // Load HomeFragment
                     selectedFragment = new HomeFragment();
                     break;
 
                 case R.id.nav_discover:
+                    if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                        Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                        return false; // Prevent navigation
+                    }
                     selectedFragment = new MapsFragment();
                     break;
 
@@ -136,10 +147,14 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_chat:
+                    if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                        Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                        return false; // Prevent navigation
+                    }
                     selectedFragment = new ChatRoomFragment();
                     break;
+
                 default:
-                    // Handle unexpected cases gracefully
                     selectedFragment = new HomeFragment();
                     break;
             }
