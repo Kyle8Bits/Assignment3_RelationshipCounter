@@ -96,36 +96,32 @@ public class ForegroundService extends Service {
                         }
                         String otherUserId = Utils.getOtherId(user.getUid(), usersId); // Ensure usersId has data
                         final String[] sentUserId = new String[1];
-                        if(check!=null){
-                            if (check){
+                        if (check != null) {
+                            if (check) {
                                 message[0] = " has accepted your friend request";
                                 sentUserId[0] = firstUser;
-                            }
-                            else {
+                            } else {
 
                                 message[0] = " has sent you a friend request";
                                 sentUserId[0] = secondUser;
                             }
                         }
-
-                        dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
-                            @Override
-                            public void onSuccess(User data) {
-                                if(!isInitialLoadFriend){
+                        if (!isInitialLoadFriend) {
+                            dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
+                                @Override
+                                public void onSuccess(User data) {
                                     String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                     String title = "You have a new friend";
-                                    sendNotification(false,null,sentUserId[0], notification, title);
-                                }
-                                else {
-                                    System.out.println("first friend");
-                                }
-                            }
+                                    sendNotification(false, null, sentUserId[0], notification, title);
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e("FirestoreService", "Failed to fetch user data", e);
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Log.e("FirestoreService", "Failed to fetch user data", e);
+                                }
+                            });
+                        }
                     }
                 }
                 isInitialLoadFriend = false;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter Options"
+        android:textSize="18sp"
+        android:fontFamily="@font/hellix_bold"
+        android:textColor="@color/primary"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Filter by Latest Days -->
+    <Button
+        android:id="@+id/filter_by_latest_days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="By Latest Days"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Filter by Oldest Days -->
+    <Button
+        android:id="@+id/filter_by_oldest_days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="By Oldest Days"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Filter by Name A-Z -->
+    <Button
+        android:id="@+id/filter_by_name_az"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="By Name A-Z"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Filter by Name Z-A -->
+    <Button
+        android:id="@+id/filter_by_name_za"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="By Name Z-A"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
+

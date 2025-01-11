@@ -41,9 +41,23 @@
             android:insetTop="0dp"
             android:insetRight="0dp"
             android:insetBottom="0dp"
+            android:layout_marginHorizontal="10dp"
             style="@style/Widget.Assignment3_RelationshipCounter.CircularIconButton"
             app:icon="@drawable/ic_search"
             android:contentDescription="Search" />
+
+        <!-- Filter Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/filter_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            style="@style/Widget.Assignment3_RelationshipCounter.CircularIconButton"
+            app:icon="@drawable/ic_filter"
+            android:contentDescription="Filter" />
     </LinearLayout>
 
     <!-- Story List -->
@@ -95,5 +109,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginHorizontal="16dp"
-        android:scrollbars="none" />
+        android:scrollbars="none"
+        android:layout_marginBottom="100dp"/>
 </LinearLayout>
