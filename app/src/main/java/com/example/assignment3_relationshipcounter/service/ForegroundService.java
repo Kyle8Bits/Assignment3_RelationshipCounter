@@ -70,6 +70,7 @@ public class ForegroundService extends Service {
 
         setupAcceptFriendListener();
         setupChatListener();
+//        setupTest();
     }
 
     private void setupAcceptFriendListener() {
@@ -96,36 +97,33 @@ public class ForegroundService extends Service {
                         }
                         String otherUserId = Utils.getOtherId(user.getUid(), usersId); // Ensure usersId has data
                         final String[] sentUserId = new String[1];
-                        if(check!=null){
-                            if (check){
+                        if (check != null) {
+                            if (check) {
                                 message[0] = " has accepted your friend request";
                                 sentUserId[0] = firstUser;
-                            }
-                            else {
+                            } else {
 
                                 message[0] = " has sent you a friend request";
                                 sentUserId[0] = secondUser;
                             }
                         }
+                        if (!isInitialLoadFriend) {
+                            dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
+                                @Override
+                                public void onSuccess(User data) {
 
-                        dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
-                            @Override
-                            public void onSuccess(User data) {
-                                if(!isInitialLoadFriend){
                                     String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                     String title = "You have a new friend";
-                                    sendNotification(false,null,sentUserId[0], notification, title);
-                                }
-                                else {
-                                    System.out.println("first friend");
-                                }
-                            }
+                                    sendNotification(false, null, sentUserId[0], notification, title);
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e("FirestoreService", "Failed to fetch user data", e);
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Log.e("FirestoreService", "Failed to fetch user data", e);
+                                }
+                            });
+                        }
                     }
                 }
                 isInitialLoadFriend = false;
@@ -133,6 +131,32 @@ public class ForegroundService extends Service {
         });
     }
 
+    private void setupTest() {
+        db.collection("relationships").addSnapshotListener((snapshots, e) -> {
+            if (e != null) {
+                Log.w("FirestoreService", "Listen failed for relationships.", e);
+                return;
+            }
+            if (snapshots != null) {
+                for (DocumentChange documentChange : snapshots.getDocumentChanges()) {
+
+                    // Listen for updated documents
+                    if (documentChange.getType() == DocumentChange.Type.MODIFIED ) {
+                        if(!isInitialLoadFriend) {
+                            System.out.println("MODIFY test");
+                            return;
+                        }
+                    } else if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                        if(!isInitialLoadFriend) {
+                            System.out.println("ADD test");
+                            return;
+                        }
+                    }
+                }
+                isInitialLoadFriend = false;
+            }
+        });
+    }
     private void setupChatListener() {
         CollectionReference chatroomsCollection = db.collection("chatrooms");
 
