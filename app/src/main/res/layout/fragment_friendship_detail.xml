@@ -66,19 +66,19 @@
                 style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
         </RelativeLayout>
 
-        <!-- Row 1: Friendship Tag -->
-        <TextView
-            android:id="@+id/friendship_tag"
+        <!-- Row 1: View Gallery Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/view_gallery_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:includeFontPadding="false"
-            android:textColor="@color/white"
-            android:text="⭐ Close Friend"
-            android:background="@drawable/bg_rounded_tag"
+            android:paddingHorizontal="20dp"
+            android:text="View Gallery"
             android:fontFamily="@font/hellix_bold"
-            android:layout_marginBottom="16dp" />
+            android:backgroundTint="@color/secondary1"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="999dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         <!-- Row 2: User Images and Names -->
         <LinearLayout

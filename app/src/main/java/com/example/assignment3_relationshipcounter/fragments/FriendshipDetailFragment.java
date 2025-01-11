@@ -45,7 +45,7 @@ public class FriendshipDetailFragment extends Fragment {
 
     private static final int REQUEST_CALL_PERMISSION = 1;
     private BarChart activityBarChart;
-    private MaterialButton backButton, optionButton;
+    private MaterialButton backButton, optionButton, viewGalleryButton;
     private MaterialButton callButton;
     private TextView daysCountTextView;
     private User currentUser;
@@ -75,13 +75,39 @@ public class FriendshipDetailFragment extends Fragment {
         backButton = view.findViewById(R.id.back_button);
         optionButton = view.findViewById(R.id.option_button);
 //        callButton = view.findViewById(R.id.call_button);
+        viewGalleryButton = view.findViewById(R.id.view_gallery_button);
         daysCountTextView = view.findViewById(R.id.days_count);
         activityBarChart = view.findViewById(R.id.activity_bar_chart);
 
         backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+        // Set up "View Gallery" button click listener
+        viewGalleryButton.setOnClickListener(v -> navigateToGallery());
 //        setupCallButton();
         setupOptionButton();
         setupBarChart();
+    }
+
+    private void navigateToGallery() {
+        if (getArguments() != null) {
+            String relationshipId = getArguments().getString("relationshipId");
+
+            if (relationshipId != null) {
+                // Navigate to GalleryFragment
+                GalleryFragment galleryFragment = new GalleryFragment();
+
+                Bundle args = new Bundle();
+                args.putString("relationshipId", relationshipId);
+                galleryFragment.setArguments(args);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, galleryFragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                Toast.makeText(requireContext(), "Invalid relationship ID.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void handleFragmentArguments(View view) {
