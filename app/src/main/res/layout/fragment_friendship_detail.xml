@@ -46,6 +46,24 @@
                 android:fontFamily="@font/hellix_bold"
                 android:textColor="@color/black"
                 android:gravity="center" />
+
+            <!-- Options Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/option_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:iconSize="18dp"
+                app:icon="@drawable/ic_more_vert"
+                app:iconTint="@color/black"
+                android:backgroundTint="@color/white"
+                android:contentDescription="Options"
+                style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
         </RelativeLayout>
 
         <!-- Row 1: Friendship Tag -->
