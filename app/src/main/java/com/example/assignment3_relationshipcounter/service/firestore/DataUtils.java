@@ -330,4 +330,129 @@ public class DataUtils {
                     if (callback != null) callback.onFailure(e);
                 });
     }
+
+    public void filterFriendsByDays(String userId, boolean latestFirst, FetchCallback<List<User>> callback) {
+        db.collection("relationships")
+                .whereEqualTo("status", "FRIEND")
+                .whereArrayContains("users", userId)
+                .orderBy("dateCreated", latestFirst ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> friendIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        friendIds.add(document.getString("friendId"));
+                    }
+
+                    if (!friendIds.isEmpty()) {
+                        db.collection("users")
+                                .whereIn("id", friendIds)
+                                .get()
+                                .addOnSuccessListener(userSnapshots -> {
+                                    List<User> friends = new ArrayList<>();
+                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
+                                        friends.add(userDoc.toObject(User.class));
+                                    }
+                                    callback.onSuccess(friends);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void filterFriendsByName(String userId, boolean ascending, FetchCallback<List<User>> callback) {
+        db.collection("relationships")
+                .whereEqualTo("status", "FRIEND")
+                .whereArrayContains("users", userId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> friendIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        friendIds.add(document.getString("friendId"));
+                    }
+
+                    if (!friendIds.isEmpty()) {
+                        db.collection("users")
+                                .whereIn("id", friendIds)
+                                .orderBy("username", ascending ? Query.Direction.ASCENDING : Query.Direction.DESCENDING)
+                                .get()
+                                .addOnSuccessListener(userSnapshots -> {
+                                    List<User> friends = new ArrayList<>();
+                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
+                                        friends.add(userDoc.toObject(User.class));
+                                    }
+                                    callback.onSuccess(friends);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void filterFriendRequestsByDays(String userId, boolean latestFirst, FetchCallback<List<User>> callback) {
+        db.collection("relationships")
+                .whereEqualTo("status", "PENDING")
+                .whereEqualTo("secondUser", userId)
+                .orderBy("dateCreated", latestFirst ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> senderIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        senderIds.add(document.getString("firstUser"));
+                    }
+
+                    if (!senderIds.isEmpty()) {
+                        db.collection("users")
+                                .whereIn("id", senderIds)
+                                .get()
+                                .addOnSuccessListener(userSnapshots -> {
+                                    List<User> requestUsers = new ArrayList<>();
+                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
+                                        requestUsers.add(userDoc.toObject(User.class));
+                                    }
+                                    callback.onSuccess(requestUsers);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void filterFriendRequestsByName(String userId, boolean ascending, FetchCallback<List<User>> callback) {
+        db.collection("relationships")
+                .whereEqualTo("status", "PENDING")
+                .whereEqualTo("secondUser", userId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> senderIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        senderIds.add(document.getString("firstUser"));
+                    }
+
+                    if (!senderIds.isEmpty()) {
+                        db.collection("users")
+                                .whereIn("id", senderIds)
+                                .orderBy("username", ascending ? Query.Direction.ASCENDING : Query.Direction.DESCENDING)
+                                .get()
+                                .addOnSuccessListener(userSnapshots -> {
+                                    List<User> requestUsers = new ArrayList<>();
+                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
+                                        requestUsers.add(userDoc.toObject(User.class));
+                                    }
+                                    callback.onSuccess(requestUsers);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onSuccess(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
 }
