@@ -133,7 +133,7 @@ public class HomeActivity extends AppCompatActivity {
                         selectedFragment = new UserManagerFragment();
                         break;
                     case R.id.nav_support:
-                        selectedFragment = new SupportFragment();
+                        selectedFragment = new ChatRoomFragment();
                         break;
                     default:
                         selectedFragment = new UserManagerFragment();
