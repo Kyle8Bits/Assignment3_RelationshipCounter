@@ -24,6 +24,7 @@ import com.example.assignment3_relationshipcounter.service.firestore.Authenticat
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.stripe.android.PaymentConfiguration;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -64,6 +65,10 @@ public class WelcomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        PaymentConfiguration.init(
+                getApplicationContext(),
+                "pk_test_51QgNo7RopI2ofz188cRxyDxL0S0XaR0wuydbRO8pkoA6tY8KnQzis9JrZSvAxdI7IEDqaGze7PmM2oc7NAt35Ib800Fe4rvQ8s"
+        );
         Context context = getApplicationContext();
         String packageName = context.getPackageName();
         Log.d("PackageName", "App Package Name: " + packageName);

@@ -1,5 +1,8 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
+
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -424,6 +428,27 @@ public class DataUtils {
                 });
     }
 
+    public void updateUserToPremium(String userId, NormalCallback<Void> callback) {
+
+        // Update the accountType field for the specified user
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("accountType", "PREMIUM");
+
+        db.collection("users")
+                .document(userId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    // Call onSuccess when the update is successful
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    // Call onFailure when the update fails
+                    callback.onFailure(new Exception("Failed to update user to PREMIUM: " + e.getMessage()));
+                });
+    }
+
+
+
     public void getEvents(String relationshipId, @Nullable String selectedDate, FetchCallback<List<Event>> callback) {
         Query query = db.collection("events")
                 .whereEqualTo("relationshipId", relationshipId);
@@ -450,6 +475,7 @@ public class DataUtils {
                 .addOnSuccessListener(docRef -> callback.onSuccess())
                 .addOnFailureListener(callback::onFailure);
     }
+
 
 
 
