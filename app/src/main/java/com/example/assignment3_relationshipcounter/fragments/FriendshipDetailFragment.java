@@ -48,8 +48,7 @@ public class FriendshipDetailFragment extends Fragment {
 
     private static final int REQUEST_CALL_PERMISSION = 1;
     private MaterialButton optionButton;
-    private BarChart activityBarChart;
-    private MaterialButton backButton, optionButton, viewGalleryButton;
+    private MaterialButton backButton, viewGalleryButton;
     private MaterialButton callButton;
     private TextView daysCountTextView;
     private User currentUser;
