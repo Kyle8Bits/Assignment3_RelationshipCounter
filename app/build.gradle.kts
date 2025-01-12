@@ -42,8 +42,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage)
     implementation(libs.play.services.maps)
-    implementation ("androidx.work:work-runtime:2.8.1")
-    implementation (libs.glide)
+    implementation("androidx.work:work-runtime:2.8.1")
+    implementation(libs.glide)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -54,10 +54,15 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.firebase.ui.firestore)
     implementation(libs.mpandroidchart)
+//    implementation(libs.prolificinteractive.material.calendarview)
+    implementation(libs.legacy.support.v4)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation (libs.material.v190)
-    implementation (libs.dhaval2404.imagepicker)
+    implementation(libs.material.v190)
+    implementation(libs.dhaval2404.imagepicker)
+    implementation (libs.material.calendar.view)
+
 
 }

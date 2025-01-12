@@ -2,6 +2,7 @@ package com.example.assignment3_relationshipcounter.service.models;
 
 public enum UserType {
     ADMIN,
+    PREMIUM,
     USER;
 
     public static UserType fromString(String type) {

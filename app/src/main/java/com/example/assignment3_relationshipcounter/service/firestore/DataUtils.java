@@ -1,15 +1,18 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 
+import com.example.assignment3_relationshipcounter.service.models.Event;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.GalleryItem;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -419,6 +422,33 @@ public class DataUtils {
                     Log.e("DataUtils", "Failed to fetch gallery items: ", e);
                     callback.onFailure(e); // Pass the exception to onFailure
                 });
+    }
+
+    public void getEvents(String relationshipId, @Nullable String selectedDate, FetchCallback<List<Event>> callback) {
+        Query query = db.collection("events")
+                .whereEqualTo("relationshipId", relationshipId);
+
+        if (selectedDate != null) {
+            query = query.whereEqualTo("date", selectedDate);
+        }
+
+        query.get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Event> events = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Event event = doc.toObject(Event.class);
+                        events.add(event);
+                    }
+                    callback.onSuccess(events);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void addEvent(Event event, NormalCallback<Void> callback) {
+        db.collection("events")
+                .add(event)
+                .addOnSuccessListener(docRef -> callback.onSuccess())
+                .addOnFailureListener(callback::onFailure);
     }
 
 
