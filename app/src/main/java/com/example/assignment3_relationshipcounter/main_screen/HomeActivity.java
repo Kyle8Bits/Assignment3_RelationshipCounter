@@ -135,6 +135,12 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.nav_support:
                         selectedFragment = new ChatRoomFragment();
                         break;
+                    case R.id.nav_profile:
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user", currentUser);
+                        selectedFragment = new ProfileFragment();
+                        selectedFragment.setArguments(bundle);
+                        break;
                     default:
                         selectedFragment = new UserManagerFragment();
                         break;
