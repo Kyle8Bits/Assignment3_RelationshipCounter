@@ -10,79 +10,9 @@
         android:layout_height="match_parent"
         android:background="#FDF7FD"
         android:padding="16dp">
-
-        <!-- Header Section -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <!-- Back Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/back_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:insetLeft="0dp"
-                android:insetTop="0dp"
-                android:insetRight="0dp"
-                android:insetBottom="0dp"
-                app:iconSize="18dp"
-                app:icon="@drawable/ic_back"
-                android:backgroundTint="@color/white"
-                android:contentDescription="Back"
-                style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
-
-            <!-- Title -->
-            <TextView
-                android:id="@+id/friendship_detail_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Friendship Detail"
-                android:textSize="24sp"
-                android:fontFamily="@font/hellix_bold"
-                android:textColor="@color/black"
-                android:gravity="center" />
-
-            <!-- Options Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/option_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:insetLeft="0dp"
-                android:insetTop="0dp"
-                android:insetRight="0dp"
-                android:insetBottom="0dp"
-                app:iconSize="18dp"
-                app:icon="@drawable/ic_more_vert"
-                app:iconTint="@color/black"
-                android:backgroundTint="@color/white"
-                android:contentDescription="Options"
-                style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
-        </RelativeLayout>
-
-        <!-- Row 1: View Gallery Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/view_gallery_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:text="View Gallery"
-            android:fontFamily="@font/hellix_bold"
-            android:backgroundTint="@color/secondary1"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="16dp"
-            app:cornerRadius="999dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <!-- Header Section -->
@@ -94,19 +24,19 @@
                 <!-- Back Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/back_button"
-                    style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:backgroundTint="@color/white"
-                    android:contentDescription="Back"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
                     android:insetBottom="0dp"
+                    app:iconSize="18dp"
                     app:icon="@drawable/ic_back"
-                    app:iconSize="18dp" />
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="Back"
+                    style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
 
                 <!-- Title -->
                 <TextView
@@ -114,266 +44,231 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:fontFamily="@font/hellix_bold"
-                    android:gravity="center"
                     android:text="Friendship Detail"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/hellix_bold"
                     android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:gravity="center" />
 
                 <!-- Options Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/option_button"
-                    style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:iconSize="18dp"
+                    app:icon="@drawable/ic_more_vert"
+                    app:iconTint="@color/black"
                     android:backgroundTint="@color/white"
                     android:contentDescription="Options"
-                    android:insetLeft="0dp"
-                    android:insetTop="0dp"
-                    android:insetRight="0dp"
-                    android:insetBottom="0dp"
-                    app:icon="@drawable/ic_more_vert"
-                    app:iconSize="18dp"
-                    app:iconTint="@color/black" />
+                    style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
             </RelativeLayout>
 
-            <!-- Row 1: Friendship Tag -->
-            <TextView
-                android:id="@+id/friendship_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_rounded_tag"
-                android:fontFamily="@font/hellix_bold"
-                android:includeFontPadding="false"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="⭐ Close Friend"
-                android:textColor="@color/white" />
 
-            <!-- Row 2: User Images and Names -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <!-- Friend Details -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <!-- Friend Image -->
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/friend_image"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:layout_marginBottom="8dp"
-                        android:padding="5dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sample"
-                        app:shapeAppearanceOverlay="@style/CircleImage"
-                        app:strokeColor="@color/secondary1"
-                        app:strokeWidth="6dp" />
-
-                    <!-- Friend Name -->
-                    <TextView
-                        android:id="@+id/friend_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_rounded_secondary"
-                        android:fontFamily="@font/hellix_semibold"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:text="Friend Name"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Heart Divider -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:text="❤️"
-                    android:textSize="24sp" />
-
-                <!-- Current User Details -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <!-- Current User Image -->
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/current_user_image"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:layout_marginBottom="8dp"
-                        android:padding="5dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sample"
-                        app:shapeAppearanceOverlay="@style/CircleImage"
-                        app:strokeColor="@color/white"
-                        app:strokeWidth="6dp" />
-
-                    <!-- Current User Name -->
-                    <TextView
-                        android:id="@+id/current_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_rounded_white"
-                        android:fontFamily="@font/hellix_semibold"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:text="Your Name"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Row 3: Days Together -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <!-- Left Insight Wrapper -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start">
-
-                    <!-- Left Insight -->
-                    <TextView
-                        android:id="@+id/left_insight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_insight_white"
-                        android:fontFamily="@font/hellix_semibold"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="12dp"
-                        android:text="Insights"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <!-- Days Count Wrapper -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center">
-
-                    <!-- Days Count -->
-                    <TextView
-                        android:id="@+id/days_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_days_count"
-                        android:fontFamily="@font/hellix_semibold"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="12dp"
-                        android:text="100 Days"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-                <!-- Right Insight Wrapper -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end">
-
-                    <!-- Right Insight -->
-                    <TextView
-                        android:id="@+id/right_insight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_insight_white"
-                        android:fontFamily="@font/hellix_semibold"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="12dp"
-                        android:text="Insights"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal">
-
-                <!-- Left Aligned TextView -->
-                <TextView
-                    android:id="@+id/activity_dashboard_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/hellix_bold"
-                    android:text="@string/our_milestones"
-                    android:textColor="@color/primary"
-                    android:textSize="20sp" />
-
-                <!-- Right Aligned Button -->
+                <!-- Row 1: View Gallery Button -->
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/add_event"
-                    style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:backgroundTint="@color/hard_pink"
-                    android:contentDescription="@string/action_add_event"
-                    app:icon="@drawable/ic_add"
-                    android:insetLeft="0dp"
-                    android:insetTop="0dp"
-                    android:insetRight="0dp"
-                    android:insetBottom="0dp"
-                    app:iconSize="20sp" />
-            </LinearLayout>
+                    android:id="@+id/view_gallery_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:text="View Gallery"
+                    android:fontFamily="@font/hellix_bold"
+                    android:backgroundTint="@color/secondary1"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="16dp"
+                    app:cornerRadius="999dp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton" />
 
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="340dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:padding="8dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp">
-
-                <com.applandeo.materialcalendarview.CalendarView
-                    android:id="@+id/calendarView"
+                <!-- Row 2: User Images and Names -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-            </androidx.cardview.widget.CardView>
+                    <!-- Friend Details -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                        <!-- Friend Image -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/friend_image"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_marginBottom="8dp"
+                            android:padding="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/sample"
+                            app:shapeAppearanceOverlay="@style/CircleImage"
+                            app:strokeColor="@color/secondary1"
+                            app:strokeWidth="6dp" />
+
+                        <!-- Friend Name -->
+                        <TextView
+                            android:id="@+id/friend_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_rounded_secondary"
+                            android:fontFamily="@font/hellix_semibold"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:text="Friend Name"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Heart Divider -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:text="❤️"
+                        android:textSize="24sp" />
+
+                    <!-- Current User Details -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <!-- Current User Image -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/current_user_image"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_marginBottom="8dp"
+                            android:padding="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/sample"
+                            app:shapeAppearanceOverlay="@style/CircleImage"
+                            app:strokeColor="@color/white"
+                            app:strokeWidth="6dp" />
+
+                        <!-- Current User Name -->
+                        <TextView
+                            android:id="@+id/current_user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_rounded_white"
+                            android:fontFamily="@font/hellix_semibold"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:text="Your Name"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 3: Days Together -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+
+                    <!-- Days Count Wrapper -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <!-- Days Count -->
+                        <TextView
+                            android:id="@+id/days_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_days_count"
+                            android:fontFamily="@font/hellix_semibold"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="12dp"
+                            android:text="100 Days"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <!-- Left Aligned TextView -->
+                    <TextView
+                        android:id="@+id/activity_dashboard_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/hellix_bold"
+                        android:text="@string/our_milestones"
+                        android:textColor="@color/primary"
+                        android:textSize="20sp" />
+
+                    <!-- Right Aligned Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/add_event"
+                        style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:backgroundTint="@color/hard_pink"
+                        android:contentDescription="@string/action_add_event"
+                        app:icon="@drawable/ic_add"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        app:iconSize="20sp" />
+                </LinearLayout>
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="340dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="1dp">
+
+                    <com.applandeo.materialcalendarview.CalendarView
+                        android:id="@+id/calendarView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.cardview.widget.CardView>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp" />
+            </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
 
 

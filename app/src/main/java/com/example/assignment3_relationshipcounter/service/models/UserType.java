@@ -30,3 +30,4 @@ public enum UserType {
                 return null;
         }
     }
+}

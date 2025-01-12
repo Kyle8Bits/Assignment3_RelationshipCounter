@@ -172,6 +172,8 @@ public class HomeActivity extends AppCompatActivity {
                             Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
                             return false; // Prevent navigation
                         }
+                        selectedFragment = new ChatRoomFragment();
+                        break;
                     default:
                         selectedFragment = new HomeFragment();
                         break;

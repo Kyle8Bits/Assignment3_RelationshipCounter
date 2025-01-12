@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.FriendList;
-import com.example.assignment3_relationshipcounter.adapter.StoryList;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView storyRecyclerView;
+
     private RecyclerView tabRecyclerView;
     private TabLayout tabLayout;
 
@@ -54,14 +53,12 @@ public class HomeFragment extends Fragment {
         dataUtils = new DataUtils();
 
         // Initialize UI components
-        storyRecyclerView = view.findViewById(R.id.home_story_list);
         tabRecyclerView = view.findViewById(R.id.home_recycler_view);
         tabLayout = view.findViewById(R.id.home_tab_layout);
         searchButton = view.findViewById(R.id.search_button);
         filterButton = view.findViewById(R.id.filter_button);
 
-        // Load Stories
-        loadStories();
+
 
         // Load Tab Content
         setupTabs();
@@ -214,11 +211,6 @@ public class HomeFragment extends Fragment {
         transaction.commit();
     }
 
-    private void loadStories() {
-        StoryList storyAdapter = new StoryList(requireContext());
-        storyRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        storyRecyclerView.setAdapter(storyAdapter);
-    }
 
     private void setupTabs() {
         // Initialize the lists for My Friends and Explore
