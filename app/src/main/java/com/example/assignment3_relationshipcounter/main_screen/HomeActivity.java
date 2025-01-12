@@ -123,6 +123,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
+
         // Handle navigation item selection
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -151,6 +152,10 @@ public class HomeActivity extends AppCompatActivity {
                         selectedFragment = new HomeFragment();
                         break;
                     case R.id.nav_discover:
+                        if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                            Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                            return false; // Prevent navigation
+                        }
                         selectedFragment = new MapsFragment();
                         break;
                     case R.id.nav_profile:
@@ -163,8 +168,10 @@ public class HomeActivity extends AppCompatActivity {
                         selectedFragment = new SearchFriendFragment();
                         break;
                     case R.id.nav_chat:
-                        selectedFragment = new ChatRoomFragment();
-                        break;
+                        if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                            Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                            return false; // Prevent navigation
+                        }
                     default:
                         selectedFragment = new HomeFragment();
                         break;

@@ -2,7 +2,6 @@ package com.example.assignment3_relationshipcounter.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,27 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
-import com.example.assignment3_relationshipcounter.service.ProgressManager;
+import com.example.assignment3_relationshipcounter.utils.ProgressManager;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.models.Gender;
-import com.example.assignment3_relationshipcounter.service.models.Image;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.example.assignment3_relationshipcounter.service.models.UserType;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,7 +60,7 @@ public class SignUpFragment extends Fragment {
         eDOB = view.findViewById(R.id.e_dob);
         eDOB.setOnClickListener(v -> pickDOB());
 
-        ImageView backBtn = view.findViewById(R.id.button_back);
+        MaterialButton backBtn = view.findViewById(R.id.button_back);
         backBtn.setOnClickListener(v -> {
             getChildFragmentManager().popBackStack();
             requireActivity().findViewById(R.id.auth_container).setVisibility(View.INVISIBLE);

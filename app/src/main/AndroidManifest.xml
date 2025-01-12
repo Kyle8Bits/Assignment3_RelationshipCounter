@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.assignment3_relationshipcounter">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -13,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -20,9 +22,11 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
 
@@ -35,22 +39,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Assignment3_RelationshipCounter"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".main_screen.PaymentActivity"
+            android:exported="false" />
 
-        <!--
-             TODO: Before you run your application, you need a Google Maps API key.
-
-             To get one, follow the directions here:
-
-                https://developers.google.com/maps/documentation/android-sdk/get-api-key
-
-             Once you have your API key (it starts with "AIza"), define a new property in your
-             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
-             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
-        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAmYG0ewlmb4zaJAkC6pBsFjqi0NBQu-Po" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+        <meta-data
+            android:name="sqip.SQUARE_APPLICATION_ID"
+            android:value="sandbox-sq0idb-FQYJApm3DNrAdoZhyAbzww" />
+
         <activity
             android:name=".main_screen.WelcomeActivity"
             android:exported="false" />
@@ -62,7 +65,7 @@
             android:exported="false" />
         <activity
             android:name=".main_screen.SplashActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -75,18 +78,20 @@
             android:exported="true"
             android:foregroundServiceType="dataSync" />
 
-        <receiver android:name=".service.broadcast.CallReceiver" android:exported="true">
+        <receiver
+            android:name=".service.broadcast.CallReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.example.CALL_PERSON" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".service.broadcast.BatteryReceiver"
-            android:exported="true" >
+        <receiver
+            android:name=".service.broadcast.BatteryReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>
