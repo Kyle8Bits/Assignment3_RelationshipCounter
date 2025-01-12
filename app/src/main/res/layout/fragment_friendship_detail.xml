@@ -265,7 +265,18 @@
                         android:layout_height="match_parent" />
 
                 </androidx.cardview.widget.CardView>
-
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/call_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:text="Emergency"
+                    android:fontFamily="@font/hellix_bold"
+                    android:backgroundTint="#CE3030"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="16dp"
+                    app:cornerRadius="999dp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton" />
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="300dp" />

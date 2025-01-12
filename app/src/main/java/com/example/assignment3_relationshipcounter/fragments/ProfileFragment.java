@@ -85,6 +85,10 @@ public class ProfileFragment extends Fragment {
             upgradeBtn.setText("Premium user");
             upgradeBtn.setEnabled(false);
         }
+        if(user.getAccountType() == UserType.ADMIN){
+            upgradeBtn.setText("Admin");
+            upgradeBtn.setEnabled(false);
+        }
         // Register ActivityResultLauncher
         paymentLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

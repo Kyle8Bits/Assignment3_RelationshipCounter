@@ -1,7 +1,10 @@
 package com.example.assignment3_relationshipcounter.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,6 +68,13 @@ public class FriendshipDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friendship_detail, container, false);
+
+        String phone= getArguments().getString("phone");
+        callButton = view.findViewById(R.id.call_button);
+        callButton.setOnClickListener(v -> {
+            String phoneNumber = phone; // Replace with the phone number you want to call
+            makeCall(phoneNumber);
+        });
 
         // Initialize UI components
         initializeUI(view);
@@ -385,6 +396,18 @@ public class FriendshipDetailFragment extends Fragment {
         List<EventDay> eventDays = CalendarEventHelper.generateEventDays(events);
 
         calendarView.setEvents(eventDays);
+    }
+
+    private void makeCall(String phoneNumber) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // Request CALL_PHONE permission
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        } else {
+            // Permission granted, make the call
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+            startActivity(callIntent);
+        }
     }
 
 }
