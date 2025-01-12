@@ -125,4 +125,9 @@
         <item name="android:textColor">@color/primary</item>
     </style>
 
+    <style name="CustomShapeAppearance" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
 </resources>

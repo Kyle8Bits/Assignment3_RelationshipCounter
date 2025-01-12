@@ -11,6 +11,74 @@
         android:background="#FDF7FD"
         android:padding="16dp">
 
+        <!-- Header Section -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <!-- Back Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/back_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:iconSize="18dp"
+                app:icon="@drawable/ic_back"
+                android:backgroundTint="@color/white"
+                android:contentDescription="Back"
+                style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/friendship_detail_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Friendship Detail"
+                android:textSize="24sp"
+                android:fontFamily="@font/hellix_bold"
+                android:textColor="@color/black"
+                android:gravity="center" />
+
+            <!-- Options Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/option_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:iconSize="18dp"
+                app:icon="@drawable/ic_more_vert"
+                app:iconTint="@color/black"
+                android:backgroundTint="@color/white"
+                android:contentDescription="Options"
+                style="@style/Widget.Assignment3_RelationshipCounter.CircularBackButton" />
+        </RelativeLayout>
+
+        <!-- Row 1: View Gallery Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/view_gallery_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:text="View Gallery"
+            android:fontFamily="@font/hellix_bold"
+            android:backgroundTint="@color/secondary1"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="999dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

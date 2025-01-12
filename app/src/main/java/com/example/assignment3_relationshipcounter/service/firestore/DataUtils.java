@@ -1,11 +1,13 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
 import androidx.annotation.Nullable;
+import android.util.Log;
 
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 
 import com.example.assignment3_relationshipcounter.service.models.Event;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
+import com.example.assignment3_relationshipcounter.service.models.GalleryItem;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
 import com.google.firebase.Timestamp;
@@ -352,68 +354,6 @@ public class DataUtils {
                 })
                 .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to count friends: " + e.getMessage())));
     }
-  
-    public void filterFriendsByDays(String userId, boolean latestFirst, FetchCallback<List<User>> callback) {
-        db.collection("relationships")
-                .whereEqualTo("status", "FRIEND")
-                .whereArrayContains("users", userId)
-                .orderBy("dateCreated", latestFirst ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<String> friendIds = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        friendIds.add(document.getString("friendId"));
-                    }
-
-                    if (!friendIds.isEmpty()) {
-                        db.collection("users")
-                                .whereIn("id", friendIds)
-                                .get()
-                                .addOnSuccessListener(userSnapshots -> {
-                                    List<User> friends = new ArrayList<>();
-                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
-                                        friends.add(userDoc.toObject(User.class));
-                                    }
-                                    callback.onSuccess(friends);
-                                })
-                                .addOnFailureListener(callback::onFailure);
-                    } else {
-                        callback.onSuccess(Collections.emptyList());
-                    }
-                })
-                .addOnFailureListener(callback::onFailure);
-    }
-
-    public void filterFriendsByName(String userId, boolean ascending, FetchCallback<List<User>> callback) {
-        db.collection("relationships")
-                .whereEqualTo("status", "FRIEND")
-                .whereArrayContains("users", userId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<String> friendIds = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        friendIds.add(document.getString("friendId"));
-                    }
-
-                    if (!friendIds.isEmpty()) {
-                        db.collection("users")
-                                .whereIn("id", friendIds)
-                                .orderBy("username", ascending ? Query.Direction.ASCENDING : Query.Direction.DESCENDING)
-                                .get()
-                                .addOnSuccessListener(userSnapshots -> {
-                                    List<User> friends = new ArrayList<>();
-                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
-                                        friends.add(userDoc.toObject(User.class));
-                                    }
-                                    callback.onSuccess(friends);
-                                })
-                                .addOnFailureListener(callback::onFailure);
-                    } else {
-                        callback.onSuccess(Collections.emptyList());
-                    }
-                })
-                .addOnFailureListener(callback::onFailure);
-    }
 
     public void filterFriendRequestsByDays(String userId, boolean latestFirst, FetchCallback<List<User>> callback) {
         db.collection("relationships")
@@ -446,35 +386,42 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void filterFriendRequestsByName(String userId, boolean ascending, FetchCallback<List<User>> callback) {
-        db.collection("relationships")
-                .whereEqualTo("status", "PENDING")
-                .whereEqualTo("secondUser", userId)
+    /**
+     * Loads gallery items for a specific relationship ID from the "gallery" collection.
+     *
+     * @param relationshipId The ID of the relationship whose gallery items are being retrieved.
+     * @param callback       The callback to handle success or failure of the query.
+     */
+    public void loadGalleryItems(String relationshipId, FetchCallback<List<GalleryItem>> callback) {
+        db.collection("gallery")
+                .whereEqualTo("relationshipId", relationshipId)
+                .orderBy("dateAdded", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<String> senderIds = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        senderIds.add(document.getString("firstUser"));
-                    }
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<GalleryItem> galleryItems = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            GalleryItem galleryItem = document.toObject(GalleryItem.class);
+                            if (galleryItem != null) {
+                                galleryItems.add(galleryItem);
+                            }
+                        }
 
-                    if (!senderIds.isEmpty()) {
-                        db.collection("users")
-                                .whereIn("id", senderIds)
-                                .orderBy("username", ascending ? Query.Direction.ASCENDING : Query.Direction.DESCENDING)
-                                .get()
-                                .addOnSuccessListener(userSnapshots -> {
-                                    List<User> requestUsers = new ArrayList<>();
-                                    for (QueryDocumentSnapshot userDoc : userSnapshots) {
-                                        requestUsers.add(userDoc.toObject(User.class));
-                                    }
-                                    callback.onSuccess(requestUsers);
-                                })
-                                .addOnFailureListener(callback::onFailure);
+                        // Log the fetched gallery items
+                        for (GalleryItem item : galleryItems) {
+                            Log.d("DataUtils", "Gallery Item: " + item.toString());
+                        }
+
+                        callback.onSuccess(galleryItems); // Pass the list of gallery items to the callback
                     } else {
-                        callback.onSuccess(Collections.emptyList());
+                        Log.d("DataUtils", "No gallery items found for relationshipId: " + relationshipId);
+                        callback.onSuccess(Collections.emptyList()); // No gallery items found
                     }
                 })
-                .addOnFailureListener(callback::onFailure);
+                .addOnFailureListener(e -> {
+                    Log.e("DataUtils", "Failed to fetch gallery items: ", e);
+                    callback.onFailure(e); // Pass the exception to onFailure
+                });
     }
 
     public void getEvents(String relationshipId, @Nullable String selectedDate, FetchCallback<List<Event>> callback) {
