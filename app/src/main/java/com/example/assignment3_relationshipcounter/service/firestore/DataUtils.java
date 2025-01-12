@@ -1,5 +1,7 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
+import androidx.annotation.Nullable;
+
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 
 import com.example.assignment3_relationshipcounter.service.models.Event;
@@ -475,12 +477,15 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void getEventsForRelationship(String relationshipId, String selectedDate, FetchCallback<List<Event>> callback) {
-        db.collection("relationships")
-                .document(relationshipId)
-                .collection("events")
-                .whereEqualTo("date", selectedDate) // Match the selected date
-                .get()
+    public void getEvents(String relationshipId, @Nullable String selectedDate, FetchCallback<List<Event>> callback) {
+        Query query = db.collection("events")
+                .whereEqualTo("relationshipId", relationshipId);
+
+        if (selectedDate != null) {
+            query = query.whereEqualTo("date", selectedDate);
+        }
+
+        query.get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Event> events = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
@@ -492,14 +497,13 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure);
     }
 
-    public void addEventToRelationship(String relationshipId, Event event, NormalCallback<Void> callback) {
-        db.collection("relationships")
-                .document(relationshipId)
-                .collection("events")
+    public void addEvent(Event event, NormalCallback<Void> callback) {
+        db.collection("events")
                 .add(event)
                 .addOnSuccessListener(docRef -> callback.onSuccess())
                 .addOnFailureListener(callback::onFailure);
     }
+
 
 
 }

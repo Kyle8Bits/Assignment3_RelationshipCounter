@@ -31,5 +31,10 @@
     <string name="action_add_friend">Add Friend</string>
     <string name="gender">Gender</string>
     <string name="our_milestones">Our Milestones</string>
+    <string name="new_event">New Event </string>
+    <string name="prompt_event_title">Event Title</string>
+    <string name="prompt_description">Event Description</string>
+    <string name="event_date">Event Date</string>
+    <string name="action_add_event">Add Event</string>
 
 </resources>

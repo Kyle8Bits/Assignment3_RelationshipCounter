@@ -1,4 +1,4 @@
-package com.example.assignment3_relationshipcounter.service;
+package com.example.assignment3_relationshipcounter.utils;
 
 import androidx.fragment.app.FragmentManager;
 

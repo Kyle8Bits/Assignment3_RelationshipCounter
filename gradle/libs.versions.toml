@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.0"
+applandeoMaterialCalendarView = "1.9.2"
 firebaseBom = "33.7.0"
 firebaseUiFirestoreVersion = "8.0.1"
 glide = "4.16.0"
@@ -43,6 +44,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+material-calendar-view = { module = "com.applandeo:material-calendar-view", version.ref = "applandeoMaterialCalendarView" }
 material-calendarview = { module = "com.github.prolificinteractive:material-calendarview", version.ref = "materialCalendarview" }
 material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }

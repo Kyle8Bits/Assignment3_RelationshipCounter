@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.firebase.ui.firestore)
     implementation(libs.mpandroidchart)
-    implementation(libs.prolificinteractive.material.calendarview)
+//    implementation(libs.prolificinteractive.material.calendarview)
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
     testImplementation(libs.junit)
@@ -62,7 +62,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.material.v190)
     implementation(libs.dhaval2404.imagepicker)
-
+    implementation (libs.material.calendar.view)
 
 
 }

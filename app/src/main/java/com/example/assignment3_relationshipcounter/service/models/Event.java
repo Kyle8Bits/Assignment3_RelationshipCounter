@@ -1,6 +1,10 @@
 package com.example.assignment3_relationshipcounter.service.models;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Event implements Serializable {
     private String id;
@@ -8,6 +12,7 @@ public class Event implements Serializable {
     private String description;
     private String date;
     private String relationshipId;
+    private String status;
 
     public Event() {
 
@@ -18,6 +23,7 @@ public class Event implements Serializable {
         this.date = date;
         this.description = description;
         this.relationshipId = relationshipId;
+        this.status = calculateStatus(date);
     }
 
     public String getDate() {
@@ -58,5 +64,32 @@ public class Event implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String calculateStatus(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date eventDate = sdf.parse(dateString);
+            Date currentDate = new Date();
+
+            if (eventDate.before(currentDate)) {
+                return "Ended";
+            } else if (sdf.format(eventDate).equals(sdf.format(currentDate))) {
+                return "Happening";
+            } else {
+                return "Upcoming";
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "unknown";
+        }
     }
 }
