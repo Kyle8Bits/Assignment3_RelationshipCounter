@@ -79,20 +79,23 @@ Use the above test card details to simulate payments in test mode. These test ca
 ---
 
 ## Open Issues
-- *Notification Logic*  
-  While notifications are implemented, there is an opportunity to optimize notification delivery for the following scenarios:
-    - *Friend Request Notification:* Notify the receiver in real time when a friend request is sent.
-    - *Friend Acceptance Notification:* Notify the sender once their friend request is accepted.
-    - *Milestone Notification:* Notify both partners about upcoming milestones or anniversaries.
-    - *General Performance:* Improve performance by ensuring notifications are batched or queued properly to prevent delays during peak times.
-
+- No record
 ---
 
 ## Test Accounts
 Test accounts have been provided for system testing purposes. Contact the contributors if test credentials are required.
 
+### Admin account
+    Email: admin123@gmail.com
+    Password: admin@123
+### User account
+    Email: thong@gmail.com 
+    Password: thong@123
+### User account
+    Email: doris@gmail.com 
+    Password: doris123
 ---
 
 *Developed by:*  
 Vo Thanh Thong, Truong Hong Van, and Mai Dang Khoa.
-"""
+___
