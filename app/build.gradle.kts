@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.firebase.ui.firestore)
     implementation(libs.mpandroidchart)
+    implementation(libs.legacy.support.v4)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -62,6 +64,6 @@ dependencies {
     implementation(libs.stripe.java)
     implementation (libs.android.volley)
     implementation(libs.stripe.android)
-
+    implementation (libs.material.calendar.view)
 
 }

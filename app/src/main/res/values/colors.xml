@@ -1,78 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <color name="black">#22172A</color>
-        <color name="primary">#4B164C</color>
-        <color name="secondary1">#DD88CF</color>
-        <color name="hard_pink">#EDC1E6</color>
-        <color name="soft_pink">#FDF7FD</color>
-        <color name="white">#FFFFFFFF</color>
-        <color name="background_white">#FCFDFD</color>
-        <color name="transparent">#00FFFFFF</color>
+<resources>
+    <color name="black">#22172A</color>
+    <color name="primary">#4B164C</color>
+    <color name="secondary1">#DD88CF</color>
+    <color name="hard_pink">#EDC1E6</color>
+    <color name="soft_pink">#FDF7FD</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_white">#FCFDFD</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="green">#72BAA9</color>
+    <color name="text_disable">#CDC1FF</color>
 
-        <!-- Primary Colors -->
-        <color name="colorPrimary">#4B164C</color>
-        <color name="colorOnPrimary">#FFFFFF</color>
-        <color name="colorPrimaryContainer">#DD88CF</color>
-        <color name="colorOnPrimaryContainer">#22172A</color>
-        <color name="colorPrimaryInverse">#DD88CF</color>
-        <color name="colorPrimaryFixed">#DD88CF</color>
-        <color name="colorPrimaryFixedDim">#DD88CF</color>
-        <color name="colorOnPrimaryFixed">#22172A</color>
-        <color name="colorOnPrimaryFixedVariant">#4B164C</color>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#4B164C</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#DD88CF</color>
+    <color name="colorOnPrimaryContainer">#22172A</color>
+    <color name="colorPrimaryInverse">#DD88CF</color>
+    <color name="colorPrimaryFixed">#DD88CF</color>
+    <color name="colorPrimaryFixedDim">#DD88CF</color>
+    <color name="colorOnPrimaryFixed">#22172A</color>
+    <color name="colorOnPrimaryFixedVariant">#4B164C</color>
 
-        <!-- Secondary Colors -->
-        <color name="colorSecondary">#EDC1E6</color>
-        <color name="colorOnSecondary">#FFFFFF</color>
-        <color name="colorSecondaryContainer">#FDF7FD</color>
-        <color name="colorOnSecondaryContainer">#4B164C</color>
-        <color name="colorSecondaryFixed">#EDC1E6</color>
-        <color name="colorSecondaryFixedDim">#EDC1E6</color>
-        <color name="colorOnSecondaryFixed">#4B164C</color>
-        <color name="colorOnSecondaryFixedVariant">#DD88CF</color>
+    <!-- Secondary Colors -->
+    <color name="colorSecondary">#EDC1E6</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSecondaryContainer">#FDF7FD</color>
+    <color name="colorOnSecondaryContainer">#4B164C</color>
+    <color name="colorSecondaryFixed">#EDC1E6</color>
+    <color name="colorSecondaryFixedDim">#EDC1E6</color>
+    <color name="colorOnSecondaryFixed">#4B164C</color>
+    <color name="colorOnSecondaryFixedVariant">#DD88CF</color>
 
-        <!-- Tertiary Colors -->
-        <color name="colorTertiary">#DD88CF</color>
-        <color name="colorOnTertiary">#FFFFFF</color>
-        <color name="colorTertiaryContainer">#FDF7FD</color>
-        <color name="colorOnTertiaryContainer">#4B164C</color>
-        <color name="colorTertiaryFixed">#DD88CF</color>
-        <color name="colorTertiaryFixedDim">#EDC1E6</color>
-        <color name="colorOnTertiaryFixed">#4B164C</color>
-        <color name="colorOnTertiaryFixedVariant">#DD88CF</color>
+    <!-- Tertiary Colors -->
+    <color name="colorTertiary">#DD88CF</color>
+    <color name="colorOnTertiary">#FFFFFF</color>
+    <color name="colorTertiaryContainer">#FDF7FD</color>
+    <color name="colorOnTertiaryContainer">#4B164C</color>
+    <color name="colorTertiaryFixed">#DD88CF</color>
+    <color name="colorTertiaryFixedDim">#EDC1E6</color>
+    <color name="colorOnTertiaryFixed">#4B164C</color>
+    <color name="colorOnTertiaryFixedVariant">#DD88CF</color>
 
-        <!-- Background and Surface -->
-        <color name="colorBackground">#FDF7FD</color>
-        <color name="colorOnBackground">#22172A</color>
-        <color name="colorSurface">#FFFFFF</color>
-        <color name="colorOnSurface">#22172A</color>
-        <color name="colorSurfaceVariant">#E5E6EB</color>
-        <color name="colorOnSurfaceVariant">#4D5461</color>
-        <color name="colorOutline">#9EA3AE</color>
+    <!-- Background and Surface -->
+    <color name="colorBackground">#FDF7FD</color>
+    <color name="colorOnBackground">#22172A</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#22172A</color>
+    <color name="colorSurfaceVariant">#E5E6EB</color>
+    <color name="colorOnSurfaceVariant">#4D5461</color>
+    <color name="colorOutline">#9EA3AE</color>
 
-        <!-- Error Colors -->
-        <color name="colorError">#B00020</color>
-        <color name="colorOnError">#FFFFFF</color>
-        <color name="colorErrorContainer">#F9DEDC</color>
-        <color name="colorOnErrorContainer">#8C1D18</color>
+    <!-- Error Colors -->
+    <color name="colorError">#B00020</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorErrorContainer">#F9DEDC</color>
+    <color name="colorOnErrorContainer">#8C1D18</color>
 
-        <!-- Grayscale -->
-        <color name="grey_50">#F9FAFB</color>
-        <color name="grey_100">#F4F4F6</color>
-        <color name="grey_200">#E5E6EB</color>
-        <color name="grey_300">#D3D5DA</color>
-        <color name="grey_400">#9EA3AE</color>
-        <color name="grey_500">#6C727F</color>
-        <color name="grey_600">#4D5461</color>
-        <color name="grey_700">#394150</color>
-        <color name="grey_800">#212936</color>
-        <color name="grey_900">#121826</color>
+    <!-- Grayscale -->
+    <color name="grey_50">#F9FAFB</color>
+    <color name="grey_100">#F4F4F6</color>
+    <color name="grey_200">#E5E6EB</color>
+    <color name="grey_300">#D3D5DA</color>
+    <color name="grey_400">#9EA3AE</color>
+    <color name="grey_500">#6C727F</color>
+    <color name="grey_600">#4D5461</color>
+    <color name="grey_700">#394150</color>
+    <color name="grey_800">#212936</color>
+    <color name="grey_900">#121826</color>
 
-        <!--  Others  -->
-        <color name="secondary1_10">#1ADD88CF</color> <!-- 10% opacity -->
-        <color name="primary_with_opacity">#334B164C</color>
-        <color name="tab_bar_background">#F8E7F6</color>
-        <color name="stroke_back_button">#1422172A</color>
-        <color name="bg_nav_item_color">#DD88CF</color>
+    <!--  Others  -->
+    <color name="secondary1_10">#1ADD88CF</color> <!-- 10% opacity -->
+    <color name="primary_with_opacity">#334B164C</color>
+    <color name="tab_bar_background">#F8E7F6</color>
+    <color name="stroke_back_button">#1422172A</color>
+    <color name="bg_nav_item_color">#DD88CF</color>
 
 
 </resources>
