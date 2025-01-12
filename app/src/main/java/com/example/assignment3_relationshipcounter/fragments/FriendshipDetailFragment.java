@@ -125,12 +125,6 @@ public class FriendshipDetailFragment extends Fragment {
         loadFriendshipDetails(relationshipId);
     }
 
-//    private void setupCallButton() {
-//        callButton.setOnClickListener(v -> {
-//            String phoneNumber = "xxxxxx"; // Replace with actual phone number
-//            makeCall(phoneNumber);
-//        });
-//    }
 
     private void setupOptionButton() {
         optionButton.setOnClickListener(v -> {

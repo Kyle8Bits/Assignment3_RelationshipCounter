@@ -1,5 +1,7 @@
 package com.example.assignment3_relationshipcounter.service.firestore;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
@@ -17,6 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -420,6 +423,31 @@ public class DataUtils {
                     callback.onFailure(e); // Pass the exception to onFailure
                 });
     }
+
+    public void updateUserToPremium(String userId, NormalCallback<Void> callback) {
+
+        // Update the accountType field for the specified user
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("accountType", "PREMIUM");
+
+        db.collection("users")
+                .document(userId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    // Call onSuccess when the update is successful
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    // Call onFailure when the update fails
+                    callback.onFailure(new Exception("Failed to update user to PREMIUM: " + e.getMessage()));
+                });
+    }
+
+
+
+
+
+
 
 
 

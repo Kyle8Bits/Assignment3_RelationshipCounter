@@ -106,11 +106,6 @@ public class HomeActivity extends AppCompatActivity {
         // Bottom Navigation setup
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-//        // Disable navigation items for non-premium users
-//        if (currentUser != null && currentUser.getAccountType() == UserType.USER) { // Non-premium user
-//            bottomNavigationView.getMenu().findItem(R.id.nav_discover).setEnabled(false);
-//            bottomNavigationView.getMenu().findItem(R.id.nav_chat).setEnabled(false);
-//        }
 
         // Set default fragment
         if (savedInstanceState == null) {

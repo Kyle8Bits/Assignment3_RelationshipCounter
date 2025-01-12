@@ -2,10 +2,13 @@ package com.example.assignment3_relationshipcounter.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,25 +22,37 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.main_screen.PaymentActivity;
 import com.example.assignment3_relationshipcounter.main_screen.WelcomeActivity;
 import com.example.assignment3_relationshipcounter.service.firestore.Authentication;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.models.UserType;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 
 public class ProfileFragment extends Fragment {
+    private ActivityResultLauncher<Intent> paymentLauncher;
     private ImageView avatar;
     private EditText firstName, lastName, email, phoneNumber, username;
     private TextView dob;
+    private MaterialButton upgradeBtn;
     private String storageUrl;
     private User user;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
 
 
     @Override
@@ -64,6 +79,25 @@ public class ProfileFragment extends Fragment {
         avatar.setOnClickListener(v -> pickImage());
         saveButton.setOnClickListener(v -> saveProfile());
         cancelButton.setOnClickListener(v -> cancelChanges());
+        upgradeBtn = view.findViewById(R.id.upgrade_to_premium_button);
+        upgradeBtn.setOnClickListener(v -> navigateToPaymentActivity());
+        if (user.getAccountType() == UserType.PREMIUM) {
+            upgradeBtn.setText("Premium user");
+            upgradeBtn.setEnabled(false);
+        }
+        // Register ActivityResultLauncher
+        paymentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        boolean paymentSuccess = result.getData().getBooleanExtra("paymentSuccess", false);
+                        if (paymentSuccess) {
+                            upgradeBtn.setText("Premium user");
+                            upgradeBtn.setEnabled(false);
+                        }
+                    }
+                }
+        );
 
 
         return view;
@@ -182,6 +216,11 @@ public class ProfileFragment extends Fragment {
         if (user != null) {
             loadFields(user);
         }
+    }
+
+    private void navigateToPaymentActivity() {
+        Intent intent = new Intent(requireContext(), PaymentActivity.class);
+        paymentLauncher.launch(intent);
     }
 
 
