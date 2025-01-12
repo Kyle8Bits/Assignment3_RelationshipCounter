@@ -4,8 +4,4 @@
         android:id="@+id/action_unfriend"
         android:title="Unfriend"
         android:iconTint="@color/primary" />
-    <item
-        android:id="@+id/action_block"
-        android:title="Block"
-        android:iconTint="@color/primary" />
 </menu>

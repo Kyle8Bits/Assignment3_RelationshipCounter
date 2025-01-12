@@ -175,9 +175,6 @@ public class FriendshipDetailFragment extends Fragment {
             case R.id.action_unfriend:
                 handleUnfriendAction(relationshipId);
                 return true;
-            case R.id.action_block:
-                handleBlockAction(relationshipId);
-                return true;
             default:
                 return false;
         }
@@ -204,37 +201,6 @@ public class FriendshipDetailFragment extends Fragment {
         });
     }
 
-    private void handleBlockAction(String relationshipId) {
-        if (relationshipId == null) {
-            Toast.makeText(requireContext(), "Invalid relationship ID.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        dataUtils = new DataUtils();
-        dataUtils.getById("relationships", relationshipId, Relationship.class, new DataUtils.FetchCallback<Relationship>() {
-            @Override
-            public void onSuccess(Relationship relationship) {
-                relationship.setStatus(FriendStatus.BLOCKED);
-                dataUtils.updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(requireContext(), "Friend has been blocked.", Toast.LENGTH_SHORT).show();
-                        requireActivity().getSupportFragmentManager().popBackStack();
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(requireContext(), "Failed to block friend.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(requireContext(), "Failed to block friend.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void loadFriendshipDetails(String relationshipId) {
         if (relationshipId == null) {
