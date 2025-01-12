@@ -33,7 +33,7 @@ public class User implements DataUtils.HasId, Serializable {
         this.accountType = accountType;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.avatarUrl = "";
+        this.avatarUrl = "https://firebasestorage.googleapis.com/v0/b/android-asm3-group.firebasestorage.app/o/avatars%2F8ihuDEyvSGZqT6XQ2wu8nppzmTJ2?alt=media&token=5d29846c-0cdc-4c32-936c-27448b36bf4f";
     }
 
     public String getAvatarUrl() {

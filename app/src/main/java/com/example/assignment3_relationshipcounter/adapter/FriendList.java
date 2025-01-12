@@ -334,7 +334,8 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
         args.putString("friendId", friend.getId());
         args.putString("friendName", friend.getUsername());
         args.putLong("daysTogether", Utils.calculateDayCount(relationship.getDateCreated())); // Pass day count
-        args.putString("relationshipId", relationship.getId()); // Pass relationship ID if needed
+        args.putString("relationshipId", relationship.getId());
+        args.putString("avatar", friend.getAvatarUrl());// Pass relationship ID if needed
         fragment.setArguments(args);
 
         // Perform navigation

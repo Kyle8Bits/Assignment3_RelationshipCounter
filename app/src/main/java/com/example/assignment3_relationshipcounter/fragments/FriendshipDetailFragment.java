@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
+import com.bumptech.glide.Glide;
 import com.example.assignment3_relationshipcounter.R;
 import com.example.assignment3_relationshipcounter.adapter.EventAdapter;
 import com.example.assignment3_relationshipcounter.main_screen.HomeActivity;
@@ -31,6 +32,7 @@ import com.example.assignment3_relationshipcounter.utils.CalendarEventHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 
@@ -51,6 +53,9 @@ public class FriendshipDetailFragment extends Fragment {
     private MaterialButton backButton, viewGalleryButton;
     private MaterialButton callButton;
     private TextView daysCountTextView;
+
+    private ShapeableImageView currentImage, friendImage;
+
     private User currentUser;
     private DataUtils dataUtils;
     private List<Event> sharedEvents;
@@ -81,6 +86,8 @@ public class FriendshipDetailFragment extends Fragment {
         optionButton = view.findViewById(R.id.option_button);
         viewGalleryButton = view.findViewById(R.id.view_gallery_button);
         daysCountTextView = view.findViewById(R.id.days_count);
+        currentImage = view.findViewById(R.id.current_user_image);
+        friendImage = view.findViewById(R.id.friend_image);
         backButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
         // Set up "View Gallery" button click listener
         viewGalleryButton.setOnClickListener(v -> navigateToGallery());
@@ -116,6 +123,19 @@ public class FriendshipDetailFragment extends Fragment {
         TextView friendNameTextView = view.findViewById(R.id.friend_name);
 
         String friendId = getArguments().getString("friendId");
+
+        String friendAvatarURL = getArguments().getString("avatar");
+
+        String currentAvatarURL = currentUser.getAvatarUrl();
+
+        Glide.with(requireContext())
+                .load(friendAvatarURL)
+                .into(friendImage);
+
+        Glide.with(requireContext())
+                .load(currentAvatarURL)
+                .into(currentImage);
+
         String friendName = getArguments().getString("friendName");
         String relationshipId = getArguments().getString("relationshipId");
         currentUserNameTextView.setText(currentUser.getUsername() + " \uD83D\uDC4B");
@@ -400,6 +420,5 @@ public class FriendshipDetailFragment extends Fragment {
 
         calendarView.setEvents(eventDays);
     }
-
 
 }

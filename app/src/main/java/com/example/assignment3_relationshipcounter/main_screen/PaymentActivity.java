@@ -34,7 +34,7 @@ import org.json.JSONObject;
 
 public class PaymentActivity extends AppCompatActivity {
     private CardInputWidget cardInputWidget;
-    private Button payButton;
+    private Button payButton, cancelButton;
     private Stripe stripe;
 
     @Override
@@ -44,6 +44,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         cardInputWidget = findViewById(R.id.card_input_widget);
         payButton = findViewById(R.id.pay_button);
+        cancelButton = findViewById(R.id.cancel_button);
 
         stripe = new Stripe(
                 getApplicationContext(),
@@ -51,6 +52,8 @@ public class PaymentActivity extends AppCompatActivity {
         );
 
         payButton.setOnClickListener(v -> startPayment());
+
+        cancelButton.setOnClickListener(v-> finish());
     }
 
     private void startPayment() {

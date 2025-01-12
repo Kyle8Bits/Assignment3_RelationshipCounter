@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:textColor="@android:color/black" />
+        android:textColor="@color/primary" />
 
     <!-- Stripe Card Input Widget -->
     <com.stripe.android.view.CardInputWidget
@@ -34,6 +34,17 @@
         android:layout_marginHorizontal="24dp"
         android:text="Pay"
         android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white" />
+
+    <!-- Pay Button -->
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/secondary1"
+        android:text="Cancel"
         android:textColor="@android:color/white" />
 
 </LinearLayout>

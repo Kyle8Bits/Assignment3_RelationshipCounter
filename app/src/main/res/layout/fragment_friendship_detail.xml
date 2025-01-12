@@ -106,6 +106,9 @@
                         android:orientation="vertical">
 
                         <!-- Friend Image -->
+
+                        <!-- Friend Name -->
+
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/friend_image"
                             android:layout_width="120dp"
@@ -118,7 +121,6 @@
                             app:strokeColor="@color/secondary1"
                             app:strokeWidth="6dp" />
 
-                        <!-- Friend Name -->
                         <TextView
                             android:id="@+id/friend_name"
                             android:layout_width="wrap_content"
