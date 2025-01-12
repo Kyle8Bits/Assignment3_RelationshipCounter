@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.example.assignment3_relationshipcounter.service.models.ChatRoom;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.models.UserType;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
@@ -41,6 +43,7 @@ public class ChatRoomFragment extends Fragment {
     RecyclerView recyclerView, createChatRCV;
     DataUtils dataUtils = new DataUtils();
     TextInputEditText searchbar;
+    Button chatWithAdminButton;
 
     public ChatRoomFragment(){
 
@@ -52,12 +55,41 @@ public class ChatRoomFragment extends Fragment {
         recyclerView = view.findViewById(R.id.chat_room_created);
         searchbar = view.findViewById(R.id.et_search_friend);
         createChatRCV = view.findViewById(R.id.create_chat_rcv);
+        chatWithAdminButton = view.findViewById(R.id.btn_chat_with_admin);
 
+        // Hide "Chat with Admin" button if user is an admin
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getAccountType() == UserType.ADMIN) {
+            chatWithAdminButton.setVisibility(View.GONE);
+        } else {
+            chatWithAdminButton.setVisibility(View.VISIBLE);
+        }
+
+        // Handle "Chat with Admin" button click
+        chatWithAdminButton.setOnClickListener(v -> openChatWithAdmin());
 
         setupRecyclerView();
         setupSearchResult();
         return view;
     }
+
+    private void openChatWithAdmin() {
+        dataUtils.getAdmin(new DataUtils.FetchCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                Intent intent = new Intent(requireActivity(), ChatFragment.class);
+                intent.putExtra("otherUser", data.get(0));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireActivity(), "Admin is busy right now", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     void setupRecyclerView(){
 
         Query query = dataUtils.getAllChatRoomOfUser();

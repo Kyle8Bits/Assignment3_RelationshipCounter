@@ -28,6 +28,7 @@ import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.models.UserType;
 import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -63,130 +64,137 @@ public class FriendList extends RecyclerView.Adapter<FriendListView> {
                 .centerCrop()
                 .into(holder.avatar);
 
-        // Fetch relationship for the user
-        fetchRelationshipForUser(user, new DataUtils.FetchCallback<Relationship>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onSuccess(Relationship relationship) {
-                String currentUserId = UserSession.getInstance().getCurrentUser().getId();
+        boolean isAdmin = UserSession.getInstance().getCurrentUser().getAccountType() == UserType.ADMIN;
 
-                switch (relationship.getStatus()) {
-                    case FRIEND:
-                        // User is already a friend
-                        holder.addFriendButton.setVisibility(View.GONE);
-                        holder.navigateIcon.setVisibility(View.VISIBLE);
+        if (isAdmin) {
+            // For Admins: Only show the navigation icon, hide other elements
+            holder.navigateIcon.setVisibility(View.VISIBLE);
+            holder.addFriendButton.setVisibility(View.GONE);
+            holder.dayCount.setVisibility(View.GONE);
 
-                        // Calculate and display the Day Count
-                        long dayCount = Utils.calculateDayCount(relationship.getDateCreated());
-                        holder.dayCount.setText(dayCount + " days"); // Bind day count
-                        holder.dayCount.setVisibility(View.VISIBLE);
+            // Set click listener to navigate to user details
+            holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
+        } else {
+            // For Regular Users: Proceed with normal behavior
+            fetchRelationshipForUser(user, new DataUtils.FetchCallback<Relationship>() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onSuccess(Relationship relationship) {
+                    String currentUserId = UserSession.getInstance().getCurrentUser().getId();
 
-                        // Set click listener to navigate to Friendship Detail
-                        holder.itemView.setOnClickListener(v -> {
-                            navigateToFriendshipDetail(user, relationship);
-                        });
-                        break;
-                    case PENDING:
-                        // Friend request is pending
-                        holder.addFriendButton.setVisibility(View.VISIBLE);
-                        holder.navigateIcon.setVisibility(View.GONE);
-                        holder.dayCount.setVisibility(View.GONE);
-                        holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
+                    switch (relationship.getStatus()) {
+                        case FRIEND:
+                            // User is already a friend
+                            holder.addFriendButton.setVisibility(View.GONE);
+                            holder.navigateIcon.setVisibility(View.VISIBLE);
 
-                        if (relationship.getFirstUser().equals(currentUserId)) {
-                            // Current user is the sender
-                            holder.addFriendButton.setText("Pending");
-                            holder.addFriendButton.setEnabled(false);
-                        } else if (relationship.getSecondUser().equals(currentUserId)) {
-                            // Current user is the receiver
-                            holder.addFriendButton.setText("Accept");
+                            // Calculate and display the Day Count
+                            long dayCount = Utils.calculateDayCount(relationship.getDateCreated());
+                            holder.dayCount.setText(dayCount + " days");
+                            holder.dayCount.setVisibility(View.VISIBLE);
+
+                            // Set click listener to navigate to Friendship Detail
+                            holder.itemView.setOnClickListener(v -> navigateToFriendshipDetail(user, relationship));
+                            break;
+
+                        case PENDING:
+                            // Friend request is pending
+                            holder.addFriendButton.setVisibility(View.VISIBLE);
+                            holder.navigateIcon.setVisibility(View.GONE);
+                            holder.dayCount.setVisibility(View.GONE);
+                            holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
+
+                            if (relationship.getFirstUser().equals(currentUserId)) {
+                                // Current user is the sender
+                                holder.addFriendButton.setText("Pending");
+                                holder.addFriendButton.setEnabled(false);
+                            } else if (relationship.getSecondUser().equals(currentUserId)) {
+                                // Current user is the receiver
+                                holder.addFriendButton.setText("Accept");
+                                holder.addFriendButton.setEnabled(true);
+
+                                // Handle "Accept" Button Click
+                                holder.addFriendButton.setOnClickListener(v -> {
+                                    relationship.setStatus(FriendStatus.FRIEND);
+                                    relationship.setDateCreated(Utils.getCurrentDate());
+
+                                    new DataUtils().updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Toast.makeText(context, "You are now friends with " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                            holder.addFriendButton.setVisibility(View.GONE);
+                                            holder.navigateIcon.setVisibility(View.VISIBLE);
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Toast.makeText(context, "Failed to accept friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                });
+                            }
+                            break;
+
+                        case NOT_FRIEND:
+                            // User is not a friend
+                            holder.addFriendButton.setVisibility(View.VISIBLE);
+                            holder.addFriendButton.setText("Add Friend");
                             holder.addFriendButton.setEnabled(true);
+                            holder.navigateIcon.setVisibility(View.GONE);
+                            holder.dayCount.setVisibility(View.GONE);
 
-                            // Handle "Accept" Button Click
+                            holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
+
+                            // Handle "Add Friend" Button Click
                             holder.addFriendButton.setOnClickListener(v -> {
-                                // Log the relationship details
-                                Log.d("AcceptButtonClick", "Accepting Friend Request: " + relationship.toString());
+                                holder.addFriendButton.setText("Pending");
+                                holder.addFriendButton.setEnabled(false);
 
-                                // Update the status to "Friend" and set the created date
-                                relationship.setStatus(FriendStatus.FRIEND);
-                                relationship.setDateCreated(Utils.getCurrentDate());
+                                Relationship newRelationship = new Relationship(
+                                        null,
+                                        currentUserId,
+                                        user.getId(),
+                                        Utils.getCurrentDate(),
+                                        null,
+                                        FriendStatus.PENDING,
+                                        0
+                                );
 
-                                new DataUtils().updateRelationship(relationship, new DataUtils.NormalCallback<Void>() {
+                                new DataUtils().addRelationship(newRelationship, new DataUtils.NormalCallback<Void>() {
                                     @Override
                                     public void onSuccess() {
-                                        Toast.makeText(context, "You are now friends with " + user.getUsername(), Toast.LENGTH_SHORT).show();
-                                        holder.addFriendButton.setVisibility(View.GONE);
-                                        holder.navigateIcon.setVisibility(View.VISIBLE);
+                                        Toast.makeText(context, "Friend request sent to " + user.getUsername(), Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override
                                     public void onFailure(Exception e) {
-                                        Toast.makeText(context, "Failed to accept friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        holder.addFriendButton.setText("Add Friend");
+                                        holder.addFriendButton.setEnabled(true);
+                                        Toast.makeText(context, "Failed to send friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             });
-                        }
+                            break;
 
-                        break;
-                    case NOT_FRIEND:
-                        // User is not a friend
-                        holder.addFriendButton.setVisibility(View.VISIBLE);
-                        holder.addFriendButton.setText("Add Friend");
-                        holder.addFriendButton.setEnabled(true);
-                        holder.navigateIcon.setVisibility(View.GONE);
-                        holder.dayCount.setVisibility(View.GONE);
-
-                        holder.itemView.setOnClickListener(v -> navigateToUserProfile(user));
-
-                        // Handle "Add Friend" Button Click
-                        holder.addFriendButton.setOnClickListener(v -> {
-                            holder.addFriendButton.setText("Pending");
-                            holder.addFriendButton.setEnabled(false);
-
-                            // Create a new relationship with "Pending" status
-                            Relationship newRelationship = new Relationship(
-                                    null, // ID will be auto-generated
-                                    currentUserId,
-                                    user.getId(),
-                                    Utils.getCurrentDate(),
-                                    null, // Date accepted (null for now)
-                                    FriendStatus.PENDING,
-                                    0
-                            );
-
-                            new DataUtils().addRelationship(newRelationship, new DataUtils.NormalCallback<Void>() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(context, "Friend request sent to " + user.getUsername(), Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    holder.addFriendButton.setText("Add Friend");
-                                    holder.addFriendButton.setEnabled(true);
-                                    Toast.makeText(context, "Failed to send friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        });
-                        break;
-                    default:
-                        // Default case: NOT_FRIEND
-                        holder.addFriendButton.setVisibility(View.VISIBLE);
-                        holder.addFriendButton.setText("Add Friend");
-                        holder.addFriendButton.setEnabled(true);
-                        holder.navigateIcon.setVisibility(View.GONE);
-                        break;
+                        default:
+                            holder.addFriendButton.setVisibility(View.VISIBLE);
+                            holder.addFriendButton.setText("Add Friend");
+                            holder.addFriendButton.setEnabled(true);
+                            holder.navigateIcon.setVisibility(View.GONE);
+                            break;
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Exception e) {
-                holder.addFriendButton.setVisibility(View.VISIBLE);
-                holder.addFriendButton.setText("Add Friend");
-                holder.addFriendButton.setEnabled(true);
-                holder.navigateIcon.setVisibility(View.GONE);
-            }
-        });
+                @Override
+                public void onFailure(Exception e) {
+                    holder.addFriendButton.setVisibility(View.VISIBLE);
+                    holder.addFriendButton.setText("Add Friend");
+                    holder.addFriendButton.setEnabled(true);
+                    holder.navigateIcon.setVisibility(View.GONE);
+                }
+            });
+        }
+
     }
 
     // Navigate to the user's profile details

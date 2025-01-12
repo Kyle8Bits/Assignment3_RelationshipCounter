@@ -25,6 +25,8 @@ import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
 import com.example.assignment3_relationshipcounter.fragments.SearchFriendFragment;
 import com.example.assignment3_relationshipcounter.fragments.HomeFragment;
 //import com.example.assignment3_relationshipcounter.fragments.ProfileFragment;
+import com.example.assignment3_relationshipcounter.fragments.SupportFragment;
+import com.example.assignment3_relationshipcounter.fragments.UserManagerFragment;
 import com.example.assignment3_relationshipcounter.service.ForegroundService;
 import com.example.assignment3_relationshipcounter.service.broadcast.BatteryReceiver;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
@@ -106,10 +108,19 @@ public class HomeActivity extends AppCompatActivity {
         // Bottom Navigation setup
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        // Configure navigation menu based on user type
+        configureBottomNavigation(bottomNavigationView);
 
         // Set default fragment
+        // Set default fragment based on user type
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
+            if (currentUser != null && currentUser.getAccountType() == UserType.ADMIN) {
+                loadFragment(new UserManagerFragment()); // Default fragment for admin
+                bottomNavigationView.setSelectedItemId(R.id.nav_user_manager); // Highlight User Manager tab
+            } else {
+                loadFragment(new HomeFragment()); // Default fragment for normal users
+                bottomNavigationView.setSelectedItemId(R.id.nav_home); // Highlight Home tab
+            }
         }
 
 
@@ -117,48 +128,70 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
 
-            switch (item.getItemId()) {
-                case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
-                    break;
-
-                case R.id.nav_discover:
-                    if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
-                        Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
-                        return false; // Prevent navigation
-                    }
-                    selectedFragment = new MapsFragment();
-                    break;
-
-                case R.id.nav_profile:
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("user", currentUser);
-                    selectedFragment = new ProfileFragment();
-                    selectedFragment.setArguments(bundle);
-                    break;
-
-                case R.id.nav_friends:
-                    selectedFragment = new SearchFriendFragment();
-                    break;
-
-                case R.id.nav_chat:
-                    if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
-                        Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
-                        return false; // Prevent navigation
-                    }
-                    selectedFragment = new ChatRoomFragment();
-                    break;
-
-                default:
-                    selectedFragment = new HomeFragment();
-                    break;
+            if (currentUser.getAccountType() == UserType.ADMIN) {
+                switch (item.getItemId()) {
+                    case R.id.nav_user_manager:
+                        selectedFragment = new UserManagerFragment();
+                        break;
+                    case R.id.nav_support:
+                        selectedFragment = new ChatRoomFragment();
+                        break;
+                    case R.id.nav_profile:
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user", currentUser);
+                        selectedFragment = new ProfileFragment();
+                        selectedFragment.setArguments(bundle);
+                        break;
+                    default:
+                        selectedFragment = new UserManagerFragment();
+                        break;
+                }
+            } else {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        selectedFragment = new HomeFragment();
+                        break;
+                    case R.id.nav_discover:
+                        if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                            Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                            return false; // Prevent navigation
+                        }
+                        selectedFragment = new MapsFragment();
+                        break;
+                    case R.id.nav_profile:
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user", currentUser);
+                        selectedFragment = new ProfileFragment();
+                        selectedFragment.setArguments(bundle);
+                        break;
+                    case R.id.nav_friends:
+                        selectedFragment = new SearchFriendFragment();
+                        break;
+                    case R.id.nav_chat:
+                        if (currentUser != null && currentUser.getAccountType() == UserType.USER) {
+                            Toast.makeText(HomeActivity.this, "This feature is available for Premium users only.", Toast.LENGTH_SHORT).show();
+                            return false; // Prevent navigation
+                        }
+                    default:
+                        selectedFragment = new HomeFragment();
+                        break;
+                }
             }
-
 
             loadFragment(selectedFragment);
             return true;
         });
 
+    }
+
+    private void configureBottomNavigation(BottomNavigationView bottomNavigationView) {
+        if (currentUser.getAccountType() == UserType.ADMIN) {
+            bottomNavigationView.getMenu().clear();
+            bottomNavigationView.inflateMenu(R.menu.admin_navigation_menu);
+        } else {
+            bottomNavigationView.getMenu().clear();
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu);
+        }
     }
 
     @Override

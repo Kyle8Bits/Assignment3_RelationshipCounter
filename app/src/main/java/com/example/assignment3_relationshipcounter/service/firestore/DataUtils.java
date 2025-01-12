@@ -138,6 +138,24 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure);
     }
 
+    public void getAdmin(FetchCallback<List<User>> callback) {
+        db.collection("users")
+                .whereEqualTo("accountType", "ADMIN")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Convert the documents to a list of User objects
+                        List<User> users = queryDocumentSnapshots.toObjects(User.class);
+                        callback.onSuccess(users); // Return the list of users
+                    } else {
+                        callback.onFailure(new Exception("No admin found"));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure(e); // Return the exception in case of failure
+                });
+    }
+
 
     public <T> void getAll(String collection, Class<T> objectClass, FetchCallback<List<T>> callback) {
         db.collection(collection).get()
@@ -347,16 +365,32 @@ public class DataUtils {
      * Count total friends the user has
      **/
     public void countTotalFriends(String userId, FetchCallback<Integer> callback) {
-
         db.collection("relationships")
-                .whereEqualTo("status", FriendStatus.FRIEND)
-                .whereArrayContains("userIds", userId)
+                .whereEqualTo("status", "FRIEND") // Filter by confirmed friends
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int totalFriends = queryDocumentSnapshots.size();
+                    int totalFriends = 0;
+
+                    // Iterate through documents to count only relationships involving the userId
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String firstUser = doc.getString("firstUser");
+                        String secondUser = doc.getString("secondUser");
+
+                        if (userId.equals(firstUser) || userId.equals(secondUser)) {
+                            totalFriends++;
+                        }
+                    }
+
+                    // Log the result for debugging
+                    Log.d("CountTotalFriends", "Total friends for userId " + userId + ": " + totalFriends);
+
                     callback.onSuccess(totalFriends);
                 })
-                .addOnFailureListener(e -> callback.onFailure(new Exception("Failed to count friends: " + e.getMessage())));
+                .addOnFailureListener(e -> {
+                    // Log the error
+                    Log.e("CountTotalFriends", "Failed to count friends: " + e.getMessage());
+                    callback.onFailure(new Exception("Failed to count friends: " + e.getMessage()));
+                });
     }
 
     public void filterFriendRequestsByDays(String userId, boolean latestFirst, FetchCallback<List<User>> callback) {
@@ -428,6 +462,46 @@ public class DataUtils {
                 });
     }
 
+    public void fetchFriendsForUser(String userId, FetchCallback<List<User>> callback) {
+        getAll("relationships", Relationship.class, new FetchCallback<List<Relationship>>() {
+            @Override
+            public void onSuccess(List<Relationship> relationships) {
+                List<String> friendIds = new ArrayList<>();
+                for (Relationship relationship : relationships) {
+                    if (relationship.getStatus() == FriendStatus.FRIEND &&
+                            (relationship.getFirstUser().equals(userId) || relationship.getSecondUser().equals(userId))) {
+                        friendIds.add(relationship.getFirstUser().equals(userId)
+                                ? relationship.getSecondUser()
+                                : relationship.getFirstUser());
+                    }
+                }
+
+                // Fetch user details for all friend IDs
+                getAll("users", User.class, new FetchCallback<List<User>>() {
+                    @Override
+                    public void onSuccess(List<User> allUsers) {
+                        List<User> friends = new ArrayList<>();
+                        for (User user : allUsers) {
+                            if (friendIds.contains(user.getId())) {
+                                friends.add(user);
+                            }
+                        }
+                        callback.onSuccess(friends);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
+    }
     public void updateUserToPremium(String userId, NormalCallback<Void> callback) {
 
         // Update the accountType field for the specified user
@@ -475,8 +549,4 @@ public class DataUtils {
                 .addOnSuccessListener(docRef -> callback.onSuccess())
                 .addOnFailureListener(callback::onFailure);
     }
-
-
-
-
 }
