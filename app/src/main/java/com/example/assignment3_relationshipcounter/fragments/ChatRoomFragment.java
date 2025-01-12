@@ -74,7 +74,19 @@ public class ChatRoomFragment extends Fragment {
     }
 
     private void openChatWithAdmin() {
+        dataUtils.getAdmin(new DataUtils.FetchCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                Intent intent = new Intent(requireActivity(), ChatFragment.class);
+                intent.putExtra("otherUser", data.get(0));
+                startActivity(intent);
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireActivity(), "Admin is busy right now", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

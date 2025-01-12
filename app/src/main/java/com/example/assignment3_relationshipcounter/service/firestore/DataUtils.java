@@ -132,6 +132,24 @@ public class DataUtils {
                 .addOnFailureListener(callback::onFailure);
     }
 
+    public void getAdmin(FetchCallback<List<User>> callback) {
+        db.collection("users")
+                .whereEqualTo("accountType", "ADMIN")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Convert the documents to a list of User objects
+                        List<User> users = queryDocumentSnapshots.toObjects(User.class);
+                        callback.onSuccess(users); // Return the list of users
+                    } else {
+                        callback.onFailure(new Exception("No admin found"));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure(e); // Return the exception in case of failure
+                });
+    }
+
 
     public <T> void getAll(String collection, Class<T> objectClass, FetchCallback<List<T>> callback) {
         db.collection(collection).get()
