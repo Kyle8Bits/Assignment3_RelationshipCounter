@@ -112,12 +112,13 @@ public class ForegroundService extends Service {
                             dataUtils.getById("users", otherUserId, User.class, new DataUtils.FetchCallback<User>() {
                                 @Override
                                 public void onSuccess(User data) {
+                                    System.out.println(otherUserId + "---");
                                     System.out.println(data.getFirstName());
                                     System.out.println(sentUserId[0]);
                                     System.out.println(user.getUid());
                                     String notification = data.getFirstName() + " " + data.getLastName() + message[0];
                                     String title = "You have a new friend";
-                                    sendNotification(false, null,otherUserId, notification, title);
+                                    sendNotification(false, null, sentUserId[0], notification, title);
 
                                 }
 
