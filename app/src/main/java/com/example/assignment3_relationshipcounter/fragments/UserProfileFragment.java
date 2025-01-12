@@ -4,7 +4,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +18,25 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.assignment3_relationshipcounter.R;
+import com.example.assignment3_relationshipcounter.adapter.FriendList;
 import com.example.assignment3_relationshipcounter.service.firestore.DataUtils;
 import com.example.assignment3_relationshipcounter.service.firestore.Utils;
 import com.example.assignment3_relationshipcounter.service.models.FriendStatus;
 import com.example.assignment3_relationshipcounter.service.models.Relationship;
 import com.example.assignment3_relationshipcounter.service.models.User;
+import com.example.assignment3_relationshipcounter.service.models.UserType;
+import com.example.assignment3_relationshipcounter.utils.UserSession;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfileFragment extends Fragment {
 
     private ImageView avatar;
     private TextView username, firstName, lastName, gender, dob, totalFriendsTV;
-    private Button actionBtn;
+    private Button actionBtn, deleteBtn;
+    private RecyclerView friendsRecyclerView;
 
     private User user;
     private DataUtils dataUtils;
@@ -52,6 +60,9 @@ public class UserProfileFragment extends Fragment {
         dob = view.findViewById(R.id.dob);
         totalFriendsTV = view.findViewById(R.id.total_friends);
         actionBtn = view.findViewById(R.id.button_action);
+        deleteBtn = view.findViewById(R.id.button_delete);
+        friendsRecyclerView = view.findViewById(R.id.friends_recycler_view);
+
 
         dataUtils = new DataUtils();
         currentUserId = FirebaseAuth.getInstance().getUid();
@@ -64,7 +75,7 @@ public class UserProfileFragment extends Fragment {
         if (args != null && args.containsKey("user")) {
             user = (User) args.getSerializable("user");
             displayUserData();
-            checkFriendshipStatus();
+            setupUIBasedOnRole();
         } else {
             Toast.makeText(requireContext(), "No user data provided", Toast.LENGTH_SHORT).show();
         }
@@ -94,6 +105,8 @@ public class UserProfileFragment extends Fragment {
             dataUtils.countTotalFriends(user.getId(), new DataUtils.FetchCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer totalFriends) {
+                    // Log the total friends count
+                    Log.d("UserProfileFragment", "Total friends for user " + user.getUsername() + " (" + user.getId() + "): " + totalFriends);
                     totalFriendsTV.setText(String.valueOf(totalFriends));
                 }
 
@@ -106,6 +119,69 @@ public class UserProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up the UI based on whether the current user is an Admin or not.
+     */
+    private void setupUIBasedOnRole() {
+        boolean isAdmin = UserSession.getInstance().getCurrentUser().getAccountType() == UserType.ADMIN;
+
+        if (isAdmin) {
+            actionBtn.setVisibility(View.GONE); // Hide the Add Friend button
+            deleteBtn.setVisibility(View.VISIBLE); // Show the Delete button
+            friendsRecyclerView.setVisibility(View.VISIBLE); // Show the friends list
+
+            setupDeleteButton();
+            loadFriendsList();
+        } else {
+            deleteBtn.setVisibility(View.GONE); // Hide the Delete button
+            friendsRecyclerView.setVisibility(View.GONE); // Hide the friends list
+            checkFriendshipStatus(); // Check friendship status for regular users
+        }
+    }
+
+    /**
+     * Sets up the Delete button for Admins.
+     */
+    private void setupDeleteButton() {
+        deleteBtn.setOnClickListener(v -> {
+            dataUtils.deleteById("users", user.getId(), new DataUtils.NormalCallback<Void>() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(requireContext(), "User deleted successfully!", Toast.LENGTH_SHORT).show();
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(requireContext(), "Failed to delete user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    /**
+     * Loads the list of friends for the displayed user.
+     */
+    private void loadFriendsList() {
+        friendsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        List<User> friendList = new ArrayList<>();
+        FriendList adapter = new FriendList(requireContext(), friendList);
+        friendsRecyclerView.setAdapter(adapter);
+
+        dataUtils.fetchFriendsForUser(user.getId(), new DataUtils.FetchCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> friends) {
+                friendList.clear();
+                friendList.addAll(friends);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(requireContext(), "Failed to load friends list: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     /**
      * Checks the friendship status between the current user and the displayed user.
